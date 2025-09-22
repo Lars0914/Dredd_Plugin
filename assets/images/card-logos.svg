@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="50" viewBox="0 0 300 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Visa Logo -->
+  <g id="visa" transform="translate(0, 10)">
+    <rect width="70" height="30" rx="4" fill="#1A1F71"/>
+    <text x="35" y="20" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">VISA</text>
+  </g>
+  
+  <!-- Mastercard Logo -->
+  <g id="mastercard" transform="translate(80, 10)">
+    <rect width="70" height="30" rx="4" fill="#EB001B"/>
+    <circle cx="25" cy="15" r="8" fill="#FF5F00"/>
+    <circle cx="45" cy="15" r="8" fill="#F79E1B"/>
+    <text x="35" y="20" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">MC</text>
+  </g>
+  
+  <!-- American Express Logo -->
+  <g id="amex" transform="translate(160, 10)">
+    <rect width="70" height="30" rx="4" fill="#006FCF"/>
+    <text x="35" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">AMEX</text>
+  </g>
+  
+  <!-- Discover Logo -->
+  <g id="discover" transform="translate(240, 10)">
+    <rect width="50" height="30" rx="4" fill="#FF6000"/>
+    <text x="25" y="20" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">DISC</text>
+  </g>
+</svg>
