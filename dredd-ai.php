@@ -342,7 +342,7 @@ class DreddAI {
         // Localize script with AJAX URL and nonce
         wp_localize_script('dredd-ai-public', 'dredd_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('dredd_ai_nonce'),
+            'nonce' => wp_create_nonce('dredd_admin_nonce'),
             'user_id' => get_current_user_id(),
             'is_logged_in' => is_user_logged_in(),
             'plugin_url' => DREDD_AI_PLUGIN_URL,
@@ -372,7 +372,7 @@ class DreddAI {
         
         wp_localize_script('dredd-ai-admin', 'dredd_admin_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('dredd_ai_admin_nonce')
+            'nonce' => wp_create_nonce('dredd_admin_nonce')
         ));
     }
     

@@ -354,11 +354,11 @@ class Dredd_Admin {
         // Get comprehensive analytics for settings dashboard
         global $wpdb;
         $total_users = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->users}");
-        $total_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analyses");
+        $total_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history ");
         $total_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'");
         $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'") ?? 0;
-        $psycho_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analyses WHERE analysis_mode = 'psycho'");
-        $scam_detections = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analyses WHERE verdict LIKE '%scam%' OR verdict LIKE '%fraud%'");
+        $psycho_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history  WHERE analysis_mode = 'psycho'");
+        $scam_detections = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history  WHERE verdict LIKE '%scam%' OR verdict LIKE '%fraud%'");
         
         // System health metrics
         $avg_response_time = rand(150, 300); // Simulated - in real app get from logs
