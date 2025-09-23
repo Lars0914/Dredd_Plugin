@@ -514,7 +514,6 @@ class Dredd_Public {
                         <div class="message-content">
                             <div class="message-bubble dredd-message">
                                 <p><strong>I AM THE BlOCKChAIN ENFORCER!</strong></p>
-                                <p>Judge Dredd here, dispensing justice to crypto scammers and rug pullers.</p>
                                 <p>What suspicious token needs investigation, citizen?</p>
                             </div>
                             <!-- <div class="message-timestamp"><?php echo current_time('H:i'); ?></div> -->

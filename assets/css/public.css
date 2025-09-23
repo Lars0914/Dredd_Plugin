@@ -648,10 +648,12 @@ select.chain-dropdown option {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
+  word-break: break-all !important;
 }
 
 .user-message {
   flex-direction: row-reverse;
+  word-break: break-all !important;
 }
 
 .message-avatar {

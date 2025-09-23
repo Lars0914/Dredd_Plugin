@@ -237,19 +237,14 @@ class Dredd_N8N {
         // Extract token information from message
         $extracted_data = $this->extract_token_information($message);
 
-        if (count($extracted_data['contract_addresses']) > 1) {
-            $contract_addresses = [];
-            $token_names = [];
-        } 
+        $contract_addresses = null;
+        $token_names = null;
+    
         if(count($extracted_data['contract_addresses']) == 1) {
             $contract_addresses = $extracted_data['contract_addresses'][0];
             $token_names = $extracted_data['token_names'][0];
         }
-        if(count($extracted_data['contract_addresses']) == 0){
-             $contract_addresses = "";
-            $token_names = "";
-        }
-        // Build enhanced payload for n8n
+  
         $payload = array(
             'user_message'       => $message,          // keep full text
             'session_id'         => $session_id,
@@ -324,35 +319,23 @@ class Dredd_N8N {
             'token_names' => array(),
             'contract_addresses' => array(),
         );
-
-        // ✅ Ethereum-style contract addresses (0x + 40 hex chars)
         if (preg_match_all('/0x[a-fA-F0-9]{40}/', $message, $matches)) {
             $extracted['contract_addresses'] = $matches[0];
         }
-
-        // ✅ Solana base58 addresses (32–50 chars, excludes 0, O, I, l)
         if (preg_match_all('/\b[1-9A-HJ-NP-Za-km-z]{32,50}\b/', $message, $matches)) {
             $extracted['contract_addresses'] = $matches[0];
         }
-
-        // ✅ Token symbols in $SYMBOL format (e.g. $ETH, $USDT)
         if (preg_match_all('/\$([A-Z0-9]{2,10})\b/', $message, $matches)) {
             $extracted['token_names'] = array_merge($extracted['token_names'], $matches[1]);
         }
-
-        // ✅ Token name before Ethereum contract address
         if (preg_match_all('/([A-Za-z][A-Za-z0-9\s]{1,20})\s+(0x[a-fA-F0-9]{40})/', $message, $matches)) {
             foreach ($matches[1] as $name) {
                 $extracted['token_names'][] = trim($name);
             }
         }
-
-        // ✅ Common token name patterns (Token, Coin, Swap, Inu, etc.)
         if (preg_match_all('/\b([A-Z][a-z]*(?:\s+[A-Z][a-z]*)*(?:\s+(?:Token|Coin|Protocol|Finance|Swap|Inu|Doge|Safe|Moon)))\b/', $message, $matches)) {
             $extracted['token_names'] = array_merge($extracted['token_names'], $matches[1]);
         }
-
-        // ✅ Deduplicate everything
         $extracted['token_names'] = array_values(array_unique($extracted['token_names']));
         $extracted['contract_addresses'] = array_values(array_unique($extracted['contract_addresses']));
         return $extracted;
