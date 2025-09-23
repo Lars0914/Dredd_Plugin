@@ -333,7 +333,7 @@ class Dredd_Public {
                             
                             <div class="auth-modal-content">
                                 <div class="dredd-quote">
-                                    <p>"I am the Blockchain Enforcer! State your credentials, citizen."</p>
+                                    <p>"I am the Blockchain Enforcer! DREDD is running low on resources, check back soon"</p>
                                 </div>
                                 
                                 <form id="dredd-login-form" class="auth-form-inner">
@@ -514,7 +514,7 @@ class Dredd_Public {
                         <div class="message-content">
                             <div class="message-bubble dredd-message">
                                 <p><strong>I AM THE BlOCKChAIN ENFORCER!</strong></p>
-                                <p>What suspicious token needs investigation, citizen?</p>
+                                <p>DREDD is running low on resources, check back soon</p>
                             </div>
                             <!-- <div class="message-timestamp"><?php echo current_time('H:i'); ?></div> -->
                         </div>
