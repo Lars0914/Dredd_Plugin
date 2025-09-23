@@ -41,19 +41,16 @@ class Dredd_Public {
                             <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="">
                         </div>
                         <div class="dredd-title">
-                            <h3>JUDGE DREDD</h3>
-                            <span class="dredd-subtitle">CRYPTO JUSTICE</span>
+                            <h3>DREDD AI</h3>
                         </div>
                     </div>
                     
                     <div class="dredd-header-center">
                         <div class="dredd-mode-selector">
                             <button class="mode-btn active" data-mode="standard">
-                                
                                 STANDARD
                             </button>
                             <button class="mode-btn" data-mode="psycho">
-                                
                                 PSYCHO
                             </button>
                         </div>
@@ -368,7 +365,7 @@ class Dredd_Public {
                             
                             <div class="auth-modal-content">
                                 <div class="dredd-quote">
-                                    <p>"I AM THE LAW! State your credentials, citizen."</p>
+                                    <p>"I am the Blockchain Enforcer! State your credentials, citizen."</p>
                                 </div>
                                 
                                 <form id="dredd-login-form" class="auth-form-inner">
@@ -548,7 +545,7 @@ class Dredd_Public {
                         <div class="message-avatar">⚖️</div>
                         <div class="message-content">
                             <div class="message-bubble dredd-message">
-                                <p><strong>I AM THE LAW!</strong></p>
+                                <p><strong>I AM THE Blockchain Enforcer!</strong></p>
                                 <p>Judge Dredd here, dispensing justice to crypto scammers and rug pullers.</p>
                                 <p>What suspicious token needs investigation, citizen?</p>
                             </div>
@@ -573,7 +570,7 @@ class Dredd_Public {
                 <!-- Chat Input -->
                 <div class="dredd-chat-input">
                     <div class="input-container">
-                        <input type="text" id="dredd-message-input" placeholder="Enter token contract address or name..." maxlength="500" />
+                        <input type="text" id="dredd-message-input" placeholder="Contract or Ticker and Chain" maxlength="500" />
                         <button id="dredd-send-btn" class="send-button">
                             <span class="send-text">Analyze</span>
                         </button>
