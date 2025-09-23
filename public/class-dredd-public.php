@@ -333,7 +333,7 @@ class Dredd_Public {
                             
                             <div class="auth-modal-content">
                                 <div class="dredd-quote">
-                                    <p>"I am the Blockchain Enforcer! DREDD is running low on resources, check back soon"</p>
+                                    <p>"I am the BlockChain Enforcer! DREDD is running low on resources, check back soon"</p>
                                 </div>
                                 
                                 <form id="dredd-login-form" class="auth-form-inner">
@@ -510,10 +510,12 @@ class Dredd_Public {
                 <!-- Main Chat Area -->
                 <div class="dredd-chat-messages" id="dredd-chat-messages">
                     <div class="dredd-welcome-message">
-                        <div class="message-avatar">⚖️</div>
+                        <div class="message-avatar">
+                            <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="DREDD Avatar" />
+                        </div>
                         <div class="message-content">
                             <div class="message-bubble dredd-message">
-                                <p><strong>I AM THE BlOCKChAIN ENFORCER!</strong></p>
+                                <p><strong>I AM THE BlOCKCHAIN ENFORCER!</strong></p>
                                 <p>DREDD is running low on resources, check back soon</p>
                             </div>
                             <!-- <div class="message-timestamp"><?php echo current_time('H:i'); ?></div> -->
