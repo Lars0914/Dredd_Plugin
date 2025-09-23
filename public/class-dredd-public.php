@@ -37,7 +37,9 @@ class Dredd_Public {
                 <!-- Chat Header -->
                 <div class="dredd-chat-header">
                     <div class="dredd-header-left">
-                        <div class="dredd-badge">🛡️</div>
+                        <div class="dredd-badge">
+                            <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="">
+                        </div>
                         <div class="dredd-title">
                             <h3>JUDGE DREDD</h3>
                             <span class="dredd-subtitle">CRYPTO JUSTICE</span>
@@ -86,11 +88,11 @@ class Dredd_Public {
                         </div>
                         
                         <?php if (is_user_logged_in()): ?>
-                        <div class="dredd-credits">
+                        <!-- <div class="dredd-credits">
                             
                             <span class="credits-count"><?php echo dredd_ai_get_user_credits(get_current_user_id()); ?></span>
-                        </div>
-                        <div class="dredd-user-menu">
+                        </div> -->
+                        <!-- <div class="dredd-user-menu">
                             <button class="user-menu-btn" title="User Menu">
                                 <span class="user-icon">👤</span>
                                 <span class="user-name"><?php echo esc_html(wp_get_current_user()->display_name); ?></span>
@@ -115,7 +117,7 @@ class Dredd_Public {
                         <button class="promotions-toggle" title="Featured Tokens">
                             
                         </button>
-                        <?php endif; ?>
+                        <?php endif; ?> -->
                     </div>
                 </div>
                 
