@@ -545,11 +545,11 @@ class Dredd_Public {
                         <div class="message-avatar">⚖️</div>
                         <div class="message-content">
                             <div class="message-bubble dredd-message">
-                                <p><strong>I AM THE Blockchain Enforcer!</strong></p>
+                                <p><strong>I AM THE BlOCkChAIN ENfORCER!</strong></p>
                                 <p>Judge Dredd here, dispensing justice to crypto scammers and rug pullers.</p>
                                 <p>What suspicious token needs investigation, citizen?</p>
                             </div>
-                            <div class="message-timestamp"><?php echo current_time('H:i'); ?></div>
+                            <!-- <div class="message-timestamp"><?php echo current_time('H:i'); ?></div> -->
                         </div>
                     </div>
                 </div>
@@ -562,7 +562,7 @@ class Dredd_Public {
                             <div class="typing-dots">
                                 <span></span><span></span><span></span>
                             </div>
-                            <span class="typing-text">Enforcers gathering intelligence...</span>
+                            <span class="typing-text">Analyzing...</span>
                         </div>
                     </div>
                 </div>

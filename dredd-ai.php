@@ -357,7 +357,7 @@ class DreddAI {
                 'credits' => dredd_ai_get_user_credits(get_current_user_id())
             ) : null,
             'strings' => array(
-                'loading' => __('Enforcers gathering intelligence...', 'dredd-ai'),
+                'loading' => __('Analyzing...', 'dredd-ai'),
                 'error' => __('System malfunction! Try again, citizen!', 'dredd-ai'),
                 'network_error' => __('Communication breakdown! Check your connection!', 'dredd-ai')
             )

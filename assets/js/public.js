@@ -17,7 +17,7 @@
       this.paymentEventsInitialized = false; // Prevent multiple event bindings
       this.lastModalToggle = 0; // Performance throttling
       this.loadingMessages = [
-        "Enforcers gathering intelligence...",
+        "Analyzing...",
         "Scanning blockchain for criminal activity...",
         "Investigating token holders...",
         "Analyzing market manipulation...",
