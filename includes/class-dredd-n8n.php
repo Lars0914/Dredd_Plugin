@@ -240,9 +240,14 @@ class Dredd_N8N {
         if (count($extracted_data['contract_addresses']) > 1) {
             $contract_addresses = [];
             $token_names = [];
-        } else {
+        } 
+        if(count($extracted_data['contract_addresses']) == 1) {
             $contract_addresses = $extracted_data['contract_addresses'][0];
             $token_names = $extracted_data['token_names'][0];
+        }
+        if(count($extracted_data['contract_addresses']) == 0){
+             $contract_addresses = "";
+            $token_names = "";
         }
         // Build enhanced payload for n8n
         $payload = array(
@@ -458,7 +463,7 @@ class Dredd_N8N {
             // Check if body is empty - n8n workflow might not be triggering
             if (empty($body) || strlen($body) < 5) {
                 return array(
-                    'message' => 'Please check your connection and token address. Contact support. If the issue persists, please contact support.',
+                    'message' => 'Please check your connection and token address.If the issue persists, please contact support.',
                     'action' => 'error'
                 );
             }
