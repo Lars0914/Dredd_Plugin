@@ -657,8 +657,11 @@ select.chain-dropdown option {
 
 .user-message {
   flex-direction: row-reverse;
+  word-break: break-all !important;
 }
-
+.user-message p {
+  word-break: break-all !important;
+}
 .message-avatar {
   width: 40px;
   height: 40px;
@@ -1619,6 +1622,10 @@ select.chain-dropdown option {
   /* Better message styling on mobile */
   .chat-message {
     margin-bottom: 12px;
+    word-break: break-all !important;
+  }
+  .chat-message p {
+    word-break: break-all !important;
   }
 
   .message-bubble {
