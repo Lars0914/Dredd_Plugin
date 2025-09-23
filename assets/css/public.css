@@ -178,7 +178,7 @@ h6 {
 }
 
 .dredd-badge img {
-  border-radius: 50%;
+  border-radius: 50% !important;
 }
 
 .dredd-title h3 {
@@ -675,7 +675,7 @@ select.chain-dropdown option {
   );
 }
 .message-avatar img {
-  border-radius: 50%;
+  border-radius: 50% !important;
 }
 .message-content {
   flex: 1;
