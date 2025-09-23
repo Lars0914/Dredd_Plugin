@@ -266,7 +266,7 @@ class Dredd_Payments {
         
         $subject = 'DREDD AI - Payment Confirmation';
         $message = "
-        <div style='font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto;'>
+        <div style='font-family: Krona One, sans-serif; max-width: 600px; margin: 0 auto;'>
             <div style='background: linear-gradient(135deg, #0a0a0a, #1a1a1a); color: #c0c0c0; padding: 30px; text-align: center;'>
                 <h1 style='color: #ffffff; margin-bottom: 20px;'>I AM THE LAW!</h1>
                 <p style='font-size: 18px; margin-bottom: 30px;'>Your token purchase has been processed successfully.</p>
