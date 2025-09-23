@@ -687,7 +687,7 @@ class DreddAI {
      */
     public function handle_login() {
         // Verify nonce for security
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_admin_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_ai_nonce')) {
             wp_send_json_error('Security check failed');
         }
         
@@ -711,12 +711,6 @@ class DreddAI {
         if (is_wp_error($user)) {
             dredd_ai_log('Login failed for username: ' . $username . ' - ' . $user->get_error_message(), 'warning');
             wp_send_json_error('Invalid credentials. Justice denied!');
-        }
-        
-        // Check if email is verified
-        $email_verified = get_user_meta($user->ID, 'dredd_email_verified', true);
-        if (!$email_verified) {
-            wp_send_json_error('Please verify your email address before logging in. Check your inbox for the verification link.');
         }
         
         // Set authentication cookie
@@ -783,7 +777,6 @@ class DreddAI {
         if (email_exists($email)) {
             wp_send_json_error('Email address already registered');
         }
-        
         // Create the user
         $user_id = wp_create_user($username, $password, $email);
         
@@ -795,58 +788,17 @@ class DreddAI {
         // Update user meta
         update_user_meta($user_id, 'dredd_newsletter_subscription', $newsletter);
         update_user_meta($user_id, 'dredd_registration_date', current_time('mysql'));
-        update_user_meta($user_id, 'dredd_email_verified', false);
+        update_user_meta($user_id, 'dredd_email_verified', true); // Set email as verified immediately
         
-        // Generate verification token
-        $verification_token = wp_generate_password(32, false);
-        update_user_meta($user_id, 'dredd_email_verification_token', $verification_token);
+        // Give welcome credits
+        $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
+        dredd_ai_add_credits($user_id, $welcome_credits);
         
-        // Get the current page URL to redirect back to after verification
-        $current_url = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : home_url('/');
-        
-        // Store the return URL for use after verification
-        update_user_meta($user_id, 'dredd_verification_return_url', $current_url);
-        
-        // Send verification email
-        $verification_url = home_url('/?dredd_verify_email=' . $verification_token);
-        $subject = 'DREDD AI - Verify Your Email Address';
-        $message = "
-        <div style='font-family: Poppins, -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #c0c0c0;'>
-            <div style='background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #000000 100%); border: 2px solid #00FFFF; border-radius: 20px; padding: 40px; margin: 20px; box-shadow: 0 0 60px rgba(0, 255, 255, 0.4);'>
-                <div style='text-align: center; margin-bottom: 30px;'>
-                    <h1 style='color: #00FFFF; font-size: 28px; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5); margin: 0;'>⚖️ WELCOME TO THE FORCE!</h1>
-                    <div style='width: 60px; height: 4px; background: linear-gradient(90deg, #00FFFF, #40E0D0); margin: 15px auto; border-radius: 2px;'></div>
-                </div>
-                
-                <div style='background: rgba(0, 255, 255, 0.05); border: 2px solid #00FFFF; border-radius: 15px; padding: 25px; margin-bottom: 30px; text-align: center;'>
-                    <p style='font-size: 18px; margin-bottom: 20px; color: #40E0D0; font-weight: 600;'>Your DREDD AI account has been created successfully.</p>
-                    
-                    <div style='background: rgba(26, 26, 26, 0.8); border: 1px solid rgba(0, 255, 255, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;'>
-                        <p style='margin: 8px 0; color: #c0c0c0;'><strong style='color: #00FFFF;'>Username:</strong> {$username}</p>
-                        <p style='margin: 8px 0; color: #c0c0c0;'><strong style='color: #00FFFF;'>Email:</strong> {$email}</p>
-                    </div>
-                </div>
-                
-                <div style='text-align: center; margin: 30px 0;'>
-                    <p style='color: #c0c0c0; margin-bottom: 25px; font-size: 16px;'>Click the button below to verify your email and activate your account:</p>
-                    <a href='{$verification_url}' style='display: inline-block; background: linear-gradient(135deg, #00FFFF 0%, #40E0D0 100%); color: #0a0a0a; padding: 18px 35px; text-decoration: none; border-radius: 25px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4); transition: all 0.3s ease;'>⚡ VERIFY EMAIL & ACTIVATE</a>
-                </div>
-                
-                <div style='border-top: 1px solid rgba(0, 255, 255, 0.2); padding-top: 20px; text-align: center;'>
-                    <p style='font-size: 12px; color: rgba(192, 192, 192, 0.7); margin: 0;'>You must verify your email before you can log in and start analyzing tokens.</p>
-                    <p style='font-size: 11px; color: rgba(192, 192, 192, 0.5); margin: 10px 0 0 0;'>Justice requires verification. I AM THE LAW!</p>
-                </div>
-            </div>
-        </div>
-        ";
-        
-        $headers = array('Content-Type: text/html; charset=UTF-8');
-        wp_mail($email, $subject, $message, $headers);
-        
-        dredd_ai_log('New user registered (pending verification): ' . $username . ' (ID: ' . $user_id . ')', 'info');
+        dredd_ai_log('New user registered successfully: ' . $username . ' (ID: ' . $user_id . ')', 'info');
         
         wp_send_json_success(array(
-            'message' => 'Registration successful! Please check your email to verify your account before logging in.'
+            'message' => 'Registration successful! Welcome to DREDD AI. You can now log in.',
+            'auto_login' => true
         ));
     }
     
