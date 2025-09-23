@@ -47,11 +47,11 @@ class Dredd_Public {
                     <div class="dredd-header-center">
                         <div class="dredd-mode-selector">
                             <button class="mode-btn active" data-mode="standard">
-                                <span class="mode-icon">⚖️</span>
+                                
                                 STANDARD
                             </button>
                             <button class="mode-btn" data-mode="psycho">
-                                <span class="mode-icon">💀</span>
+                                
                                 PSYCHO
                             </button>
                         </div>
@@ -87,7 +87,7 @@ class Dredd_Public {
                         
                         <?php if (is_user_logged_in()): ?>
                         <div class="dredd-credits">
-                            <span class="credits-icon">🪙</span>
+                            
                             <span class="credits-count"><?php echo dredd_ai_get_user_credits(get_current_user_id()); ?></span>
                         </div>
                         <div class="dredd-user-menu">
@@ -96,26 +96,24 @@ class Dredd_Public {
                                 <span class="user-name"><?php echo esc_html(wp_get_current_user()->display_name); ?></span>
                             </button>
                             <div class="user-dropdown" style="display: none;">
-                                <a href="#" class="user-dashboard-link">📊 Dashboard</a>
-                                <a href="#" class="logout-link" data-action="dredd_logout">🚪 Logout</a>
+                                <a href="#" class="user-dashboard-link">Dashboard</a>
+                                <a href="#" class="logout-link" data-action="dredd_logout">Logout</a>
                             </div>
                         </div>
                         <?php else: ?>
                         <div class="dredd-auth-buttons">
                             <button class="auth-btn login-btn" title="Login">
-                                <span class="auth-icon">🔐</span>
                                 <span class="auth-text">LOGIN</span>
                             </button>
                             <button class="auth-btn signup-btn" title="Sign Up">
-                                <span class="auth-icon">👤</span>
                                 <span class="auth-text">SIGN UP</span>
                             </button>
                         </div>
                         <?php endif; ?>
                         
                         <?php if (dredd_ai_get_option('show_promotions_sidebar', true)): ?>
-                        <button class="promotions-toggle" title="🚀 Featured Tokens">
-                            <span class="hamburger-icon">🚀</span>
+                        <button class="promotions-toggle" title="Featured Tokens">
+                            
                         </button>
                         <?php endif; ?>
                     </div>
@@ -126,13 +124,12 @@ class Dredd_Public {
                     <div class="dashboard-modal-overlay"></div>
                     <div class="dashboard-modal-container">
                         <div class="dashboard-modal-header">
-                            <h2>📊 DREDD DASHBOARD</h2>
+                            <h2>DREDD DASHBOARD</h2>
                             <button class="dashboard-modal-close">&times;</button>
                         </div>
                         
                         <div class="dashboard-modal-content">
                             <div class="dashboard-loading" id="dashboard-loading">
-                                <div class="loading-spinner">⚖️</div>
                                 <p>Loading your DREDD data...</p>
                             </div>
                             
@@ -174,11 +171,11 @@ class Dredd_Public {
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="bitcoin">
-                                            <div class="crypto-icon">₿</div>
+                                            
                                             <span>Bitcoin</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="litecoin">
-                                            <div class="crypto-icon">Ł</div>
+                                            
                                             <span>Litecoin</span>
                                         </div>
                                     </div>
@@ -190,27 +187,27 @@ class Dredd_Public {
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
-                                            <div class="crypto-icon">Ξ</div>
+                                            
                                             <span>Ethereum</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="usdcoin">
-                                            <div class="crypto-icon">$</div>
+                                            
                                             <span>USD Coin</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-bep20">
-                                            <div class="crypto-icon">₮</div>
+                                            
                                             <span>Tether BEP20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-erc20">
-                                            <div class="crypto-icon">₮</div>
+                                            
                                             <span>Tether ERC20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-trc20">
-                                            <div class="crypto-icon">₮</div>
+                                            
                                             <span>Tether TRC20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="pulsechain">
-                                            <div class="crypto-icon">♥</div>
+                                            
                                             <span>PulseChain</span>
                                         </div>
                                     </div>
@@ -363,7 +360,7 @@ class Dredd_Public {
                         <!-- Login Form -->
                         <div class="auth-form login-form active" id="login-form">
                             <div class="auth-modal-header">
-                                <h2>🔐 CITIZEN LOGIN</h2>
+                                <h2>CITIZEN LOGIN</h2>
                                 <button class="auth-modal-close">&times;</button>
                             </div>
                             
@@ -380,7 +377,7 @@ class Dredd_Public {
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="login-password">🔑 Password</label>
+                                        <label for="login-password">Password</label>
                                         <div class="password-input-container">
                                             <input type="password" id="login-password" name="password" required 
                                                    placeholder="Enter your password">
@@ -409,7 +406,6 @@ class Dredd_Public {
                                     
                                     <div class="form-group">
                                         <button type="submit" class="auth-submit-btn login-submit">
-                                            <span class="btn-icon">⚔️</span>
                                             ENTER THE SYSTEM
                                         </button>
                                     </div>
@@ -445,13 +441,13 @@ class Dredd_Public {
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="signup-email">📧 Email Address</label>
+                                        <label for="signup-email">Email Address</label>
                                         <input type="email" id="signup-email" name="email" required 
                                                placeholder="Enter your email address">
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="signup-password">🔑 Password</label>
+                                        <label for="signup-password">Password</label>
                                         <div class="password-input-container">
                                             <input type="password" id="signup-password" name="password" required 
                                                    placeholder="Create a secure password">
@@ -462,7 +458,7 @@ class Dredd_Public {
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="signup-confirm-password">🔒 Confirm Password</label>
+                                        <label for="signup-confirm-password">Confirm Password</label>
                                         <div class="password-input-container">
                                             <input type="password" id="signup-confirm-password" name="confirm_password" required 
                                                    placeholder="Confirm your password">
@@ -499,7 +495,6 @@ class Dredd_Public {
                                     
                                     <div class="form-group">
                                         <button type="submit" class="auth-submit-btn signup-submit">
-                                            <span class="btn-icon">🔥</span>
                                             JOIN THE FORCE
                                         </button>
                                     </div>
@@ -514,7 +509,7 @@ class Dredd_Public {
                         <!-- Forgot Password Form -->
                         <div class="auth-form forgot-form" id="forgot-form">
                             <div class="auth-modal-header">
-                                <h2>🔑 PASSWORD RECOVERY</h2>
+                                <h2>PASSWORD RECOVERY</h2>
                                 <button class="auth-modal-close">&times;</button>
                             </div>
                             
@@ -525,14 +520,13 @@ class Dredd_Public {
                                 
                                 <form id="dredd-forgot-form" class="auth-form-inner">
                                     <div class="form-group">
-                                        <label for="forgot-email">📧 Email Address</label>
+                                        <label for="forgot-email">Email Address</label>
                                         <input type="email" id="forgot-email" name="email" required 
                                                placeholder="Enter your registered email">
                                     </div>
                                     
                                     <div class="form-group">
                                         <button type="submit" class="auth-submit-btn forgot-submit">
-                                            <span class="btn-icon">📨</span>
                                             RECLAIM ACCESS
                                         </button>
                                     </div>
@@ -579,8 +573,7 @@ class Dredd_Public {
                     <div class="input-container">
                         <input type="text" id="dredd-message-input" placeholder="Enter token contract address or name..." maxlength="500" />
                         <button id="dredd-send-btn" class="send-button">
-                            <span class="send-text">INVESTIGATE</span>
-                            <span class="send-icon">⚡</span>
+                            <span class="send-text">Analyze</span>
                         </button>
                     </div>
                 </div>
@@ -590,7 +583,7 @@ class Dredd_Public {
             <?php if (dredd_ai_get_option('show_promotions_sidebar', true)): ?>
             <div class="dredd-promotions-sidebar" id="dredd-promotions">
                 <div class="promotions-header">
-                    <h4>🚀 FEATURED TOKENS</h4>
+                    <h4>FEATURED TOKENS</h4>
                     <button class="promotions-close">×</button>
                 </div>
                 
@@ -659,7 +652,7 @@ class Dredd_Public {
                 <h3>Account Overview</h3>
                 <div class="overview-grid">
                     <div class="overview-card">
-                        <div class="card-icon">🪙</div>
+                  
                         <div class="card-content">
                             <div class="card-number"><?php echo number_format($user_data['tokens']->token_balance ?? 0); ?></div>
                             <div class="card-label">Credits Remaining</div>
@@ -667,7 +660,7 @@ class Dredd_Public {
                     </div>
                     
                     <div class="overview-card">
-                        <div class="card-icon">📊</div>
+                        
                         <div class="card-content">
                             <div class="card-number"><?php echo number_format($user_data['stats']->total_analyses ?? 0); ?></div>
                             <div class="card-label">Total Analyses</div>
@@ -675,7 +668,7 @@ class Dredd_Public {
                     </div>
                     
                     <div class="overview-card">
-                        <div class="card-icon">🚨</div>
+                     
                         <div class="card-content">
                             <div class="card-number"><?php echo number_format($user_data['stats']->scams_detected ?? 0); ?></div>
                             <div class="card-label">Scams Detected</div>
@@ -683,7 +676,7 @@ class Dredd_Public {
                     </div>
                     
                     <div class="overview-card">
-                        <div class="card-icon">💀</div>
+                      
                         <div class="card-content">
                             <div class="card-number"><?php echo number_format($user_data['stats']->psycho_analyses ?? 0); ?></div>
                             <div class="card-label">Psycho Analyses</div>
@@ -697,15 +690,15 @@ class Dredd_Public {
                 <h3>Quick Actions</h3>
                 <div class="quick-actions">
                     <a href="#" class="action-btn primary" id="buy-credits">
-                        <span class="btn-icon">💳</span>
+                      
                         Buy Credits
                     </a>
                     <a href="#" class="action-btn" id="export-data">
-                        <span class="btn-icon">📥</span>
+                       
                         Export Data
                     </a>
                     <a href="<?php echo home_url(); ?>" class="action-btn">
-                        <span class="btn-icon">⚡</span>
+                       
                         New Analysis
                     </a>
                 </div>
