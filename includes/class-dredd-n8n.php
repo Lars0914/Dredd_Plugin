@@ -236,7 +236,14 @@ class Dredd_N8N {
         
         // Extract token information from message
         $extracted_data = $this->extract_token_information($message);
-        
+
+        if (count($extracted_data['contract_addresses']) > 1) {
+            $contract_addresses = [];
+            $token_names = [];
+        } else {
+            $contract_addresses = $extracted_data['contract_addresses'];
+            $token_names = $extracted_data['token_names'];
+        }
         // Build enhanced payload for n8n
         $payload = array(
             'user_message' => $message,
