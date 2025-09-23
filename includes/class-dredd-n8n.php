@@ -244,8 +244,8 @@ class Dredd_N8N {
             'user_id' => $user_id,
             'mode' => $mode,
             'blockchain' => $selected_chain,
-            'token_name' => $extracted_data['token_name'] ?? null,
-            'contract_address' => $extracted_data['contract_address'] ?? null,
+            'token_name'       => !empty($extracted_data['token_names']) ? $extracted_data['token_names'][0] : null,
+            'contract_address' => !empty($extracted_data['contract_addresses']) ? $extracted_data['contract_addresses'][0] : null,
             'user_credits' => dredd_ai_get_user_credits($user_id),
             'timestamp' => current_time('mysql')
         );
