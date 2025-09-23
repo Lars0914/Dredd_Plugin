@@ -246,17 +246,17 @@ class Dredd_N8N {
         }
         // Build enhanced payload for n8n
         $payload = array(
-            'user_message' => $message,
-            'session_id' => $session_id,
-            'user_id' => $user_id,
-            'mode' => $mode,
-            'blockchain' => $selected_chain,
-            'token_name'       => !empty($extracted_data['token_names']) ? $extracted_data['token_names'][0] : null,
-            'contract_address' => !empty($extracted_data['contract_addresses']) ? $extracted_data['contract_addresses'][0] : null,
-            'user_credits' => dredd_ai_get_user_credits($user_id),
-            'timestamp' => current_time('mysql')
+            'user_message'       => $message,          // keep full text
+            'session_id'         => $session_id,
+            'user_id'            => $user_id,
+            'mode'               => $mode,
+            'blockchain'         => $selected_chain,
+            'contract_addresses' => $contract_addresses,
+            'token_names'        => $token_names,
+            'user_credits'       => dredd_ai_get_user_credits($user_id),
+            'timestamp'          => current_time('mysql')
         );
-        
+                
         // Send to n8n and wait for response
         $response = $this->send_to_n8n_direct($payload);
         
