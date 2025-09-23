@@ -563,14 +563,15 @@
 
       const messageClass = sender === "user" ? "user-message" : "chat-message";
       const bubbleClass = sender === "user" ? "user-message" : "dredd-message";
-      const avatarEmoji = sender === "user" ? "👤" : "⚖️";
 
       let messageHtml = `
                 <div class="chat-message ${messageClass}">
                     ${
                       sender !== "user"
                         ? `
-                        <div class="message-avatar">${avatarEmoji}</div>
+                        <div class="message-avatar">
+                            <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="DREDD Avatar" />
+                        </div>
                     `
                         : ""
                     }
@@ -582,7 +583,7 @@
                     ${
                       sender === "user"
                         ? `
-                        <div class="message-avatar">${avatarEmoji}</div>
+                        <div class="message-avatar">👤</div>
                     `
                         : ""
                     }
