@@ -376,7 +376,7 @@ class Dredd_N8N {
         
         if ($response_code !== 200) {
             dredd_ai_log('DREDD N8N - HTTP error: ' . $response_code, 'error');
-            return array('message' => 'Please check connection and ask team', 'action' => 'error');
+            return array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error');
         }
         
         $body = wp_remote_retrieve_body($response);
@@ -446,7 +446,7 @@ class Dredd_N8N {
             // Check if body is empty - n8n workflow might not be triggering
             if (empty($body) || strlen($body) < 5) {
                 return array(
-                    'message' => 'Please check your connection and token address.If the issue persists, please contact support.',
+                    'message' => 'DREDD is running low on resources, check back soon.',
                     'action' => 'error'
                 );
             }
