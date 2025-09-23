@@ -670,7 +670,9 @@ select.chain-dropdown option {
     rgba(160, 32, 240, 0.1)
   );
 }
-
+.message-avatar img {
+  border-radius: 50%;
+}
 .message-content {
   flex: 1;
 }
