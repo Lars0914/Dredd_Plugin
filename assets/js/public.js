@@ -578,7 +578,6 @@
                         <div class="message-bubble ${bubbleClass} ${type}">
                             <p>${this.formatMessage(content)}</p>
                         </div>
-                        <div class="message-timestamp">${timestamp}</div>
                     </div>
                     ${
                       sender === "user"

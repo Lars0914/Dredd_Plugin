@@ -309,31 +309,43 @@ class Dredd_N8N {
      */
     private function extract_token_information($message) {
         $extracted = array(
-            'token_name' => null,
-            'contract_address' => null
+            'token_names' => array(),
+            'contract_addresses' => array(),
         );
-        
-        // Extract contract address (0x followed by 40 hex characters)
-        if (preg_match('/0x[a-fA-F0-9]{40}/', $message, $matches)) {
-            $extracted['contract_address'] = $matches[0];
+
+        // ✅ Ethereum-style contract addresses (0x + 40 hex chars)
+        if (preg_match_all('/0x[a-fA-F0-9]{40}/', $message, $matches)) {
+            $extracted['contract_addresses'] = $matches[0];
         }
-        
-        // Extract token name/symbol patterns
-        // Pattern 1: $SYMBOL format
-        if (preg_match('/\$([A-Z]{2,10})\b/', $message, $matches)) {
-            $extracted['token_name'] = $matches[1];
+
+        // ✅ Solana base58 addresses (32–50 chars, excludes 0, O, I, l)
+        if (preg_match_all('/\b[1-9A-HJ-NP-Za-km-z]{32,50}\b/', $message, $matches)) {
+            $extracted['contract_addresses'] = $matches[0];
         }
-        // Pattern 2: Token name before contract address
-        elseif (preg_match('/([A-Za-z][A-Za-z0-9\s]{1,20})\s+0x[a-fA-F0-9]{40}/', $message, $matches)) {
-            $extracted['token_name'] = trim($matches[1]);
+
+        // ✅ Token symbols in $SYMBOL format (e.g. $ETH, $USDT)
+        if (preg_match_all('/\$([A-Z0-9]{2,10})\b/', $message, $matches)) {
+            $extracted['token_names'] = array_merge($extracted['token_names'], $matches[1]);
         }
-        // Pattern 3: Common token name patterns
-        elseif (preg_match('/\b([A-Z][a-z]*(?:\s+[A-Z][a-z]*)*(?:\s+(?:Token|Coin|Protocol|Finance|Swap|Inu|Doge|Safe|Moon)))\b/', $message, $matches)) {
-            $extracted['token_name'] = $matches[1];
+
+        // ✅ Token name before Ethereum contract address
+        if (preg_match_all('/([A-Za-z][A-Za-z0-9\s]{1,20})\s+(0x[a-fA-F0-9]{40})/', $message, $matches)) {
+            foreach ($matches[1] as $name) {
+                $extracted['token_names'][] = trim($name);
+            }
         }
-        
+
+        // ✅ Common token name patterns (Token, Coin, Swap, Inu, etc.)
+        if (preg_match_all('/\b([A-Z][a-z]*(?:\s+[A-Z][a-z]*)*(?:\s+(?:Token|Coin|Protocol|Finance|Swap|Inu|Doge|Safe|Moon)))\b/', $message, $matches)) {
+            $extracted['token_names'] = array_merge($extracted['token_names'], $matches[1]);
+        }
+
+        // ✅ Deduplicate everything
+        $extracted['token_names'] = array_values(array_unique($extracted['token_names']));
+        $extracted['contract_addresses'] = array_values(array_unique($extracted['contract_addresses']));
         return $extracted;
     }
+
     
     /**
      * Send data directly to n8n and wait for response
@@ -369,7 +381,7 @@ class Dredd_N8N {
         
         if ($response_code !== 200) {
             dredd_ai_log('DREDD N8N - HTTP error: ' . $response_code, 'error');
-            return array('message' => 'Analysis failed (HTTP ' . $response_code . ')', 'action' => 'error');
+            return array('message' => 'Please check connection and ask team', 'action' => 'error');
         }
         
         $body = wp_remote_retrieve_body($response);
@@ -439,7 +451,7 @@ class Dredd_N8N {
             // Check if body is empty - n8n workflow might not be triggering
             if (empty($body) || strlen($body) < 5) {
                 return array(
-                    'message' => 'n8n workflow is not triggering properly. Webhook reached but no response generated. Check: 1) Is workflow ACTIVE? 2) Is webhook trigger configured correctly? 3) Check n8n execution logs.',
+                    'message' => 'Please check your connection and token address. Contact support. If the issue persists, please contact support.',
                     'action' => 'error'
                 );
             }
