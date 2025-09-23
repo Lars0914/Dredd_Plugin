@@ -19,10 +19,6 @@ class Dredd_Security {
         add_action('wp_ajax_dredd_delete_user_data', array($this, 'delete_user_data'));
         add_action('wp_ajax_dredd_privacy_request', array($this, 'handle_privacy_request'));
         
-        // Rate limiting
-        add_action('wp_ajax_dredd_chat', array($this, 'check_rate_limit'), 5);
-        add_action('wp_ajax_nopriv_dredd_chat', array($this, 'check_rate_limit'), 5);
-        
         // Security headers
         add_action('send_headers', array($this, 'add_security_headers'));
     }
@@ -60,11 +56,7 @@ class Dredd_Security {
                         ', Valid: ' . ($nonce_valid ? 'yes' : 'no'), 'debug');
         }
         
-        // Basic rate limiting check (always apply)
-        if (!$this->check_request_rate()) {
-            dredd_ai_log('Security: Rate limit exceeded', 'warning');
-            return false;
-        }
+
         
         return true;
     }
@@ -118,59 +110,6 @@ class Dredd_Security {
             default:
                 return sanitize_text_field($data);
         }
-    }
-    
-    /**
-     * Check rate limiting for requests
-     */
-    public function check_rate_limit() {
-        $user_id = get_current_user_id();
-        $ip_address = $this->get_client_ip();
-        
-        // Different limits for logged in vs anonymous users
-        if ($user_id) {
-            $limit_key = 'dredd_rate_limit_user_' . $user_id;
-            $max_requests = 60; // 60 requests per hour for logged in users
-        } else {
-            $limit_key = 'dredd_rate_limit_ip_' . md5($ip_address);
-            $max_requests = 20; // 20 requests per hour for anonymous users
-        }
-        
-        $current_count = get_transient($limit_key);
-        
-        if ($current_count === false) {
-            // First request in this hour
-            set_transient($limit_key, 1, HOUR_IN_SECONDS);
-            return true;
-        } elseif ($current_count < $max_requests) {
-            // Increment counter
-            set_transient($limit_key, $current_count + 1, HOUR_IN_SECONDS);
-            return true;
-        } else {
-            // Rate limit exceeded
-            dredd_ai_log('Rate limit exceeded for ' . ($user_id ? "user {$user_id}" : "IP {$ip_address}"), 'warning');
-            wp_send_json_error('Rate limit exceeded. Please try again later.');
-            return false;
-        }
-    }
-    
-    /**
-     * Check request rate (internal method)
-     */
-    private function check_request_rate() {
-        $user_id = get_current_user_id();
-        $ip_address = $this->get_client_ip();
-        
-        if ($user_id) {
-            $limit_key = 'dredd_rate_limit_user_' . $user_id;
-            $max_requests = 60;
-        } else {
-            $limit_key = 'dredd_rate_limit_ip_' . md5($ip_address);
-            $max_requests = 20;
-        }
-        
-        $current_count = get_transient($limit_key);
-        return $current_count === false || $current_count < $max_requests;
     }
     
     /**
