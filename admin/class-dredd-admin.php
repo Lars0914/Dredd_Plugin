@@ -364,7 +364,7 @@ class Dredd_Admin {
         $avg_response_time = rand(150, 300); // Simulated - in real app get from logs
         $uptime_percentage = 99.8; // Simulated - in real app calculate from monitoring
         $active_webhooks = $system_status['n8n'] === 'online' ? 1 : 0;
-        $error_rate = rand(1, 5) / 100; // Simulated error rate
+        $error_rate = 0; // Simulated error rate
         
         ?>
         <div class="wrap dredd-admin-wrap">
@@ -550,7 +550,7 @@ class Dredd_Admin {
                                     <label class="control-label">API Timeout</label>
                                     <div class="control-input-group">
                                         <input type="number" name="api_timeout" value="<?php echo esc_attr($settings['api_timeout']); ?>" 
-                                               class="control-input" min="10" max="300" />
+                                               class="control-input" min="10" max="600" />
                                         <span class="input-unit">seconds</span>
                                     </div>
                                     <p class="control-description">Maximum timeout for API calls</p>
@@ -1676,7 +1676,7 @@ class Dredd_Admin {
     private function get_all_settings() {
         return array(
             'n8n_webhook' => dredd_ai_get_option('n8n_webhook', ''),
-            'api_timeout' => dredd_ai_get_option('api_timeout', 300),
+            'api_timeout' => dredd_ai_get_option('api_timeout', 600),
             'paid_mode_enabled' => dredd_ai_get_option('paid_mode_enabled', false),
             'analysis_cost' => dredd_ai_get_option('analysis_cost', 5),
             'cache_duration' => dredd_ai_get_option('cache_duration', 24),
@@ -1688,7 +1688,7 @@ class Dredd_Admin {
             'recaptcha_site_key' => dredd_ai_get_option('recaptcha_site_key', ''),
             'recaptcha_secret_key' => dredd_ai_get_option('recaptcha_secret_key', ''),
             'wallet_min_balance_eth' => dredd_ai_get_option('wallet_min_balance_eth', '0.1'),
-            'wallet_min_balance_usd' => dredd_ai_get_option('wallet_min_balance_usd', '100')
+            'wallet_min_balance_usd' => dredd_ai_get_option('wallet_min_balance_usd', '1')
         );
     }
     

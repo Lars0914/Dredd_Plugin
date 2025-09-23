@@ -495,7 +495,7 @@ class DreddAI {
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-define('WP_DEBUG_LOG', true);</pre>
+                define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -738,7 +738,7 @@ define('WP_DEBUG_LOG', true);</pre>
     
     public function handle_register() {
         // Verify nonce for security
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_ai_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_admin_nonce')) {
             wp_send_json_error('Security check failed');
         }
         
