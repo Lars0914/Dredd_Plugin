@@ -177,6 +177,10 @@ h6 {
   justify-content: center;
 }
 
+.dredd-badge img {
+  border-radius: 50%;
+}
+
 .dredd-title h3 {
   margin: 0;
   font-size: 30px;
