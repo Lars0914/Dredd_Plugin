@@ -241,8 +241,8 @@ class Dredd_N8N {
             $contract_addresses = [];
             $token_names = [];
         } else {
-            $contract_addresses = $extracted_data['contract_addresses'];
-            $token_names = $extracted_data['token_names'];
+            $contract_addresses = $extracted_data['contract_addresses'][0];
+            $token_names = $extracted_data['token_names'][0];
         }
         // Build enhanced payload for n8n
         $payload = array(
