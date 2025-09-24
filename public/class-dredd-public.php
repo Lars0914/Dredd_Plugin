@@ -37,9 +37,6 @@ class Dredd_Public {
                 <!-- Chat Header -->
                 <div class="dredd-chat-header">
                     <div class="dredd-header-left">
-                        <div class="dredd-badge">
-                            <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="">
-                        </div>
                         <div class="dredd-title">
                             <h3>DREDD AI</h3>
                         </div>
@@ -516,7 +513,7 @@ class Dredd_Public {
                         <div class="message-content">
                             <div class="message-bubble dredd-message">
                                 <p><strong>I AM THE BlOCKCHAIN ENFORCER!</strong></p>
-                                <p>DREDD is running low on resources, check back soon</p>
+                                <p>What suspicious token needs investigation, citizen?</p>
                             </div>
                             <!-- <div class="message-timestamp"><?php echo current_time('H:i'); ?></div> -->
                         </div>
