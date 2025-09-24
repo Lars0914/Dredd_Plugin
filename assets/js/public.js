@@ -251,17 +251,17 @@
       // Password toggle functionality removed - handled in document ready section
 
       // Force input text visibility on input events
-      $(document).on(
-        "input keyup focus click",
-        '.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="password"]',
-        function () {
-          $(this).css({
-            color: "#FFFFFF !important",
-            "caret-color": "#00FFFF !important",
-            "-webkit-text-fill-color": "#FFFFFF !important",
-          });
-        }
-      );
+      // $(document).on(
+      //   "input keyup focus click",
+      //   '.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="password"]',
+      //   function () {
+      //     $(this).css({
+      //       color: "#FFFFFF !important",
+      //       "caret-color": "#00FFFF !important",
+      //       "-webkit-text-fill-color": "#FFFFFF !important",
+      //     });
+      //   }
+      // );
 
       // Modal
       $(".modal-close").on("click", () => this.closeModal());
@@ -2325,7 +2325,7 @@
         .done((response) => {
           if (response.success) {
             this.showMessage(
-              "Registration successful! Please check your email to verify your account.",
+              "Registration successful! Welcome to DREDD AI.",
               "success"
             );
             this.closeAuthModal();
@@ -2491,10 +2491,6 @@
     }
 
     handleLogout() {
-      if (!confirm("Are you sure you want to logout?")) {
-        return;
-      }
-
       $.ajax({
         url: dredd_ajax.ajax_url,
         type: "POST",
@@ -2640,13 +2636,6 @@
                     opacity: 1 !important;
                     visibility: visible !important;
                 }
-                .dredd-auth-modal .auth-form .form-group input[type="text"]:focus,
-                .dredd-auth-modal .auth-form .form-group input[type="email"]:focus,
-                .dredd-auth-modal .auth-form .form-group input[type="password"]:focus {
-                    color: #FFFFFF !important;
-                    -webkit-text-fill-color: #FFFFFF !important;
-                    background: #222222 !important;
-                }
                 </style>
             `;
 
@@ -2682,17 +2671,17 @@
       forceTextVisibility();
 
       // Re-apply on focus/input events
-      $(document).on("focus input keyup click", inputSelector, function () {
-        const $this = $(this);
-        setTimeout(() => {
-          $this.css({
-            color: "#FFFFFF !important",
-            "caret-color": "#00FFFF !important",
-            "-webkit-text-fill-color": "#FFFFFF !important",
-            background: "#222222 !important",
-          });
-        }, 10);
-      });
+      // $(document).on("focus input keyup click", inputSelector, function () {
+      //   const $this = $(this);
+      //   setTimeout(() => {
+      //     $this.css({
+      //       color: "#FFFFFF !important",
+      //       "caret-color": "#00FFFF !important",
+      //       "-webkit-text-fill-color": "#FFFFFF !important",
+      //       background: "#222222 !important",
+      //     });
+      //   }, 10);
+      // });
 
       // Fix for when auth modal is opened - more aggressive
       $(document).on("click", ".login-btn, .signup-btn", function () {
