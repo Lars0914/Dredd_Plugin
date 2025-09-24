@@ -8,63 +8,20 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get all users with their data
-global $wpdb;
-// $users_query = "
-//     SELECT 
-//         u.ID,
-//         u.display_name,
-//         u.user_email,
-//         u.user_registered,
-//         ut.token_balance as credits,
-//         ut.total_purchased,
-//         COALESCE(stats.total_analyses, 0) as total_analyses,
-//         COALESCE(stats.standard_analyses, 0) as standard_analyses,
-//         COALESCE(stats.psycho_analyses, 0) as psycho_analyses,
-//         COALESCE(stats.scams_detected, 0) as scams_detected,
-//         COALESCE(payments.total_spent, 0) as total_spent,
-//         COALESCE(payments.stripe_payments, 0) as stripe_payments,
-//         COALESCE(payments.crypto_payments, 0) as crypto_payments
-//     FROM {$wpdb->users} u
-//     LEFT JOIN {$wpdb->prefix}dredd_user_tokens ut ON u.ID = ut.user_id
-//     LEFT JOIN (
-//         SELECT 
-//             user_id,
-//             COUNT(*) as total_analyses,
-//             SUM(CASE WHEN analysis_mode = 'standard' THEN 1 ELSE 0 END) as standard_analyses,
-//             SUM(CASE WHEN analysis_mode = 'psycho' THEN 1 ELSE 0 END) as psycho_analyses,
-//             SUM(CASE WHEN verdict LIKE '%scam%' OR verdict LIKE '%fraud%' THEN 1 ELSE 0 END) as scams_detected
-//         FROM {$wpdb->prefix}dredd_analysis_history  
-//         GROUP BY user_id
-//     ) stats ON u.ID = stats.user_id
-//     LEFT JOIN (
-//         SELECT 
-//             user_id,
-//             SUM(amount) as total_spent,
-//             SUM(CASE WHEN payment_method = 'stripe' THEN 1 ELSE 0 END) as stripe_payments,
-//             SUM(CASE WHEN payment_method LIKE '%crypto%' THEN 1 ELSE 0 END) as crypto_payments
-//         FROM {$wpdb->prefix}dredd_transactions 
-//         WHERE status = 'completed'
-//         GROUP BY user_id
-//     ) payments ON u.ID = payments.user_id
-//     ORDER BY u.user_registered DESC
-// ";
+// Get data passed from admin class
+$users = isset($data['users']) ? $data['users'] : array();
+$chat_users = isset($data['chat_users']) ? $data['chat_users'] : array();
+$credit_settings = isset($data['credit_settings']) ? $data['credit_settings'] : array();
 
-// $users = $wpdb->get_results($users_query);
-
-// Get credit settings
-$credit_settings = get_option('dredd_credit_settings', [
-    'credits_per_dollar' => 10,
-    'analysis_cost' => 5,
-    'psycho_cost' => 10
-]);
-
-// Calculate statistics
+// Calculate statistics for WordPress users (displayed in this table)
 $total_users = count($users);
 $total_credits = array_sum(array_column($users, 'credits'));
 $total_analyses = array_sum(array_column($users, 'total_analyses'));
 $total_revenue = array_sum(array_column($users, 'total_spent'));
 $active_users = count(array_filter($users, function($user) { return $user->total_analyses > 0; }));
+
+// Calculate statistics for chat users (separate page)
+$total_chat_users = count($chat_users);
 ?>
 
 <div class="wrap dredd-admin-wrap">
@@ -80,14 +37,18 @@ $active_users = count(array_filter($users, function($user) { return $user->total
                 <div class="title-container">
                     
                     <h1 class="epic-title">
-                        <span class="title-text">DREDD AI</span>
-                        <span class="title-subtitle">User Command Center</span>
+                        <span class="title-text">User Command Center</span>
+                        <span class="title-subtitle">Management Dashboard</span>
                     </h1>
                 </div>
                 <div class="header-stats-mini">
                     <div class="mini-stat">
                         <span class="mini-stat-number"><?php echo number_format($total_users); ?></span>
-                        <span class="mini-stat-label">Total Users</span>
+                        <span class="mini-stat-label">WordPress Users</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-number"><?php echo number_format($total_chat_users); ?></span>
+                        <span class="mini-stat-label">Chat Users</span>
                     </div>
                     <div class="mini-stat">
                         <span class="mini-stat-number"><?php echo number_format($active_users); ?></span>
@@ -134,10 +95,10 @@ $active_users = count(array_filter($users, function($user) { return $user->total
                 <div class="stat-icon">👥</div>
                 <div class="stat-content">
                     <div class="stat-number"><?php echo number_format($total_users); ?></div>
-                    <div class="stat-label">Registered Users</div>
+                    <div class="stat-label">WordPress Users</div>
                     <div class="stat-trend">
                         <span class="trend-indicator up">↗️</span>
-                        <span class="trend-text"><?php echo $active_users; ?> active</span>
+                        <span class="trend-text"><?php echo $active_users; ?> active users</span>
                     </div>
                 </div>
                 <div class="stat-glow users-glow"></div>
@@ -221,7 +182,6 @@ $active_users = count(array_filter($users, function($user) { return $user->total
                 </div>
                 <div class="view-controls">
                     <button class="view-toggle active" data-view="table">📊 Table</button>
-                    <button class="view-toggle" data-view="cards">🃏 Cards</button>
                 </div>
             </div>
         </div>
@@ -247,13 +207,12 @@ $active_users = count(array_filter($users, function($user) { return $user->total
                             <th class="sortable" data-sort="registered">
                                 <span class="th-content">📅 Joined</span>
                             </th>
-                            <th class="actions-header">⚡ Actions</th>
                         </tr>
                     </thead>
                     <tbody id="users-table-body">
                         <?php if (empty($users)): ?>
                         <tr class="empty-row">
-                            <td colspan="6">
+                            <td colspan="5">
                                 <div class="empty-state-epic">
                                     <div class="empty-icon">🌌</div>
                                     <h4>No Users Detected</h4>
@@ -280,10 +239,6 @@ $active_users = count(array_filter($users, function($user) { return $user->total
                                     <div class="credits-main">
                                         <span class="credits-icon">🪙</span>
                                         <span class="credits-amount"><?php echo number_format($user->credits ?? 0); ?></span>
-                                    </div>
-                                    <div class="credits-actions-epic">
-                                        <button class="action-btn add-credits" data-user-id="<?php echo $user->ID; ?>" title="Add Credits">➕</button>
-                                        <button class="action-btn edit-credits" data-user-id="<?php echo $user->ID; ?>" title="Edit Credits">✏️</button>
                                     </div>
                                 </div>
                             </td>
@@ -330,13 +285,6 @@ $active_users = count(array_filter($users, function($user) { return $user->total
                                     <div class="date-time"><?php echo date('H:i', strtotime($user->user_registered)); ?></div>
                                 </div>
                             </td>
-                            <td class="actions-cell">
-                                <div class="action-buttons-epic">
-                                    <button class="action-btn view-details" data-user-id="<?php echo $user->ID; ?>" title="View Details">👁️</button>
-                                    <button class="action-btn view-history" data-user-id="<?php echo $user->ID; ?>" title="Analysis History">📊</button>
-                                    <button class="action-btn user-settings" data-user-id="<?php echo $user->ID; ?>" title="User Settings">⚙️</button>
-                                </div>
-                            </td>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>
@@ -345,110 +293,6 @@ $active_users = count(array_filter($users, function($user) { return $user->total
             </div>
         </div>
         
-        <!-- Cards View -->
-        <div id="cards-view" class="database-view">
-            <div class="user-cards-grid">
-                <?php foreach ($users as $user): ?>
-                <div class="user-card-epic" data-user-id="<?php echo $user->ID; ?>">
-                    <div class="card-header">
-                        <div class="card-avatar">
-                            <?php echo get_avatar($user->ID, 80, '', '', array('class' => 'card-avatar-img')); ?>
-                            <div class="card-status-dot"></div>
-                        </div>
-                        <div class="card-user-info">
-                            <h4 class="card-user-name"><?php echo esc_html($user->display_name); ?></h4>
-                            <p class="card-user-email"><?php echo esc_html($user->user_email); ?></p>
-                        </div>
-                    </div>
-                    
-                    <div class="card-stats">
-                        <div class="card-stat">
-                            <span class="card-stat-icon">🪙</span>
-                            <span class="card-stat-value"><?php echo number_format($user->credits ?? 0); ?></span>
-                            <span class="card-stat-label">Credits</span>
-                        </div>
-                        <div class="card-stat">
-                            <span class="card-stat-icon">📊</span>
-                            <span class="card-stat-value"><?php echo number_format($user->total_analyses ?? 0); ?></span>
-                            <span class="card-stat-label">Analyses</span>
-                        </div>
-                        <div class="card-stat">
-                            <span class="card-stat-icon">💰</span>
-                            <span class="card-stat-value">$<?php echo number_format($user->total_spent ?? 0, 2); ?></span>
-                            <span class="card-stat-label">Spent</span>
-                        </div>
-                    </div>
-                    
-                    <div class="card-actions">
-                        <button class="card-action-btn primary" data-user-id="<?php echo $user->ID; ?>">View Details</button>
-                        <button class="card-action-btn secondary edit-credits" data-user-id="<?php echo $user->ID; ?>">Edit Credits</button>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Epic Credit Adjustment Modal -->
-<div id="epic-credit-modal" class="epic-modal" style="display: none;">
-    <div class="modal-backdrop"></div>
-    <div class="epic-modal-content">
-        <div class="modal-header-epic">
-            <div class="modal-title-container">
-                <span class="modal-icon">🪙</span>
-                <h3 id="modal-title-epic">Credit Management System</h3>
-            </div>
-            <button class="modal-close-epic">&times;</button>
-        </div>
-        
-        <div class="modal-body-epic">
-            <div class="user-profile-display">
-                <div class="profile-avatar" id="modal-user-avatar"></div>
-                <div class="profile-info">
-                    <div class="profile-name" id="modal-user-name"></div>
-                    <div class="profile-credits" id="modal-current-credits"></div>
-                </div>
-            </div>
-            
-            <div class="adjustment-interface">
-                <div class="adjustment-types">
-                    <label class="adjustment-type-option active">
-                        <input type="radio" name="adjustment_type" value="add" checked>
-                        <span class="option-icon">➕</span>
-                        <span class="option-text">Add Credits</span>
-                    </label>
-                    <label class="adjustment-type-option">
-                        <input type="radio" name="adjustment_type" value="set">
-                        <span class="option-icon">🎯</span>
-                        <span class="option-text">Set Credits</span>
-                    </label>
-                    <label class="adjustment-type-option">
-                        <input type="radio" name="adjustment_type" value="subtract">
-                        <span class="option-icon">➖</span>
-                        <span class="option-text">Subtract Credits</span>
-                    </label>
-                </div>
-                
-                <div class="amount-input-section">
-                    <label class="input-label">Credit Amount</label>
-                    <input type="number" id="credit-amount-epic" class="epic-input" min="0" placeholder="Enter amount">
-                </div>
-                
-                <div class="reason-input-section">
-                    <label class="input-label">Adjustment Reason</label>
-                    <textarea id="adjustment-reason-epic" class="epic-textarea" placeholder="Enter reason for this adjustment (optional)"></textarea>
-                </div>
-            </div>
-        </div>
-        
-        <div class="modal-footer-epic">
-            <button class="epic-button secondary cancel-adjustment">Cancel</button>
-            <button class="epic-button primary save-adjustment">
-                <span class="button-icon">💾</span>
-                <span class="button-text">Apply Changes</span>
-            </button>
-        </div>
     </div>
 </div>
 
@@ -1366,9 +1210,196 @@ $active_users = count(array_filter($users, function($user) { return $user->total
 .date-time {
     color: var(--text-muted);
     font-size: 12px;
-    opacity: 0.7
-</`
+    opacity: 0.7;
+}
 
-```
+/* Enhanced Table Responsiveness */
+@media (max-width: 1200px) {
+    .advanced-users-table th,
+    .advanced-users-table td {
+        padding: 12px 8px;
+        font-size: 12px;
+    }
 
-```
+    .user-name-epic {
+        font-size: 16px;
+    }
+
+    .user-email-epic {
+        font-size: 12px;
+    }
+
+    .credits-amount {
+        font-size: 18px;
+    }
+
+    .stat-value {
+        font-size: 12px;
+    }
+
+    .revenue-amount {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .advanced-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .advanced-users-table {
+        min-width: 800px; /* Ensure table doesn't get too compressed */
+    }
+
+    .user-info-cell {
+        min-width: 200px;
+    }
+
+    .analysis-stats-cell {
+        min-width: 150px;
+    }
+
+    .actions-cell {
+        min-width: 120px;
+    }
+
+    .action-buttons-epic {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+    }
+
+    .action-btn {
+        min-width: 28px;
+        height: 28px;
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    /* Stack stats vertically on very small screens */
+    .stats-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .stat-row {
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    /* Make payment badges smaller */
+    .payment-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .advanced-users-table th {
+        font-size: 10px;
+        padding: 8px 4px;
+    }
+
+    .advanced-users-table td {
+        padding: 8px 4px;
+    }
+
+    .user-info-cell {
+        padding: 12px 8px;
+    }
+
+    .user-avatar-container {
+        display: none; /* Hide avatars on very small screens */
+    }
+
+    .user-details-epic {
+        text-align: center;
+    }
+
+    .user-name-epic {
+        font-size: 14px;
+    }
+
+    .user-email-epic {
+        font-size: 11px;
+    }
+
+    .credits-cell {
+        text-align: center;
+    }
+
+    .credits-main {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .credits-actions-epic {
+        justify-content: center;
+    }
+
+    .analysis-stats-cell {
+        padding: 8px 4px;
+    }
+
+    .revenue-cell {
+        text-align: center;
+    }
+
+    .date-cell {
+        text-align: center;
+        font-size: 11px;
+    }
+
+    .actions-cell {
+        padding: 8px 4px;
+    }
+
+    .action-buttons-epic {
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .action-btn {
+        min-width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    /* Hide some less critical columns on very small screens */
+    .advanced-users-table th:nth-child(4),
+    .advanced-users-table td:nth-child(4) {
+        display: none; /* Hide revenue column */
+    }
+
+    .advanced-users-table th:nth-child(5),
+    .advanced-users-table td:nth-child(5) {
+        display: none; /* Hide date column */
+    }
+}
+
+/* Horizontal scrolling indicator */
+@media (max-width: 768px) {
+    .advanced-table-container::after {
+        content: "← Swipe to see more →";
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--primary-cyan);
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+        opacity: 0.7;
+        animation: scrollHint 3s ease-in-out infinite;
+    }
+
+    @keyframes scrollHint {
+        0%, 100% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+        50% { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+    }
+}
+</style>

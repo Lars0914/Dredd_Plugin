@@ -2015,9 +2015,26 @@ class Dredd_Admin {
     /**
      * Users Management page
      */
-    public function users_page() {
+ public function users_page() {
+        // Get chat users data
+        global $wpdb;
+        $chat_users_table = $wpdb->prefix . 'dredd_chat_users';
+
+        // Ensure table exists
+        $this->ensure_chat_users_table_exists();
+
+        $chat_users = $wpdb->get_results("SELECT * FROM {$chat_users_table} ORDER BY created_at DESC");
+
         $users = $this->get_all_users_data();
         $credit_settings = $this->get_credit_settings();
+
+        // Pass both user types to the view
+        $data = array(
+            'users' => $users,
+            'chat_users' => $chat_users,
+            'credit_settings' => $credit_settings
+        );
+
         include DREDD_AI_PLUGIN_PATH . 'admin/views/users-page.php';
     }
     

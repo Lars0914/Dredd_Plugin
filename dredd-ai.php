@@ -187,6 +187,7 @@ class DreddAI {
                 $wpdb->prefix . 'dredd_analysis_history',
                 $wpdb->prefix . 'dredd_promotions',
                 $wpdb->prefix . 'dredd_cache'
+                $wpdb->prefix . 'dredd_chat_users'
             );
             
             foreach ($tables as $table) {
@@ -695,30 +696,82 @@ class DreddAI {
         $password = $_POST['password'] ?? '';
         $remember = isset($_POST['remember']);
         $recaptcha_response = $_POST['g-recaptcha-response'] ?? '';
-        
+
         if (empty($username) || empty($password)) {
             wp_send_json_error('Username and password are required');
         }
-        
+
         // Verify reCAPTCHA if configured
         if (!$this->verify_recaptcha($recaptcha_response)) {
             wp_send_json_error('Please complete the security verification');
         }
-        
-        // Attempt to log in
+
+        // First try WordPress authentication
         $user = wp_authenticate($username, $password);
-        
+
         if (is_wp_error($user)) {
-            dredd_ai_log('Login failed for username: ' . $username . ' - ' . $user->get_error_message(), 'warning');
-            wp_send_json_error('Invalid credentials. Justice denied!');
+            // If WordPress auth fails, check our custom table
+            global $wpdb;
+            $chat_users_table = $wpdb->prefix . 'dredd_chat_users';
+
+            $chat_user = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM {$chat_users_table} WHERE (username = %s OR email = %s) AND password = %s",
+                $username, $username, $password
+            ));
+
+            if ($chat_user) {
+                // Check if WordPress user exists for this chat user
+                $wp_user = get_user_by('login', $chat_user->username);
+                if (!$wp_user) {
+                    $wp_user = get_user_by('email', $chat_user->email);
+                }
+
+                if ($wp_user) {
+                    // WordPress user exists, log them in
+                    wp_set_current_user($wp_user->ID);
+                    wp_set_auth_cookie($wp_user->ID, $remember);
+                    $user = $wp_user;
+                } else {
+                    // No WordPress user, but chat user exists - create a session-based login
+                    wp_set_current_user(0); // Not logged into WordPress
+                    // Store chat user info in session
+                    if (!session_id()) {
+                        session_start();
+                    }
+                    $_SESSION['dredd_chat_user'] = array(
+                        'id' => $chat_user->id,
+                        'username' => $chat_user->username,
+                        'email' => $chat_user->email,
+                        'logged_in' => true
+                    );
+
+                    dredd_ai_log('Chat user logged in (session-based): ' . $chat_user->username, 'info');
+
+                    wp_send_json_success(array(
+                        'message' => 'Welcome back, citizen! Justice awaits.',
+                        'user' => array(
+                            'id' => $chat_user->id,
+                            'username' => $chat_user->username,
+                            'display_name' => $chat_user->username,
+                            'credits' => 0, // No credits for session-based users
+                            'chat_user' => true
+                        )
+                    ));
+                    return;
+                }
+            } else {
+                dredd_ai_log('Login failed for username: ' . $username, 'warning');
+                wp_send_json_error('Invalid credentials. Justice denied!');
+                return;
+            }
         }
-        
-        // Set authentication cookie
+
+        // Set authentication cookie for WordPress users
         wp_set_current_user($user->ID);
         wp_set_auth_cookie($user->ID, $remember);
-        
+
         dredd_ai_log('User logged in successfully: ' . $user->user_login, 'info');
-        
+
         wp_send_json_success(array(
             'message' => 'Welcome back, citizen! Justice awaits.',
             'user' => array(
@@ -731,11 +784,9 @@ class DreddAI {
     }
     
     public function handle_register() {
-        // Verify nonce for security
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_admin_nonce')) {
             wp_send_json_error('Security check failed');
         }
-        
         $username = sanitize_text_field($_POST['username'] ?? '');
         $email = sanitize_email($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
@@ -743,62 +794,97 @@ class DreddAI {
         $terms = isset($_POST['terms']);
         $newsletter = isset($_POST['newsletter']);
         $recaptcha_response = $_POST['g-recaptcha-response'] ?? '';
-        
-        // Validation
+
         if (empty($username) || empty($email) || empty($password)) {
             wp_send_json_error('All fields are required');
         }
-        
-        // Verify reCAPTCHA if configured
-        if (!$this->verify_recaptcha($recaptcha_response)) {
-            wp_send_json_error('Please complete the security verification');
-        }
-        
+
         if ($password !== $confirm_password) {
             wp_send_json_error('Passwords do not match');
         }
-        
+
         if (strlen($password) < 6) {
             wp_send_json_error('Password must be at least 6 characters long');
         }
-        
+
         if (!$terms) {
             wp_send_json_error('You must agree to the terms of service');
         }
-        
+
         if (!is_email($email)) {
             wp_send_json_error('Invalid email address');
         }
-        
-        if (username_exists($username)) {
-            wp_send_json_error('Username already exists');
+
+        global $wpdb;
+        $chat_users_table = $wpdb->prefix . 'dredd_chat_users';
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '$chat_users_table'") != $chat_users_table) {
+            $charset_collate = $wpdb->get_charset_collate();
+            $sql = "CREATE TABLE {$chat_users_table} (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                username varchar(60) NOT NULL,
+                password varchar(255) NOT NULL,
+                email varchar(100) NOT NULL,
+                created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY unique_username (username),
+                UNIQUE KEY unique_email (email),
+                KEY idx_created_at (created_at)
+            ) {$charset_collate};";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
         }
-        
-        if (email_exists($email)) {
-            wp_send_json_error('Email address already registered');
+
+        $existing_user = $wpdb->get_row($wpdb->prepare(
+            "SELECT id FROM {$chat_users_table} WHERE username = %s OR email = %s",
+            $username, $email
+        ));
+
+        if ($existing_user) {
+            wp_send_json_error('Username or email already exists');
         }
-        // Create the user
+
+        $result = $wpdb->insert(
+            $chat_users_table,
+            array(
+                'username' => $username,
+                'password' => $password,
+                'email' => $email,
+                'created_at' => current_time('mysql')
+            ),
+            array('%s', '%s', '%s', '%s')
+        );
+
+        if (!$result) {
+            dredd_ai_log('Failed to insert into chat_users table: ' . $wpdb->last_error, 'error');
+            wp_send_json_error('Failed to store user data');
+        } else {
+            dredd_ai_log('Successfully inserted user into chat_users table: ' . $username, 'info');
+        }
+
+        add_filter('wp_mail', '__return_false'); 
         $user_id = wp_create_user($username, $password, $email);
-        
+        remove_filter('wp_mail', '__return_false');
+
         if (is_wp_error($user_id)) {
-            dredd_ai_log('User registration failed: ' . $user_id->get_error_message(), 'error');
-            wp_send_json_error('Registration failed: ' . $user_id->get_error_message());
+            dredd_ai_log('WordPress user creation failed: ' . $user_id->get_error_message(), 'error');
+            $user_id = 0;
+        } else {
+            update_user_meta($user_id, 'dredd_newsletter_subscription', $newsletter);
+            update_user_meta($user_id, 'dredd_registration_date', current_time('mysql'));
+            update_user_meta($user_id, 'dredd_email_verified', true);
+
+            if (dredd_ai_is_paid_mode_enabled()) {
+                $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
+                dredd_ai_add_credits($user_id, $welcome_credits);
+            }
         }
-        
-        // Update user meta
-        update_user_meta($user_id, 'dredd_newsletter_subscription', $newsletter);
-        update_user_meta($user_id, 'dredd_registration_date', current_time('mysql'));
-        update_user_meta($user_id, 'dredd_email_verified', true); // Set email as verified immediately
-        
-        // Give welcome credits
-        $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
-        dredd_ai_add_credits($user_id, $welcome_credits);
-        
-        dredd_ai_log('New user registered successfully: ' . $username . ' (ID: ' . $user_id . ')', 'info');
-        
+
+        dredd_ai_log('Chat user registered successfully: ' . $username . ' (WP ID: ' . $user_id . ')', 'info');
+
         wp_send_json_success(array(
-            'message' => 'Registration successful! Welcome to DREDD AI. You can now log in.',
-            'auto_login' => true
+            'message' => 'Registration successful! Welcome to DREDD AI.',
+            'auto_login' => $user_id > 0
         ));
     }
     

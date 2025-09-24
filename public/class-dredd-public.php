@@ -361,9 +361,9 @@ class Dredd_Public {
                             </div>
                             
                             <div class="auth-modal-content">
-                                <div class="dredd-quote">
+                                <!-- <div class="dredd-quote">
                                     <p>"I am the BlockChain Enforcer! DREDD is running low on resources, check back soon"</p>
-                                </div>
+                                </div> -->
                                 
                                 <form id="dredd-login-form" class="auth-form-inner">
                                     <div class="form-group">
@@ -420,14 +420,14 @@ class Dredd_Public {
                         <!-- Sign Up Form -->
                         <div class="auth-form signup-form" id="signup-form">
                             <div class="auth-modal-header">
-                                <h2>👤 CITIZEN REGISTRATION</h2>
+                                <h2>👤 REGISTRATION</h2>
                                 <button class="auth-modal-close">&times;</button>
                             </div>
                             
                             <div class="auth-modal-content">
-                                <div class="dredd-quote">
+                                <!-- <div class="dredd-quote">
                                     <p>"Justice requires identification. Register to serve the law!"</p>
-                                </div>
+                                </div> -->
                                 
                                 <form id="dredd-signup-form" class="auth-form-inner">
                                     <div class="form-group">
