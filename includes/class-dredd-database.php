@@ -29,9 +29,9 @@ class Dredd_Database {
         $this->ensure_chat_users_table_exists();
 
         // If version is less than 1.0.1, update version
-        if (version_compare($current_version, '1.0.1', '<')) {
-            update_option('dredd_ai_db_version', '1.0.1');
-        }
+        // if (version_compare($current_version, '1.0.1', '<')) {
+        //     update_option('dredd_ai_db_version', '1.0.1');
+        // }
     }
 
     
