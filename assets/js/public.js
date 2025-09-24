@@ -2731,6 +2731,14 @@
 
       // Window resize handler
       $(window).on("resize", () => {
+        const activeEl = document.activeElement;
+        if (
+          activeEl &&
+          (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")
+        ) {
+          return;
+        }
+
         this.handleResize();
       });
 
