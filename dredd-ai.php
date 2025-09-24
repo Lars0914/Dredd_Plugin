@@ -783,7 +783,6 @@ class DreddAI {
     }
     
     public function handle_register() {
-        // Verify nonce for security
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_admin_nonce')) {
             wp_send_json_error('Security check failed');
         }
@@ -1036,7 +1035,7 @@ class DreddAI {
     
     public function handle_logout() {
         // Verify nonce for security
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_ai_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_admin_nonce')) {
             wp_send_json_error('Security check failed');
         }
         
