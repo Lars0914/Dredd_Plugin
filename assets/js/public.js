@@ -210,6 +210,10 @@
 
       // Auth modal events
       $(document).on("click", ".auth-modal-close", () => this.closeAuthModal());
+      $(document).on("touchstart", ".auth-modal-close", () =>
+        this.closeAuthModal()
+      );
+
       $(document).on("click", ".auth-modal-overlay", (e) => {
         if (e.target === e.currentTarget) {
           this.closeAuthModal();
