@@ -235,19 +235,29 @@
       });
 
       // Auth form submissions
-      $(document).on("submit", "#dredd-login-form", (e) => {
+      $(document).on("click", ".login-submit", (e) => {
         e.preventDefault();
         this.handleLogin();
       });
-      // $(document).on("submit", "#dredd-signup-form", (e) => {
-      //   e.preventDefault();
-      //   this.handleSignup();
-      // });
+      $(document).on("touchstart", ".login-submit", (e) => {
+        e.preventDefault();
+        this.handleLogin();
+      });
+
       $(document).on("click", ".signup-submit", (e) => {
         e.preventDefault();
         this.handleSignup();
       });
-      $(document).on("submit", "#dredd-forgot-form", (e) => {
+      $(document).on("touchstart", ".signup-submit", (e) => {
+        e.preventDefault();
+        this.handleSignup();
+      });
+
+      $(document).on("click", ".forgot-submit", (e) => {
+        e.preventDefault();
+        this.handleForgotPassword();
+      });
+      $(document).on("touchstart", ".forgot-submit", (e) => {
         e.preventDefault();
         this.handleForgotPassword();
       });
