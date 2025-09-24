@@ -242,6 +242,7 @@ h6 {
   align-items: center;
   gap: 6px;
   margin-top: 0;
+  z-index: 0;
 }
 
 .dredd-chain-selector label {
@@ -1561,12 +1562,12 @@ select.chain-dropdown option {
 @media (max-width: 768px) {
   .dredd-chat-container {
     border-radius: 0;
-    height: 100vh;
+    height: 100vh !important;
     position: fixed;
-    top: 0;
+    top: 70;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 0;
     border: none;
     margin: 0;
   }

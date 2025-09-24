@@ -2831,19 +2831,19 @@
       const $chatInput = $("#dredd-message-input");
 
       // Adjust input when virtual keyboard appears
-      $chatInput.on("focus", function () {
-        if (window.innerWidth <= 768) {
-          setTimeout(() => {
-            const chatContainer = $(".dredd-chat-container");
-            const inputOffset = $chatInput.offset().top;
-            const windowHeight = $(window).height();
+      // $chatInput.on("focus", function () {
+      //   if (window.innerWidth <= 768) {
+      //     setTimeout(() => {
+      //       const chatContainer = $(".dredd-chat-container");
+      //       const inputOffset = $chatInput.offset().top;
+      //       const windowHeight = $(window).height();
 
-            if (inputOffset > windowHeight * 0.5) {
-              chatContainer.css("transform", "translateY(-100px)");
-            }
-          }, 300);
-        }
-      });
+      //       if (inputOffset > windowHeight * 0.5) {
+      //         chatContainer.css("transform", "translateY(-100px)");
+      //       }
+      //     }, 300);
+      //   }
+      // });
 
       $chatInput.on("blur", function () {
         if (window.innerWidth <= 768) {
