@@ -899,7 +899,7 @@ class DreddAI {
     
     public function handle_forgot_password() {
         // Verify nonce for security
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_ai_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'dredd_admin_nonce')) {
             wp_send_json_error('Security check failed');
         }
         
