@@ -2038,6 +2038,39 @@ class Dredd_Admin {
         include DREDD_AI_PLUGIN_PATH . 'admin/views/users-page.php';
     }
     
+        
+    /**
+     * Ensure the chat users table exists
+     */
+    private function ensure_chat_users_table_exists() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'dredd_chat_users';
+
+        // Check if table exists
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            // Create the table
+            $charset_collate = $wpdb->get_charset_collate();
+
+            $sql = "CREATE TABLE {$table_name} (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                username varchar(60) NOT NULL,
+                password varchar(255) NOT NULL,
+                email varchar(100) NOT NULL,
+                created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY unique_username (username),
+                UNIQUE KEY unique_email (email),
+                KEY idx_created_at (created_at)
+            ) {$charset_collate};";
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+
+            dredd_ai_log('Created dredd_chat_users table in admin page', 'info');
+        }
+    }
+
+    
     /**
      * Get all users with their data
      */

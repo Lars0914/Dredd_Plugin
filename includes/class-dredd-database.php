@@ -14,8 +14,66 @@ class Dredd_Database {
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
+        $this->ensure_chat_users_table_exists();
+        add_action('plugins_loaded', array($this, 'check_database_upgrade'));
+
     }
     
+    /**
+     * Check for database upgrades and create missing tables
+     */
+    public function check_database_upgrade() {
+        $current_version = get_option('dredd_ai_db_version', '1.0.0');
+
+        // Always check if chat users table exists and create if missing
+        $this->ensure_chat_users_table_exists();
+
+        // If version is less than 1.0.1, update version
+        if (version_compare($current_version, '1.0.1', '<')) {
+            update_option('dredd_ai_db_version', '1.0.1');
+        }
+    }
+
+    
+    /**
+     * Ensure the chat users table exists
+     */
+    private function ensure_chat_users_table_exists() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'dredd_chat_users';
+
+        // Check if table exists
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            $this->create_chat_users_table();
+        }
+    }
+
+    /**
+     * Create the chat users table specifically
+     */
+    private function create_chat_users_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+
+        $chat_users_table = $this->wpdb->prefix . 'dredd_chat_users';
+        $sql_chat_users = "CREATE TABLE {$chat_users_table} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            username varchar(60) NOT NULL,
+            password varchar(255) NOT NULL,
+            email varchar(100) NOT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY unique_username (username),
+            UNIQUE KEY unique_email (email),
+            KEY idx_created_at (created_at)
+        ) {$charset_collate};";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql_chat_users);
+
+        dredd_ai_log('Created dredd_chat_users table via upgrade', 'info');
+    }
+
+
     /**
      * Create all custom database tables
      */
