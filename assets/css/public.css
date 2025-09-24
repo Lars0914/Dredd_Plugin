@@ -1571,6 +1571,9 @@ select.chain-dropdown option {
     border: none;
     margin: 0;
   }
+  footer {
+    display: none;
+  }
 
   .dredd-chat-header {
     flex-direction: column;
