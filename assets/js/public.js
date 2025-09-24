@@ -77,6 +77,7 @@
       });
 
       $("#dredd-send-btn").on("click", () => this.sendMessage());
+      $("#dredd-send-btn").on("touchstart", () => this.sendMessage());
 
       // Payment panel (old)
       $(".payment-close").on("click", () => this.closePaymentPanel());
