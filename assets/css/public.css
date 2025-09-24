@@ -1562,9 +1562,9 @@ select.chain-dropdown option {
 @media (max-width: 768px) {
   .dredd-chat-container {
     border-radius: 0;
-    height: 100vh !important;
+    height: 75vh !important;
     position: fixed;
-    top: 70;
+    top: 70px;
     left: 0;
     width: 100%;
     z-index: 0;
