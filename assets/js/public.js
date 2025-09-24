@@ -2659,11 +2659,11 @@
           });
 
           // Force re-render
-          const value = $input.val();
-          if (value) {
-            $input.val("");
-            setTimeout(() => $input.val(value), 1);
-          }
+          // const value = $input.val();
+          // if (value) {
+          //   $input.val("");
+          //   setTimeout(() => $input.val(value), 1);
+          // }
         });
       };
 
