@@ -239,7 +239,11 @@
         e.preventDefault();
         this.handleLogin();
       });
-      $(document).on("submit", "#dredd-signup-form", (e) => {
+      // $(document).on("submit", "#dredd-signup-form", (e) => {
+      //   e.preventDefault();
+      //   this.handleSignup();
+      // });
+      $(document).on("click", ".signup-submit", (e) => {
         e.preventDefault();
         this.handleSignup();
       });
