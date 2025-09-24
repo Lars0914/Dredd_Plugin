@@ -80,37 +80,41 @@ class Dredd_Public {
                             <span class="status-dot online"></span>
                             <span class="status-text">ONLINE</span>
                         </div>
+                        
+                        <?php if (is_user_logged_in()): ?>
+                        <div class="dredd-credits">
+                            <span class="credits-icon">🪙</span>
+                            <span class="credits-count"><?php echo dredd_ai_get_user_credits(get_current_user_id()); ?></span>
+                        </div>
+                        <div class="dredd-user-menu">
+                            <button class="user-menu-btn" title="User Menu">
+                                <span class="user-icon">👤</span>
+                                <span class="user-name"><?php echo esc_html(wp_get_current_user()->display_name); ?></span>
+                            </button>
+                            <div class="user-dropdown" style="display: none;">
+                                <a href="#" class="user-dashboard-link">Dashboard</a>
+                                <a href="#" class="logout-link" data-action="dredd_logout">Logout</a>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <div class="dredd-auth-buttons">
+                            <button class="auth-btn login-btn" title="Login">
+                                <span class="auth-text">LOGIN</span>
+                            </button>
+                            <button class="auth-btn signup-btn" title="Sign Up">
+                                <span class="auth-text">SIGN UP</span>
+                            </button>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php if (dredd_ai_get_option('show_promotions_sidebar', true)): ?>
+                        <button class="promotions-toggle" title="Featured Tokens">
+                            <span class="hamburger-icon">🚀</span>
+                        </button>
+                        <?php endif; ?>
                     </div>
                 </div>
-                <?php if (is_user_logged_in()): ?>
-                    <div class="dredd-credits">        
-                        <span class="credits-count"><?php echo dredd_ai_get_user_credits(get_current_user_id()); ?></span>
-                    </div> 
-                    <div class="dredd-user-menu">
-                        <button class="user-menu-btn" title="User Menu">
-                            <span class="user-icon">👤</span>
-                            <span class="user-name"><?php echo esc_html(wp_get_current_user()->display_name); ?></span>
-                        </button>
-                        <div class="user-dropdown" style="display: none;">
-                            <a href="#" class="user-dashboard-link">Dashboard</a>
-                            <a href="#" class="logout-link" data-action="dredd_logout">Logout</a>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <div class="dredd-auth-buttons">
-                        <button class="auth-btn login-btn" title="Login">
-                            <span class="auth-text">LOGIN</span>
-                        </button>
-                        <button class="auth-btn signup-btn" title="Sign Up">
-                            <span class="auth-text">SIGN UP</span>
-                        </button>
-                    </div>
-                <?php endif; ?>
-                        
-                <?php if (dredd_ai_get_option('show_promotions_sidebar', true)): ?>
-                    <button class="promotions-toggle" title="Featured Tokens">
-                    </button>
-                <?php endif; ?>
+
                 <!-- User Dashboard Modal -->
                 <div class="dredd-dashboard-modal" id="dredd-dashboard-modal" style="display: none;">
                     <div class="dashboard-modal-overlay"></div>
