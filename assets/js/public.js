@@ -314,13 +314,12 @@
       if (mode === "psycho") {
         if (dredd_ajax.paid_mode_enabled === "true") {
           modeMessage =
-            "💀 PSYCHO MODE ACTIVATED - Brutal honesty unlocked! Credits will be deducted per analysis.";
+            "PSYCHO MODE ACTIVATED - Brutal honesty unlocked! Credits will be deducted per analysis.";
         } else {
-          modeMessage =
-            "💀 PSYCHO MODE ACTIVATED - Prepare for brutal honesty!";
+          modeMessage = "PSYCHO MODE ACTIVATED - Prepare for brutal honesty!";
         }
       } else {
-        modeMessage = "⚖️ STANDARD MODE ACTIVATED - Justice with restraint.";
+        modeMessage = "STANDARD MODE ACTIVATED - Justice with restraint.";
       }
 
       this.addMessage(modeMessage, "dredd", "system");
