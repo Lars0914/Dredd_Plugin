@@ -3875,60 +3875,6 @@ body.modal-open {
   visibility: visible !important;
 }
 
-.dredd-auth-modal .auth-form .form-group input[type="text"]:focus,
-.dredd-auth-modal .auth-form .form-group input[type="email"]:focus,
-.dredd-auth-modal .auth-form .form-group input[type="password"]:focus {
-  background: #222222 !important;
-  color: #ffffff !important;
-  caret-color: #00ffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  -moz-text-fill-color: #ffffff !important;
-  text-fill-color: #ffffff !important;
-  outline: none !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-/* Force autofill text to be visible with highest specificity */
-.dredd-auth-modal .auth-form .form-group input[type="text"]:-webkit-autofill,
-.dredd-auth-modal .auth-form .form-group input[type="email"]:-webkit-autofill,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="password"]:-webkit-autofill,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="text"]:-webkit-autofill:hover,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="email"]:-webkit-autofill:hover,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="password"]:-webkit-autofill:hover,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="text"]:-webkit-autofill:focus,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="email"]:-webkit-autofill:focus,
-.dredd-auth-modal
-  .auth-form
-  .form-group
-  input[type="password"]:-webkit-autofill:focus {
-  -webkit-text-fill-color: #ffffff !important;
-  -webkit-box-shadow: 0 0 0 1000px #1a1a1a inset !important;
-  caret-color: #00ffff !important;
-  color: #ffffff !important;
-  background-color: #1a1a1a !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
 /* Notification styling */
 .dredd-notification {
   position: fixed;
