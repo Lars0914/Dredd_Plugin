@@ -8,58 +8,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get all users with their data
-global $wpdb;
-// $users_query = "
-//     SELECT 
-//         u.ID,
-//         u.display_name,
-//         u.user_email,
-//         u.user_registered,
-//         ut.token_balance as credits,
-//         ut.total_purchased,
-//         COALESCE(stats.total_analyses, 0) as total_analyses,
-//         COALESCE(stats.standard_analyses, 0) as standard_analyses,
-//         COALESCE(stats.psycho_analyses, 0) as psycho_analyses,
-//         COALESCE(stats.scams_detected, 0) as scams_detected,
-//         COALESCE(payments.total_spent, 0) as total_spent,
-//         COALESCE(payments.stripe_payments, 0) as stripe_payments,
-//         COALESCE(payments.crypto_payments, 0) as crypto_payments
-//     FROM {$wpdb->users} u
-//     LEFT JOIN {$wpdb->prefix}dredd_user_tokens ut ON u.ID = ut.user_id
-//     LEFT JOIN (
-//         SELECT 
-//             user_id,
-//             COUNT(*) as total_analyses,
-//             SUM(CASE WHEN analysis_mode = 'standard' THEN 1 ELSE 0 END) as standard_analyses,
-//             SUM(CASE WHEN analysis_mode = 'psycho' THEN 1 ELSE 0 END) as psycho_analyses,
-//             SUM(CASE WHEN verdict LIKE '%scam%' OR verdict LIKE '%fraud%' THEN 1 ELSE 0 END) as scams_detected
-//         FROM {$wpdb->prefix}dredd_analysis_history  
-//         GROUP BY user_id
-//     ) stats ON u.ID = stats.user_id
-//     LEFT JOIN (
-//         SELECT 
-//             user_id,
-//             SUM(amount) as total_spent,
-//             SUM(CASE WHEN payment_method = 'stripe' THEN 1 ELSE 0 END) as stripe_payments,
-//             SUM(CASE WHEN payment_method LIKE '%crypto%' THEN 1 ELSE 0 END) as crypto_payments
-//         FROM {$wpdb->prefix}dredd_transactions 
-//         WHERE status = 'completed'
-//         GROUP BY user_id
-//     ) payments ON u.ID = payments.user_id
-//     ORDER BY u.user_registered DESC
-// ";
+$credit_settings = isset($data['credit_settings']) ? $data['credit_settings'] : array();
+$users = isset($data['users']) ? $data['users'] : array();
 
-// $users = $wpdb->get_results($users_query);
-
-// Get credit settings
-$credit_settings = get_option('dredd_credit_settings', [
-    'credits_per_dollar' => 10,
-    'analysis_cost' => 5,
-    'psycho_cost' => 10
-]);
-
-// Calculate statistics
 $total_users = count($users);
 $total_credits = array_sum(array_column($users, 'credits'));
 $total_analyses = array_sum(array_column($users, 'total_analyses'));
