@@ -1257,9 +1257,7 @@ class Dredd_Admin {
                                     <tr class="empty-row">
                                         <td colspan="7">
                                             <div class="empty-state-epic">
-                                                <div class="empty-icon">💳</div>
                                                 <h4>No Transactions Yet</h4>
-                                                <p>Transaction history will appear here once payments are processed.</p>
                                             </div>
                                         </td>
                                     </tr>
