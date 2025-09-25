@@ -49,7 +49,7 @@ class Dredd_Admin {
             <!-- Dashboard Header -->
             <div class="dredd-dashboard-header">
                 <div class="dredd-logo">
-                    <img src="<?php echo DREDD_AI_PLUGIN_URL . 'assets/images/dredd-logo.png'; ?>" alt="DREDD AI Logo" />
+                    <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="DREDD Avatar" />
                     <h2>DREDD AI</h2>
                 </div>
                 <div class="dredd-status <?php echo $system_status['status']; ?>">
@@ -380,7 +380,7 @@ class Dredd_Admin {
                         <div class="title-container">
                             
                             <h1 class="epic-title">
-                                <span class="title-text">DREDD AI</span>
+                                <span class="title-text">Setting</span>
                                 <span class="title-subtitle">System Configuration Command Center</span>
                             </h1>
                         </div>
@@ -729,7 +729,7 @@ class Dredd_Admin {
                         <div class="title-container">
                             
                             <h1 class="epic-title">
-                                <span class="title-text">DREDD AI</span>
+                                <span class="title-text">Payments</span>
                                 <span class="title-subtitle">Payment Command Center</span>
                             </h1>
                         </div>
@@ -845,35 +845,6 @@ class Dredd_Admin {
                                     <span class="rate-percentage"><?php echo number_format($success_rate, 1); ?>%</span>
                                 </div>
                                 <div class="rate-label">Success Rate</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="analytics-card payment-health">
-                        <div class="card-header">
-                            <div class="card-icon">🔍</div>
-                            <h4>Gateway Health</h4>
-                        </div>
-                        <div class="health-indicators">
-                            <div class="health-item stripe-health">
-                                <div class="health-status <?php echo (!empty($settings['stripe_secret_key'])) ? 'online' : 'offline'; ?>">
-                                    <div class="status-dot"></div>
-                                    <div class="status-label">Stripe Gateway</div>
-                                </div>
-                                <div class="health-details">
-                                    <span class="detail-label">Mode:</span>
-                                    <span class="detail-value"><?php echo (strpos($settings['stripe_secret_key'] ?? '', 'test') !== false) ? 'Test' : 'Live'; ?></span>
-                                </div>
-                            </div>
-                            <div class="health-item crypto-health">
-                                <div class="health-status <?php echo (!empty($settings['nowpayments_api_key'])) ? 'online' : 'offline'; ?>">
-                                    <div class="status-dot"></div>
-                                    <div class="status-label">Crypto Gateway</div>
-                                </div>
-                                <div class="health-details">
-                                    <span class="detail-label">Mode:</span>
-                                    <span class="detail-value"><?php echo ($settings['nowpayments_sandbox'] ?? '1') === '1' ? 'Sandbox' : 'Live'; ?></span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1243,97 +1214,6 @@ class Dredd_Admin {
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="control-panel credit-config-panel">
-                            <div class="panel-header">
-                                <h4>🪙 Credit Configuration</h4>
-                                <div class="panel-status online">ACTIVE</div>
-                            </div>
-                            
-                            <div class="control-grid">
-                                <div class="control-item">
-                                    <label class="control-label">Credits per Dollar</label>
-                                    <div class="control-input-group">
-                                        <input type="number" name="credits_per_dollar" value="<?php echo esc_attr(dredd_ai_get_option('credits_per_dollar', 10)); ?>" 
-                                               class="control-input" min="1" max="1000" />
-                                        <span class="input-unit">credits/$</span>
-                                    </div>
-                                    <p class="control-description">How many credits customers receive per dollar spent</p>
-                                </div>
-                                
-                                <div class="control-item">
-                                    <label class="control-label">Standard Analysis Cost</label>
-                                    <div class="control-input-group">
-                                        <input type="number" name="analysis_cost" value="<?php echo esc_attr(dredd_ai_get_option('analysis_cost', 5)); ?>" 
-                                               class="control-input" min="1" max="100" />
-                                        <span class="input-unit">credits</span>
-                                    </div>
-                                    <p class="control-description">Credit cost per standard analysis</p>
-                                </div>
-                                
-                                <div class="control-item">
-                                    <label class="control-label">Psycho Mode Cost</label>
-                                    <div class="control-input-group">
-                                        <input type="number" name="psycho_cost" value="<?php echo esc_attr(dredd_ai_get_option('psycho_cost', 10)); ?>" 
-                                               class="control-input" min="1" max="200" />
-                                        <span class="input-unit">credits</span>
-                                    </div>
-                                    <p class="control-description">Credit cost per Psycho Mode analysis</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Token Packages Control Center -->
-                <div class="packages-control-center">
-                    <h3 class="section-title">
-                        <span class="section-icon">📦</span>
-                        Token Packages Control Center
-                    </h3>
-                    
-                    <div class="control-center-grid">
-                        <div class="control-panel packages-panel">
-                            <div class="panel-header">
-                                <h4>🎯 Credit Packages Configuration</h4>
-                                <div class="panel-status online">ACTIVE</div>
-                            </div>
-                            
-                            <div class="packages-container" id="token-packages">
-                                <?php foreach ($settings['token_packages'] as $index => $package): ?>
-                                <div class="package-item">
-                                    <div class="package-controls">
-                                        <div class="package-input-group">
-                                            <label class="package-label">Package Name</label>
-                                            <input type="text" name="token_packages[<?php echo $index; ?>][name]" 
-                                                   value="<?php echo esc_attr($package['name']); ?>" 
-                                                   class="package-input" placeholder="Package Name" />
-                                        </div>
-                                        <div class="package-input-group">
-                                            <label class="package-label">Credits</label>
-                                            <input type="number" name="token_packages[<?php echo $index; ?>][tokens]" 
-                                                   value="<?php echo esc_attr($package['tokens']); ?>" 
-                                                   class="package-input" placeholder="Credits" />
-                                        </div>
-                                        <div class="package-input-group">
-                                            <label class="package-label">Price ($)</label>
-                                            <input type="number" name="token_packages[<?php echo $index; ?>][price]" 
-                                                   value="<?php echo esc_attr($package['price']); ?>" 
-                                                   class="package-input" step="0.01" placeholder="Price" />
-                                        </div>
-                                        <button type="button" class="remove-package-btn epic-button danger small">🗑️ Remove</button>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                            
-                            <div class="package-actions">
-                                <button type="button" class="add-package-btn epic-button secondary">
-                                    <span class="button-icon">➕</span>
-                                    <span class="button-text">Add Package</span>
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -1362,16 +1242,16 @@ class Dredd_Admin {
                         </div>
                         
                         <div class="transactions-table-container">
-                            <table class="epic-transactions-table">
+                            <table class="advanced-users-table">
                                 <thead>
                                     <tr>
-                                        <th class="th-id">Transaction ID</th>
-                                        <th class="th-user">User</th>
-                                        <th class="th-amount">Amount</th>
-                                        <th class="th-tokens">Credits</th>
-                                        <th class="th-method">Method</th>
-                                        <th class="th-status">Status</th>
-                                        <th class="th-date">Date</th>
+                                        <th class="sortable">Transaction ID</th>
+                                        <th class="sortable">User</th>
+                                        <th class="sortable">Amount</th>
+                                        <th class="sortable">Credits</th>
+                                        <th class="sortable">Method</th>
+                                        <th class="sortable">Status</th>
+                                        <th class="sortable">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1387,32 +1267,32 @@ class Dredd_Admin {
                                     </tr>
                                     <?php else: ?>
                                     <?php foreach ($transactions as $transaction): ?>
-                                    <tr class="transaction-row">
-                                        <td class="td-id">
+                                    <tr>
+                                        <td class="sortable">
                                             <code class="transaction-id"><?php echo esc_html($transaction->transaction_id); ?></code>
                                         </td>
-                                        <td class="td-user">
+                                        <td class="sortable">
                                             <div class="user-info">
                                                 <span class="user-name"><?php echo esc_html(get_user_by('id', $transaction->user_id)->display_name ?? 'Unknown'); ?></span>
                                             </div>
                                         </td>
-                                        <td class="td-amount">
+                                        <td class="sortable">
                                             <span class="amount-value">$<?php echo number_format($transaction->amount, 2); ?></span>
                                         </td>
-                                        <td class="td-tokens">
+                                        <td class="sortable">
                                             <span class="tokens-value"><?php echo number_format($transaction->tokens); ?></span>
                                         </td>
-                                        <td class="td-method">
+                                        <td class="sortable">
                                             <span class="method-badge <?php echo strtolower($transaction->payment_method); ?>">
                                                 <?php echo esc_html(strtoupper($transaction->payment_method)); ?>
                                             </span>
                                         </td>
-                                        <td class="td-status">
+                                        <td class="sortable">
                                             <span class="status-badge-epic <?php echo $transaction->status; ?>">
                                                 <?php echo ucfirst($transaction->status); ?>
                                             </span>
                                         </td>
-                                        <td class="td-date">
+                                        <td class="sortable">
                                             <span class="date-value"><?php echo esc_html(human_time_diff(strtotime($transaction->created_at), current_time('timestamp')) . ' ago'); ?></span>
                                         </td>
                                     </tr>
