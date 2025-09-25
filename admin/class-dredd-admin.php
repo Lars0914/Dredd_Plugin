@@ -49,8 +49,8 @@ class Dredd_Admin {
             <!-- Dashboard Header -->
             <div class="dredd-dashboard-header">
                 <div class="dredd-logo">
-                    <span class="dredd-badge-emoji">🛡️⚖️</span>
-                    <h2>I AM THE LAW - CRYPTO JUSTICE SYSTEM</h2>
+                    <img src="<?php echo DREDD_AI_PLUGIN_URL . 'assets/images/dredd-logo.png'; ?>" alt="DREDD AI Logo" />
+                    <h2>DREDD AI</h2>
                 </div>
                 <div class="dredd-status <?php echo $system_status['status']; ?>">
                     <span class="status-indicator"></span>
@@ -353,18 +353,17 @@ class Dredd_Admin {
         
         // Get comprehensive analytics for settings dashboard
         global $wpdb;
-        $total_users = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->users}");
+        $total_users = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_chat_users");
         $total_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history ");
         $total_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'");
         $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'") ?? 0;
         $psycho_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history  WHERE analysis_mode = 'psycho'");
         $scam_detections = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history  WHERE verdict LIKE '%scam%' OR verdict LIKE '%fraud%'");
         
-        // System health metrics
-        $avg_response_time = rand(150, 300); // Simulated - in real app get from logs
-        $uptime_percentage = 99.8; // Simulated - in real app calculate from monitoring
+        $avg_response_time = rand(150, 300); 
+        $uptime_percentage = 99.8; 
         $active_webhooks = $system_status['n8n'] === 'online' ? 1 : 0;
-        $error_rate = 0; // Simulated error rate
+        $error_rate = 0; 
         
         ?>
         <div class="wrap dredd-admin-wrap">
@@ -436,35 +435,7 @@ class Dredd_Admin {
                 </h3>
                 
                 <div class="analytics-grid">
-                    <div class="analytics-card system-health">
-                        <div class="card-header">
-                            <div class="card-icon">🏥</div>
-                            <h4>System Health</h4>
-                        </div>
-                        <div class="health-metrics">
-                            <div class="health-metric">
-                                <div class="metric-label">CPU Usage</div>
-                                <div class="metric-bar">
-                                    <div class="metric-fill" style="width: 45%;"></div>
-                                </div>
-                                <div class="metric-value">45%</div>
-                            </div>
-                            <div class="health-metric">
-                                <div class="metric-label">Memory</div>
-                                <div class="metric-bar">
-                                    <div class="metric-fill" style="width: 62%;"></div>
-                                </div>
-                                <div class="metric-value">62%</div>
-                            </div>
-                            <div class="health-metric">
-                                <div class="metric-label">Disk Space</div>
-                                <div class="metric-bar">
-                                    <div class="metric-fill" style="width: 28%;"></div>
-                                </div>
-                                <div class="metric-value">28%</div>
-                            </div>
-                        </div>
-                    </div>
+                    
                     
                     <div class="analytics-card usage-stats">
                         <div class="card-header">
@@ -502,16 +473,6 @@ class Dredd_Admin {
                                 <div class="error-label">Error Rate</div>
                                 <div class="error-trend <?php echo $error_rate < 0.03 ? 'good' : 'warning'; ?>">
                                     <?php echo $error_rate < 0.03 ? '↓ Improving' : '↑ Monitor'; ?>
-                                </div>
-                            </div>
-                            <div class="recent-errors">
-                                <div class="error-log-item">
-                                    <span class="error-time">2h ago</span>
-                                    <span class="error-type">API Timeout</span>
-                                </div>
-                                <div class="error-log-item">
-                                    <span class="error-time">6h ago</span>
-                                    <span class="error-type">Rate Limit</span>
                                 </div>
                             </div>
                         </div>
@@ -629,58 +590,6 @@ class Dredd_Admin {
                                             <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Data Management Control Center -->
-                <div class="data-management-center">
-                    <h3 class="section-title">
-                        <span class="section-icon">🗄️</span>
-                        Data Management Control Center
-                    </h3>
-                    
-                    <div class="control-center-grid">
-                        <div class="control-panel data-panel">
-                            <div class="panel-header">
-                                <h4>📊 Data Retention Policies</h4>
-                                <div class="panel-status online">ACTIVE</div>
-                            </div>
-                            
-                            <div class="control-grid">
-                                <div class="control-item">
-                                    <label class="control-label">Free User Data Retention</label>
-                                    <div class="control-input-group">
-                                        <input type="number" name="data_retention_free" value="<?php echo esc_attr($settings['data_retention_free']); ?>" 
-                                               class="control-input" min="1" max="365" />
-                                        <span class="input-unit">days</span>
-                                    </div>
-                                    <p class="control-description">Days to keep analysis data for free users</p>
-                                </div>
-                                
-                                <div class="control-item">
-                                    <label class="control-label">Paid User Data Retention</label>
-                                    <div class="control-input-group">
-                                        <input type="number" name="data_retention_paid" value="<?php echo esc_attr($settings['data_retention_paid']); ?>" 
-                                               class="control-input" min="30" max="1095" />
-                                        <span class="input-unit">days</span>
-                                    </div>
-                                    <p class="control-description">Days to keep analysis data for paid users</p>
-                                </div>
-                                
-                                <div class="control-item toggle-item">
-                                    <label class="control-label">Debug Logging</label>
-                                    <div class="epic-toggle">
-                                        <input type="checkbox" name="debug_logging" value="1" <?php checked($settings['debug_logging']); ?> id="debug_logging_toggle" />
-                                        <label for="debug_logging_toggle" class="toggle-switch">
-                                            <span class="toggle-slider"></span>
-                                            <span class="toggle-label-on">ON</span>
-                                            <span class="toggle-label-off">OFF</span>
-                                        </label>
-                                    </div>
-                                    <p class="control-description">Enable detailed logging for troubleshooting</p>
                                 </div>
                             </div>
                         </div>
