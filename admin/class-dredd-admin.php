@@ -2071,10 +2071,12 @@ class Dredd_Admin {
     private function get_all_users_data() {
         global $wpdb;
         
-        $users = $wpdb->get_results("
+        $chat_users = $wpdb->get_results("
             SELECT 
-                u.ID, u.display_name, u.user_email, u.user_registered,
-                COALESCE(t.token_balance, 0) as credits,
+                u.id,
+                u.username,
+                u.email,
+                u.created_at,
                 COALESCE(stats.total_analyses, 0) as total_analyses,
                 COALESCE(stats.standard_analyses, 0) as standard_analyses,
                 COALESCE(stats.psycho_analyses, 0) as psycho_analyses,
@@ -2082,25 +2084,36 @@ class Dredd_Admin {
                 COALESCE(payments.total_spent, 0) as total_spent,
                 COALESCE(payments.stripe_payments, 0) as stripe_payments,
                 COALESCE(payments.crypto_payments, 0) as crypto_payments
-            FROM {$wpdb->users} u
-            LEFT JOIN {$wpdb->prefix}dredd_user_tokens t ON u.ID = t.user_id
+
+            FROM wpzl_dredd_chat_users u
+
             LEFT JOIN (
-                SELECT user_id, COUNT(*) as total_analyses,
+                SELECT 
+                    chat_user_id,
+                    COUNT(*) as total_analyses,
                     SUM(CASE WHEN mode = 'standard' THEN 1 ELSE 0 END) as standard_analyses,
                     SUM(CASE WHEN mode = 'psycho' THEN 1 ELSE 0 END) as psycho_analyses,
                     SUM(CASE WHEN verdict = 'scam' THEN 1 ELSE 0 END) as scams_detected
-                FROM {$wpdb->prefix}dredd_analysis_history GROUP BY user_id
-            ) stats ON u.ID = stats.user_id
+                FROM wpzl_dredd_analysis_history
+                GROUP BY chat_user_id
+            ) stats ON u.id = stats.chat_user_id
+
             LEFT JOIN (
-                SELECT user_id, SUM(amount) as total_spent,
+                SELECT 
+                    chat_user_id,
+                    SUM(amount) as total_spent,
                     COUNT(CASE WHEN payment_method = 'stripe' THEN 1 END) as stripe_payments,
                     COUNT(CASE WHEN payment_method LIKE '%crypto%' THEN 1 END) as crypto_payments
-                FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed' GROUP BY user_id
-            ) payments ON u.ID = payments.user_id
-            ORDER BY u.user_registered DESC
+                FROM wpzl_dredd_transactions
+                WHERE status = 'completed'
+                GROUP BY chat_user_id
+            ) payments ON u.id = payments.chat_user_id
+
+            ORDER BY u.created_at DESC
         ");
-        
-        return $users ?: array();
+
+        return $chat_users ?: array();
+
     }
     
     /**

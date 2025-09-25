@@ -14,7 +14,7 @@ $chat_users = isset($data['chat_users']) ? $data['chat_users'] : array();
 $credit_settings = isset($data['credit_settings']) ? $data['credit_settings'] : array();
 
 // Calculate statistics for WordPress users (displayed in this table)
-$total_users = count($users);
+$total_users = count($chat_users);
 $total_credits = array_sum(array_column($users, 'credits'));
 $total_analyses = array_sum(array_column($users, 'total_analyses'));
 $total_revenue = array_sum(array_column($users, 'total_spent'));

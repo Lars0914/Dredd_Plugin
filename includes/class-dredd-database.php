@@ -14,45 +14,55 @@ class Dredd_Database {
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->ensure_chat_users_table_exists();
+
+        // Ensure all tables exist
+        $this->ensure_all_tables_exist();
+
+        // Hook to plugins_loaded to handle DB version upgrades
         add_action('plugins_loaded', array($this, 'check_database_upgrade'));
     }
 
-        
-    /**
-     * Check for database upgrades and create missing tables
-     */
     public function check_database_upgrade() {
         $current_version = get_option('dredd_ai_db_version', '1.0.0');
 
-        // Always check if chat users table exists and create if missing
-        $this->ensure_chat_users_table_exists();
+        // Ensure tables are in place
+        $this->ensure_all_tables_exist();
 
-        // If version is less than 1.0.1, update version
+        // Example version check
         if (version_compare($current_version, '1.0.1', '<')) {
+            // Potential upgrade logic here
             update_option('dredd_ai_db_version', '1.0.1');
         }
     }
 
-    
-        /**
-     * Ensure the chat users table exists
+    /**
+     * Run all table existence checks
      */
-    private function ensure_chat_users_table_exists() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'dredd_chat_users';
+    private function ensure_all_tables_exist() {
+        $this->ensure_chat_users_table_exists();
+        $this->ensure_user_tokens_table_exists();
+        $this->ensure_transactions_table_exists();
+        $this->ensure_analysis_table_exists();
+        $this->ensure_promotions_table_exists();
+        $this->ensure_cache_table_exists();
+        $this->ensure_sessions_table_exists();
+        $this->ensure_payments_table_exists();
+    }
 
-        // Check if table exists
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+    // Repeat this pattern for each table below
+
+    private function ensure_chat_users_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_chat_users';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_chat_users_table();
         }
     }
 
     private function create_chat_users_table() {
         $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_chat_users';
 
-        $chat_users_table = $this->wpdb->prefix . 'dredd_chat_users';
-        $sql_chat_users = "CREATE TABLE {$chat_users_table} (
+        $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             username varchar(60) NOT NULL,
             password varchar(255) NOT NULL,
@@ -65,20 +75,21 @@ class Dredd_Database {
         ) {$charset_collate};";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql_chat_users);
-
-        dredd_ai_log('Created dredd_chat_users table via upgrade', 'info');
+        dbDelta($sql);
     }
 
-    /**
-     * Create all custom database tables
-     */
-    public function create_tables() {
+    private function ensure_user_tokens_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_user_tokens';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_user_tokens_table();
+        }
+    }
+
+    private function create_user_tokens_table() {
         $charset_collate = $this->wpdb->get_charset_collate();
-        
-        // User tokens table
-        $user_tokens_table = $this->wpdb->prefix . 'dredd_user_tokens';
-        $sql_user_tokens = "CREATE TABLE {$user_tokens_table} (
+        $table = $this->wpdb->prefix . 'dredd_user_tokens';
+
+        $sql = "CREATE TABLE {$table} (
             user_id bigint(20) unsigned NOT NULL,
             token_balance int(11) NOT NULL DEFAULT 0,
             total_purchased int(11) NOT NULL DEFAULT 0,
@@ -87,10 +98,23 @@ class Dredd_Database {
             PRIMARY KEY (user_id),
             KEY idx_user_balance (user_id, token_balance)
         ) {$charset_collate};";
-        
-        // Transactions table
-        $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
-        $sql_transactions = "CREATE TABLE {$transactions_table} (
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function ensure_transactions_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_transactions';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_transactions_table();
+        }
+    }
+
+    private function create_transactions_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_transactions';
+
+        $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             transaction_id varchar(255) NOT NULL,
             user_id bigint(20) unsigned NOT NULL,
@@ -110,10 +134,23 @@ class Dredd_Database {
             KEY idx_status (status),
             KEY idx_payment_method (payment_method)
         ) {$charset_collate};";
-        
-        // Analysis history table
-        $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        $sql_analysis = "CREATE TABLE {$analysis_table} (
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function ensure_analysis_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_analysis_history';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_analysis_table();
+        }
+    }
+
+    private function create_analysis_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_analysis_history';
+
+        $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             analysis_id varchar(255) NOT NULL,
             user_id bigint(20) unsigned NOT NULL,
@@ -143,10 +180,23 @@ class Dredd_Database {
             KEY idx_mode (mode),
             KEY idx_session (session_id)
         ) {$charset_collate};";
-        
-        // Token promotions table
-        $promotions_table = $this->wpdb->prefix . 'dredd_promotions';
-        $sql_promotions = "CREATE TABLE {$promotions_table} (
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function ensure_promotions_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_promotions';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_promotions_table();
+        }
+    }
+
+    private function create_promotions_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_promotions';
+
+        $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             token_name varchar(100) NOT NULL,
             token_symbol varchar(20) DEFAULT NULL,
@@ -176,10 +226,23 @@ class Dredd_Database {
             KEY idx_contract_chain (contract_address, chain),
             KEY idx_created_by (created_by)
         ) {$charset_collate};";
-        
-        // Cache table
-        $cache_table = $this->wpdb->prefix . 'dredd_cache';
-        $sql_cache = "CREATE TABLE {$cache_table} (
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function ensure_cache_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_cache';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_cache_table();
+        }
+    }
+
+    private function create_cache_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_cache';
+
+        $sql = "CREATE TABLE {$table} (
             cache_key varchar(255) NOT NULL,
             cache_data longtext NOT NULL,
             cache_type varchar(50) NOT NULL DEFAULT 'analysis',
@@ -189,10 +252,23 @@ class Dredd_Database {
             KEY idx_expires (expires_at),
             KEY idx_type_expires (cache_type, expires_at)
         ) {$charset_collate};";
-        
-        // User sessions table for chat management
-        $sessions_table = $this->wpdb->prefix . 'dredd_user_sessions';
-        $sql_sessions = "CREATE TABLE {$sessions_table} (
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function ensure_sessions_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_user_sessions';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_sessions_table();
+        }
+    }
+
+    private function create_sessions_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_user_sessions';
+
+        $sql = "CREATE TABLE {$table} (
             session_id varchar(255) NOT NULL,
             user_id bigint(20) unsigned NOT NULL,
             chat_history longtext DEFAULT NULL,
@@ -205,24 +281,23 @@ class Dredd_Database {
             KEY idx_user_sessions (user_id, last_activity),
             KEY idx_last_activity (last_activity)
         ) {$charset_collate};";
-        
-                // Chat users table for storing signup data
-        $chat_users_table = $this->wpdb->prefix . 'dredd_chat_users';
-        $sql_chat_users = "CREATE TABLE {$chat_users_table} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            username varchar(60) NOT NULL,
-            password varchar(255) NOT NULL,
-            email varchar(100) NOT NULL,
-            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY unique_username (username),
-            UNIQUE KEY unique_email (email),
-            KEY idx_created_at (created_at)
-        ) {$charset_collate};";
-        
-        // NOWPayments specific payments table
-        $payments_table = $this->wpdb->prefix . 'dredd_payments';
-        $sql_payments = "CREATE TABLE {$payments_table} (
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    private function ensure_payments_table_exists() {
+        $table = $this->wpdb->prefix . 'dredd_payments';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_payments_table();
+        }
+    }
+
+    private function create_payments_table() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table = $this->wpdb->prefix . 'dredd_payments';
+
+        $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             user_id bigint(20) unsigned NOT NULL,
             payment_id varchar(255) NOT NULL,
@@ -242,19 +317,9 @@ class Dredd_Database {
             KEY idx_status (status),
             KEY idx_payment_method (payment_method)
         ) {$charset_collate};";
-        
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        
-        dbDelta($sql_user_tokens);
-        dbDelta($sql_transactions);
-        dbDelta($sql_analysis);
-        dbDelta($sql_promotions);
-        dbDelta($sql_cache);
-        dbDelta($sql_sessions);
-        dbDelta($sql_payments);
-        
-        // Update database version
-        update_option('dredd_ai_db_version', '1.0.0');
+        dbDelta($sql);
     }
     
     /**
