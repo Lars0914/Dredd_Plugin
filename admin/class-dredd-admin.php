@@ -1241,7 +1241,7 @@ class Dredd_Admin {
                             <div class="panel-status online">MONITORING</div>
                         </div>
                         
-                        <div class="transactions-table-container">
+                        <div class="advanced-table-container">
                             <table class="advanced-users-table">
                                 <thead>
                                     <tr>
@@ -1305,6 +1305,104 @@ class Dredd_Admin {
                 </div>
             </div>
         </div>
+        <style>
+            .advanced-table-container {
+                overflow-x: auto;
+                border-radius: 12px;
+                border: 1px solid var(--border-secondary);
+                background: rgba(0, 0, 0, 0.3);
+            }
+            .advanced-users-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+                background: transparent;
+            }
+            .advanced-users-table thead th {
+                background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(64, 224, 208, 0.1));
+                color: var(--primary-cyan);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                padding: 18px 15px;
+                border-bottom: 2px solid var(--primary-cyan);
+                text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+                font-size: 12px;
+                position: relative;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .th-content {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .advanced-users-table thead th:hover {
+                background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(64, 224, 208, 0.15));
+            }
+
+            .advanced-users-table tbody td {
+                padding: 20px 15px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                background: transparent;
+                transition: all 0.3s ease;
+            }
+            .sortable:hover .sort-indicator {
+                opacity: 1;
+            }
+
+            @media (max-width: 1200px) {
+                .advanced-users-table th,
+                .advanced-users-table td {
+                    padding: 12px 8px;
+                    font-size: 12px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .advanced-table-container {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+                .advanced-table-container::after {
+                    content: "← Swipe to see more →";
+                    position: absolute;
+                    bottom: -25px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: var(--primary-cyan);
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-align: center;
+                    opacity: 0.7;
+                    animation: scrollHint 3s ease-in-out infinite;
+                }
+                .advanced-users-table {
+                    min-width: 800px; /* Ensure table doesn't get too compressed */
+                }
+            }
+            @media (max-width: 480px) {
+                .advanced-users-table th {
+                    font-size: 10px;
+                    padding: 8px 4px;
+                }
+
+                .advanced-users-table td {
+                    padding: 8px 4px;
+                }
+
+                .advanced-users-table th:nth-child(4),
+                .advanced-users-table td:nth-child(4) {
+                    display: none; 
+                }
+
+                .advanced-users-table th:nth-child(5),
+                .advanced-users-table td:nth-child(5) {
+                    display: none; 
+                }
+            }
+        </style>
         <?php
     }
     
