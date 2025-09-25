@@ -708,8 +708,8 @@ To edit promotion details, you would need to:
     }
 
     filterUsers() {
-      const searchText = $searchInput.val().toLowerCase();
-      const filter = $filterSelect.val();
+      const searchText = $("#user-search").val().toLowerCase();
+      const filter = $("#user-filter").val();
       console.log("Filtering users with", { searchText, filter });
       $(".user-row-epic").each(function () {
         const $row = $(this);
