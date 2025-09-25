@@ -51,10 +51,10 @@ class Dredd_Public {
                                 PSYCHO
                             </button>
                         </div>
-                        <label class="blockchain-select-mobile">Choose Your Chain:</label>
+                        <!-- <label class="blockchain-select-mobile">Choose Your Chain:</label> -->
                         <!-- Blockchain Selection -->
                         <div class="dredd-chain-selector">
-                            <label class="blockchain-select">Choose Your Chain:</label>
+                            <!-- <label class="blockchain-select">Choose Your Chain:</label> -->
                             <select id="blockchain-select" class="chain-dropdown">
                                 <?php 
                                 $chains = dredd_ai_get_option('supported_chains', array(
