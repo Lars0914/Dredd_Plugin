@@ -1562,7 +1562,7 @@ select.chain-dropdown option {
 @media (max-width: 768px) {
   .dredd-chat-container {
     border-radius: 0;
-    height: 75vh !important;
+    height: 75% !important;
     position: fixed;
     top: 70px;
     left: 0;
@@ -4663,7 +4663,7 @@ body.modal-open {
   }
 
   .dashboard-modal-container {
-    max-height: 85vh;
+    max-height: 80%;
     width: 98%;
     margin: 5px;
   }
