@@ -53,8 +53,8 @@
 
       // Analytics date range
       $("#analytics-date-range").on("change", () => this.updateAnalytics());
-      $("#user-search").on("input", filterUsers);
-      $("#user-filter").on("change", filterUsers);
+      $("#user-search").on("input", () => this.filterUsers());
+      $("#user-filter").on("change", () => this.filterUsers());
     }
 
     testConnection(e) {
