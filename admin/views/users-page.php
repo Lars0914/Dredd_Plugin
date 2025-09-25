@@ -163,9 +163,6 @@ $total_chat_users = count($users);
                             <th class="sortable" data-sort="name">
                                 <span class="th-content">👤 User</span>
                             </th>
-                            <th class="sortable" data-sort="credits">
-                                <span class="th-content">🪙 Credits</span>
-                            </th>
                             <th class="sortable" data-sort="analyses">
                                 <span class="th-content">🔬 Analysis Stats</span>
                             </th>
@@ -197,17 +194,9 @@ $total_chat_users = count($users);
                                     <div class="user-status-indicator"></div>
                                 </div>
                                 <div class="user-details-epic">
-                                    <div class="user-name-epic"><?php echo esc_html($user->display_name); ?></div>
-                                    <div class="user-email-epic"><?php echo esc_html($user->user_email); ?></div>
-                                    <div class="user-id-badge">ID: <?php echo $user->ID; ?></div>
-                                </div>
-                            </td>
-                            <td class="credits-cell">
-                                <div class="credits-display">
-                                    <div class="credits-main">
-                                        <span class="credits-icon">🪙</span>
-                                        <span class="credits-amount"><?php echo number_format($user->credits ?? 0); ?></span>
-                                    </div>
+                                    <div class="user-name-epic"><?php echo esc_html($user->username); ?></div>
+                                    <div class="user-email-epic"><?php echo esc_html($user->email); ?></div>
+                                    <div class="user-id-badge">ID: <?php echo $user->id; ?></div>
                                 </div>
                             </td>
                             <td class="analysis-stats-cell">
@@ -249,8 +238,7 @@ $total_chat_users = count($users);
                             </td>
                             <td class="date-cell">
                                 <div class="date-display">
-                                    <div class="date-main"><?php echo date('M j, Y', strtotime($user->user_registered)); ?></div>
-                                    <div class="date-time"><?php echo date('H:i', strtotime($user->user_registered)); ?></div>
+                                    <div class="date-main"><?php echo date('M j, Y', strtotime($user->created_at)); ?></div>
                                 </div>
                             </td>
                         </tr>
