@@ -380,7 +380,6 @@ class Dredd_Admin {
                         <div class="title-container">
                             
                             <h1 class="epic-title">
-                                <span class="title-text">Setting</span>
                                 <span class="title-subtitle">System Configuration Command Center</span>
                             </h1>
                         </div>
@@ -729,7 +728,6 @@ class Dredd_Admin {
                         <div class="title-container">
                             
                             <h1 class="epic-title">
-                                <span class="title-text">Payments</span>
                                 <span class="title-subtitle">Payment Command Center</span>
                             </h1>
                         </div>
