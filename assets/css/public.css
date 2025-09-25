@@ -1661,7 +1661,7 @@ select.chain-dropdown option {
     min-width: 44px;
     height: 44px;
     font-size: 16px;
-    padding: 0;
+    padding: 10px;
   }
 
   /* Promotions sidebar mobile */
@@ -4620,7 +4620,7 @@ body.modal-open {
 .dredd-mobile .auth-btn {
   -webkit-tap-highlight-color: rgba(0, 255, 255, 0.3);
   -webkit-touch-callout: none;
-  min-height: 44px;
+  min-height: 30px;
   min-width: 44px;
 }
 
