@@ -390,7 +390,7 @@ class Dredd_Public {
                                             Remember me
                                         </label>
                                     </div>
-                                    
+                                    <?php echo esc_attr(dredd_ai_get_option('recaptcha_site_key', '')); ?>
                                     <!-- reCAPTCHA -->
                                     <div class="form-group captcha-group">
                                         <div id="login-recaptcha" class="g-recaptcha" data-sitekey="<?php echo esc_attr(dredd_ai_get_option('recaptcha_site_key', '')); ?>" data-theme="dark"></div>
