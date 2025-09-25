@@ -10,18 +10,15 @@ if (!defined('ABSPATH')) {
 
 // Get data passed from admin class
 $users = isset($data['users']) ? $data['users'] : array();
-$chat_users = isset($data['chat_users']) ? $data['chat_users'] : array();
-$credit_settings = isset($data['credit_settings']) ? $data['credit_settings'] : array();
 
 // Calculate statistics for WordPress users (displayed in this table)
-$total_users = count($chat_users);
-$total_credits = array_sum(array_column($users, 'credits'));
+$total_users = count($users);
 $total_analyses = array_sum(array_column($users, 'total_analyses'));
 $total_revenue = array_sum(array_column($users, 'total_spent'));
 $active_users = count(array_filter($users, function($user) { return $user->total_analyses > 0; }));
 
 // Calculate statistics for chat users (separate page)
-$total_chat_users = count($chat_users);
+$total_chat_users = count($users);
 ?>
 
 <div class="wrap dredd-admin-wrap">
@@ -42,10 +39,6 @@ $total_chat_users = count($chat_users);
                     </h1>
                 </div>
                 <div class="header-stats-mini">
-                    <div class="mini-stat">
-                        <span class="mini-stat-number"><?php echo number_format($total_users); ?></span>
-                        <span class="mini-stat-label">WordPress Users</span>
-                    </div>
                     <div class="mini-stat">
                         <span class="mini-stat-number"><?php echo number_format($total_chat_users); ?></span>
                         <span class="mini-stat-label">Chat Users</span>
@@ -91,19 +84,6 @@ $total_chat_users = count($chat_users);
                 <div class="stat-glow revenue-glow"></div>
             </div>
             
-            <div class="mega-stat-card users">
-                <div class="stat-icon">👥</div>
-                <div class="stat-content">
-                    <div class="stat-number"><?php echo number_format($total_users); ?></div>
-                    <div class="stat-label">WordPress Users</div>
-                    <div class="stat-trend">
-                        <span class="trend-indicator up">↗️</span>
-                        <span class="trend-text"><?php echo $active_users; ?> active users</span>
-                    </div>
-                </div>
-                <div class="stat-glow users-glow"></div>
-            </div>
-            
             <div class="mega-stat-card analyses">
                 <div class="stat-icon">🔬</div>
                 <div class="stat-content">
@@ -117,18 +97,6 @@ $total_chat_users = count($chat_users);
                 <div class="stat-glow analyses-glow"></div>
             </div>
             
-            <div class="mega-stat-card credits">
-                <div class="stat-icon">🪙</div>
-                <div class="stat-content">
-                    <div class="stat-number"><?php echo number_format($total_credits); ?></div>
-                    <div class="stat-label">Active Credits</div>
-                    <div class="stat-trend">
-                        <span class="trend-indicator neutral">➡️</span>
-                        <span class="trend-text">In circulation</span>
-                    </div>
-                </div>
-                <div class="stat-glow credits-glow"></div>
-            </div>
         </div>
     </div>
 

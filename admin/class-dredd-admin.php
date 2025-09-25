@@ -2016,23 +2016,10 @@ class Dredd_Admin {
      * Users Management page
      */
     public function users_page() {
-        // Get chat users data
-        global $wpdb;
-        $chat_users_table = $wpdb->prefix . 'dredd_chat_users';
-
-        // Ensure table exists
-        $this->ensure_chat_users_table_exists();
-
-        $chat_users = $wpdb->get_results("SELECT * FROM {$chat_users_table} ORDER BY created_at DESC");
-
         $users = $this->get_all_users_data();
-        $credit_settings = $this->get_credit_settings();
-
         // Pass both user types to the view
         $data = array(
             'users' => $users,
-            'chat_users' => $chat_users,
-            'credit_settings' => $credit_settings
         );
 
         include DREDD_AI_PLUGIN_PATH . 'admin/views/users-page.php';
@@ -2089,42 +2076,31 @@ class Dredd_Admin {
 
             LEFT JOIN (
                 SELECT 
-                    chat_user_id,
+                    user_id,
                     COUNT(*) as total_analyses,
                     SUM(CASE WHEN mode = 'standard' THEN 1 ELSE 0 END) as standard_analyses,
                     SUM(CASE WHEN mode = 'psycho' THEN 1 ELSE 0 END) as psycho_analyses,
                     SUM(CASE WHEN verdict = 'scam' THEN 1 ELSE 0 END) as scams_detected
                 FROM wpzl_dredd_analysis_history
-                GROUP BY chat_user_id
-            ) stats ON u.id = stats.chat_user_id
+                GROUP BY user_id
+            ) stats ON u.id = stats.user_id
 
             LEFT JOIN (
                 SELECT 
-                    chat_user_id,
+                    user_id,
                     SUM(amount) as total_spent,
                     COUNT(CASE WHEN payment_method = 'stripe' THEN 1 END) as stripe_payments,
                     COUNT(CASE WHEN payment_method LIKE '%crypto%' THEN 1 END) as crypto_payments
                 FROM wpzl_dredd_transactions
                 WHERE status = 'completed'
-                GROUP BY chat_user_id
-            ) payments ON u.id = payments.chat_user_id
+                GROUP BY user_id
+            ) payments ON u.id = payments.user_id
 
             ORDER BY u.created_at DESC
         ");
 
         return $chat_users ?: array();
 
-    }
-    
-    /**
-     * Get credit settings
-     */
-    private function get_credit_settings() {
-        return array(
-            'credits_per_dollar' => dredd_ai_get_option('credits_per_dollar', 10),
-            'analysis_cost' => dredd_ai_get_option('analysis_cost', 5),
-            'psycho_cost' => dredd_ai_get_option('psycho_cost', 10)
-        );
     }
     
     /**
