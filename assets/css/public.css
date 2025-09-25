@@ -859,6 +859,7 @@ select.chain-dropdown option {
   border: 2px solid var(--primary-cyan);
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
   animation: borderGlow 2.5s ease-in-out infinite;
+  color: black !important;
 }
 
 .send-button:hover {
@@ -1662,7 +1663,6 @@ select.chain-dropdown option {
     height: 44px;
     font-size: 16px;
     padding: 10px;
-    color: black !important;
   }
 
   /* Promotions sidebar mobile */
