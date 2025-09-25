@@ -861,6 +861,9 @@ select.chain-dropdown option {
   animation: borderGlow 2.5s ease-in-out infinite;
   color: black !important;
 }
+.send-button span {
+  color: black !important;
+}
 
 .send-button:hover {
   background: linear-gradient(
