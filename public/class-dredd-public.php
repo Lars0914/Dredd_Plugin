@@ -390,7 +390,6 @@ class Dredd_Public {
                                             Remember me
                                         </label>
                                     </div>
-                                    <?php echo esc_attr(dredd_ai_get_option('recaptcha_site_key', '')); ?>
                                     <!-- reCAPTCHA -->
                                     <div class="form-group captcha-group">
                                         <div id="login-recaptcha" class="g-recaptcha" data-sitekey="<?php echo esc_attr(dredd_ai_get_option('recaptcha_site_key', '')); ?>" data-theme="dark"></div>
@@ -511,7 +510,7 @@ class Dredd_Public {
                             
                             <div class="auth-modal-content">
                                 <div class="dredd-quote">
-                                    <p>"Provide your email for password reset."</p>
+                                    <p>"Provide your email for password reset. Please check also spam of email"</p>
                                 </div>
                                 
                                 <form id="dredd-forgot-form" class="auth-form-inner">
