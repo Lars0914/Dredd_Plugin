@@ -69,7 +69,7 @@ class Dredd_Database
         $table = $this->wpdb->prefix . 'dredd_chat_users';
 
         $sql = "CREATE TABLE {$table} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            id bigint(20) unsigned NOT NULL,
             username varchar(60) NOT NULL,
             password varchar(255) NOT NULL,
             email varchar(100) NOT NULL,

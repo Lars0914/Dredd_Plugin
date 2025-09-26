@@ -560,7 +560,7 @@
                     }
                     <div class="message-content">
                         <div class="message-bubble ${bubbleClass} ${type}">
-                            <p>${this.formatMessage(content)}</p>
+                            <p>${content}</p>
                         </div>
                     </div>
                     ${
@@ -583,26 +583,6 @@
         type: type,
         timestamp: timestamp,
       });
-    }
-
-    formatMessage(message) {
-      // Format DREDD messages with emphasis and styling
-      return message
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*(.*?)\*/g, "<em>$1</em>")
-        .replace(
-          /GUILTY|SCAM|DANGER|CRIMINAL/gi,
-          '<span class="danger">$&</span>'
-        )
-        .replace(
-          /LEGIT|SAFE|APPROVED|INNOCENT/gi,
-          '<span class="safe">$&</span>'
-        )
-        .replace(/I AM THE LAW/gi, '<span class="law">$&</span>')
-        .replace(
-          /CAUTION|WARNING|SUSPICIOUS/gi,
-          '<span class="warning">$&</span>'
-        );
     }
 
     showTypingIndicator() {
@@ -2242,6 +2222,12 @@
       $.post(dredd_ajax.ajax_url, formData)
         .done((response) => {
           if (response.success) {
+            const user = response.data.user;
+
+            dredd_ajax.user_id = user.id;
+            dredd_ajax.current_user = user;
+            dredd_ajax.is_logged_in = true;
+
             this.showMessage(
               "Login successful! Welcome back, citizen!",
               "success"

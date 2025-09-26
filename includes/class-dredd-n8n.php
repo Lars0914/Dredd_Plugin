@@ -61,7 +61,7 @@ class Dredd_N8N
             if ($this->database->store_analysis($response)) {
                 wp_send_json_success($response);
             } else {
-                wp_send_json_error(array(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error')));
+                wp_send_json_error(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error'));
             }
         } else {
             wp_send_json_error(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error'));
