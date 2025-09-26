@@ -164,7 +164,7 @@ class Dredd_Database
 
         $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            analysis_id bigint(20) NOT NULL AUTO_INCREMENT,
+            analysis_id varchar(255) NOT NULL,
             user_id bigint(20) unsigned NOT NULL,
             session_id varchar(255) NOT NULL,
             token_name varchar(100) NOT NULL,
@@ -172,16 +172,16 @@ class Dredd_Database
             contract_address varchar(42) NOT NULL,
             chain varchar(50) NOT NULL,
             mode enum('standard', 'psycho') NOT NULL DEFAULT 'standard',
-            token_cost int(11) NOT NULL DEFAULT 0,
+            token_cost DECIMAL(18,8) NOT NULL DEFAULT 0,
             verdict enum('scam', 'caution', 'legit', 'unknown') DEFAULT 'unknown',
-            confidence_score  DEFAULT NULL,
-            risk_score DEFAULT NULL,
+            confidence_score DECIMAL(5,2) DEFAULT NULL,
+            risk_score DECIMAL(5,2) DEFAULT NULL,
             analysis_data longtext DEFAULT NULL,
             processing_time int(11) DEFAULT 300,
             wp_post_id bigint(20) unsigned DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             expires_at datetime DEFAULT NULL,
-            PRIMARY KEY (id),
+            PRIMARY KEY (id)
         ) {$charset_collate};";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -284,7 +284,7 @@ class Dredd_Database
             current_mode enum('standard', 'psycho') NOT NULL DEFAULT 'standard',
             selected_chain varchar(50) DEFAULT 'ethereum',
             extracted_data longtext DEFAULT NULL,
-            last_activity datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            last_activity datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (session_id),
             KEY idx_user_sessions (user_id, last_activity),
@@ -435,40 +435,47 @@ class Dredd_Database
     public function store_analysis($data)
     {
 
-        $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history ';
-        $user_table = $this->wpdb->prefix . 'dredd_chat_users';
-        $created_at = $this->wpdb->get_var($this->wpdb->prepare(
-            "SELECT created_at FROM $user_table WHERE id = %d",
-            $data['user_id']
-        ));
-
-        if ($created_at) {
-            $date = new DateTime($created_at);
-            $date->modify('+30 days');
-            $expires_at = $date->format('Y-m-d H:i:s');
-        }
-
+        $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
         $result = $this->wpdb->insert(
             $analysis_table,
             array(
-                'user_id' => $data['user_id'],
-                'session_id' => $data['session_id'],
-                'token_name' => $data['token_name'],
-                'token_symbol' => $data['token_symbol'] ?? null,
-                'contract_address' => $data['contract_address'],
-                'chain' => $data['chain'],
-                'mode' => $data['mode'],
-                'token_cost' => $data['token_cost'],
+                'analysis_id' => $data['session_id'],                              // bigint (you must ensure this value is passed in PHP side)
+                'user_id' => $data['user_id'],                                  // bigint
+                'session_id' => $data['session_id'],                               // varchar
+                'token_name' => $data['token_name'],                               // varchar
+                'token_symbol' => $data['token_symbol'] ?? null,                     // varchar
+                'contract_address' => $data['contract_address'],                         // varchar
+                'chain' => $data['chain'],                                    // varchar
+                'mode' => $data['mode'] ?? null,                                     // enum
+                'token_cost' => $data['token_cost'],                               // DECIMAL(18,8)
                 'verdict' => $data['verdict'] ?? 'unknown',
-                'confidence_score' => $data['confidence_score'] ?? null,
-                'risk_score' => $data['risk_score'] ?? null,
-                'analysis_data' => $data['message'] ?? null,
-                'processing_time' => $data['processing_time'] ?? 300,
-                'wp_post_id' => $data['wp_post_id'] ?? null,
-                'expires_at' => $expires_at ?? null,
+                'confidence_score' => $data['confidence_score'],                         // DECIMAL(5,2)
+                'risk_score' => $data['risk_score'],                               // DECIMAL(5,2)
+                'analysis_data' => $data['message'] ?? null,                          // longtext
+                'processing_time' => $data['processing_time'] ?? 300,                   // int
+                'wp_post_id' => $data['wp_post_id'] ?? null,                       // bigint
+                'expires_at' => '0000-00-00 00:00:00', // datetime
             ),
-            array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s', '%f', '%f', '%s', '%d', '%d', '%s')
+            array(
+                '%s', // analysis_id
+                '%d', // user_id
+                '%s', // session_id
+                '%s', // token_name
+                '%s', // token_symbol
+                '%s', // contract_address
+                '%s', // chain
+                '%s', // mode
+                '%f', // token_cost
+                '%s', // verdict
+                '%f', // confidence_score
+                '%f', // risk_score
+                '%s', // analysis_data
+                '%d', // processing_time
+                '%d', // wp_post_id
+                '%s', // expires_at
+            )
         );
+
 
         var_dump($result);
 
