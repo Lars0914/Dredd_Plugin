@@ -56,6 +56,7 @@ class Dredd_N8N {
             
         if ($response && isset($response['action'])) {
             $this->database->store_analysis($response);
+            var_dump($response);
             wp_send_json_success($response);
         } else {
             wp_send_json_error($response ? $response : 'Analysis failed');
