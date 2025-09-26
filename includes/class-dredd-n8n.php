@@ -55,8 +55,8 @@ class Dredd_N8N {
         $response = $this->send_to_n8n_direct($payload);
             
         if ($response && isset($response['action'])) {
-            $this->database->store_analysis($response);
-            var_dump($response);
+            // $this->database->store_analysis($response);
+            // var_dump($response);
             wp_send_json_success($response);
         } else {
             wp_send_json_error($response ? $response : 'Analysis failed');
@@ -135,7 +135,9 @@ class Dredd_N8N {
      */
     private function parse_n8n_response($body) {
         $n8n_response = json_decode($body, true);
+        var_dump($n8n_response)
         if ($n8n_response) {
+
             if (isset($n8n_response[0]['action'])) {
                 $data = $n8n_response[0];
 
@@ -178,12 +180,14 @@ class Dredd_N8N {
                     'message' => $n8n_response['message']
                 );
             }
+
             elseif (is_string($n8n_response)) {
                 return array(
                     'action' => 'response',
                     'message' => $n8n_response
                 );
             }
+
             else {
                 return array(
                     'action' => 'response',
