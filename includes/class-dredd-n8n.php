@@ -53,10 +53,9 @@ class Dredd_N8N {
         );
                 
         $response = $this->send_to_n8n_direct($payload);
-            
+
         if ($response && isset($response['action'])) {
-            // $this->database->store_analysis($response);
-            // var_dump($response);
+            $this->database->store_analysis($response);
             wp_send_json_success($response);
         } else {
             wp_send_json_error($response ? $response : 'Analysis failed');
@@ -125,8 +124,6 @@ class Dredd_N8N {
         }
         
         $body = wp_remote_retrieve_body($response);
-   
-        
         return $this->parse_n8n_response($body);
     }
     
@@ -135,12 +132,8 @@ class Dredd_N8N {
      */
     private function parse_n8n_response($body) {
         $n8n_response = json_decode($body, true);
-        var_dump($n8n_response)
         if ($n8n_response) {
-
-            if (isset($n8n_response[0]['action'])) {
-                $data = $n8n_response[0];
-
+                $data = $n8n_response;
                 $action            = $data['action'] ?? '';
                 $message           = $data['message'] ?? '';
                 $mode              = $data['mode'] ?? '';
@@ -155,7 +148,6 @@ class Dredd_N8N {
                 $is_honeypot       = $data['isHoneypot'] ?? false;
                 $session_id        = $data['session_id'] ?? '';
                 $user_id           = $data['user_id'] ?? '';
-
                 return array(
                     'action'            => $action,
                     'message'           => $message,
@@ -172,28 +164,6 @@ class Dredd_N8N {
                     'session_id'        => $session_id,
                     'user_id'           => $user_id,
                 );
-            }
-
-            elseif (isset($n8n_response['message'])) {
-                return array(
-                    'action' => 'response',
-                    'message' => $n8n_response['message']
-                );
-            }
-
-            elseif (is_string($n8n_response)) {
-                return array(
-                    'action' => 'response',
-                    'message' => $n8n_response
-                );
-            }
-
-            else {
-                return array(
-                    'action' => 'response',
-                    'message' => 'Analysis completed, but response format was unexpected. Please check the analysis.'
-                );
-            }
         } else {
             if (empty($body) || strlen($body) < 5) {
                 return array(

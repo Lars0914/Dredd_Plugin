@@ -7,11 +7,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Dredd_Database {
-    
+class Dredd_Database
+{
+
     private $wpdb;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         global $wpdb;
         $this->wpdb = $wpdb;
 
@@ -22,7 +24,8 @@ class Dredd_Database {
         add_action('plugins_loaded', array($this, 'check_database_upgrade'));
     }
 
-    public function check_database_upgrade() {
+    public function check_database_upgrade()
+    {
         $current_version = get_option('dredd_ai_db_version', '1.0.0');
 
         // Ensure tables are in place
@@ -38,7 +41,8 @@ class Dredd_Database {
     /**
      * Run all table existence checks
      */
-    private function ensure_all_tables_exist() {
+    private function ensure_all_tables_exist()
+    {
         $this->ensure_chat_users_table_exists();
         $this->ensure_user_tokens_table_exists();
         $this->ensure_transactions_table_exists();
@@ -51,14 +55,16 @@ class Dredd_Database {
 
     // Repeat this pattern for each table below
 
-    private function ensure_chat_users_table_exists() {
+    private function ensure_chat_users_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_chat_users';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_chat_users_table();
         }
     }
 
-    private function create_chat_users_table() {
+    private function create_chat_users_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_chat_users';
 
@@ -78,14 +84,16 @@ class Dredd_Database {
         dbDelta($sql);
     }
 
-    private function ensure_user_tokens_table_exists() {
+    private function ensure_user_tokens_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_user_tokens';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_user_tokens_table();
         }
     }
 
-    private function create_user_tokens_table() {
+    private function create_user_tokens_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_user_tokens';
 
@@ -103,14 +111,16 @@ class Dredd_Database {
         dbDelta($sql);
     }
 
-    private function ensure_transactions_table_exists() {
+    private function ensure_transactions_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_transactions';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_transactions_table();
         }
     }
 
-    private function create_transactions_table() {
+    private function create_transactions_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_transactions';
 
@@ -139,14 +149,16 @@ class Dredd_Database {
         dbDelta($sql);
     }
 
-    private function ensure_analysis_table_exists() {
+    private function ensure_analysis_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_analysis_history';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_analysis_table();
         }
     }
 
-    private function create_analysis_table() {
+    private function create_analysis_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_analysis_history';
 
@@ -171,26 +183,22 @@ class Dredd_Database {
             expires_at datetime DEFAULT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY unique_analysis_id (analysis_id),
-            KEY idx_user_analysis (user_id, created_at),
-            KEY idx_contract_chain (contract_address, chain),
-            KEY idx_expires (expires_at),
-            KEY idx_verdict (verdict),
-            KEY idx_mode (mode),
-            KEY idx_session (session_id)
         ) {$charset_collate};";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
 
-    private function ensure_promotions_table_exists() {
+    private function ensure_promotions_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_promotions';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_promotions_table();
         }
     }
 
-    private function create_promotions_table() {
+    private function create_promotions_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_promotions';
 
@@ -229,14 +237,16 @@ class Dredd_Database {
         dbDelta($sql);
     }
 
-    private function ensure_cache_table_exists() {
+    private function ensure_cache_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_cache';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_cache_table();
         }
     }
 
-    private function create_cache_table() {
+    private function create_cache_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_cache';
 
@@ -255,14 +265,16 @@ class Dredd_Database {
         dbDelta($sql);
     }
 
-    private function ensure_sessions_table_exists() {
+    private function ensure_sessions_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_user_sessions';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_sessions_table();
         }
     }
 
-    private function create_sessions_table() {
+    private function create_sessions_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_user_sessions';
 
@@ -284,14 +296,16 @@ class Dredd_Database {
         dbDelta($sql);
     }
 
-    private function ensure_payments_table_exists() {
+    private function ensure_payments_table_exists()
+    {
         $table = $this->wpdb->prefix . 'dredd_payments';
         if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $this->create_payments_table();
         }
     }
 
-    private function create_payments_table() {
+    private function create_payments_table()
+    {
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_payments';
 
@@ -319,27 +333,28 @@ class Dredd_Database {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
-    
+
     /**
      * Get user token data
      */
-    public function get_user_data($user_id) {
+    public function get_user_data($user_id)
+    {
         $tokens_table = $this->wpdb->prefix . 'dredd_user_tokens';
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        
+
         // Get token balance
         $token_data = $this->wpdb->get_row($this->wpdb->prepare(
             "SELECT * FROM {$tokens_table} WHERE user_id = %d",
             $user_id
         ));
-        
+
         // Get recent transactions
         $recent_transactions = $this->wpdb->get_results($this->wpdb->prepare(
             "SELECT * FROM {$transactions_table} WHERE user_id = %d ORDER BY created_at DESC LIMIT 10",
             $user_id
         ));
-        
+
         // Get analysis statistics
         $analysis_stats = $this->wpdb->get_row($this->wpdb->prepare(
             "SELECT 
@@ -352,75 +367,77 @@ class Dredd_Database {
             FROM {$analysis_table} WHERE user_id = %d",
             $user_id
         ));
-        
+
         return array(
             'tokens' => $token_data,
             'transactions' => $recent_transactions,
             'stats' => $analysis_stats
         );
     }
-    
+
     /**
      * Get user analysis history with pagination
      */
-    public function get_user_analysis_history($user_id, $limit = 20, $offset = 0, $filters = array()) {
+    public function get_user_analysis_history($user_id, $limit = 20, $offset = 0, $filters = array())
+    {
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        
+
         $where_conditions = array("user_id = %d");
         $where_values = array($user_id);
-        
+
         // Apply filters
         if (!empty($filters['mode'])) {
             $where_conditions[] = "mode = %s";
             $where_values[] = $filters['mode'];
         }
-        
+
         if (!empty($filters['verdict'])) {
             $where_conditions[] = "verdict = %s";
             $where_values[] = $filters['verdict'];
         }
-        
+
         if (!empty($filters['chain'])) {
             $where_conditions[] = "chain = %s";
             $where_values[] = $filters['chain'];
         }
-        
+
         if (!empty($filters['date_from'])) {
             $where_conditions[] = "created_at >= %s";
             $where_values[] = $filters['date_from'];
         }
-        
+
         if (!empty($filters['date_to'])) {
             $where_conditions[] = "created_at <= %s";
             $where_values[] = $filters['date_to'];
         }
-        
+
         $where_clause = implode(' AND ', $where_conditions);
-        
+
         // Get total count
         $count_query = "SELECT COUNT(*) FROM {$analysis_table} WHERE {$where_clause}";
         $total_count = $this->wpdb->get_var($this->wpdb->prepare($count_query, $where_values));
-        
+
         // Get paginated results
         $where_values[] = $limit;
         $where_values[] = $offset;
-        
+
         $query = "SELECT * FROM {$analysis_table} WHERE {$where_clause} ORDER BY created_at DESC LIMIT %d OFFSET %d";
         $results = $this->wpdb->get_results($this->wpdb->prepare($query, $where_values));
-        
+
         return array(
             'total' => $total_count,
             'results' => $results
         );
     }
-    
+
     /**
      * Store analysis result
      */
-    public function store_analysis($data) {
+    public function store_analysis($data)
+    {
 
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        
+        var_dump($data);
         return $this->wpdb->insert(
             $analysis_table,
             array(
@@ -436,22 +453,23 @@ class Dredd_Database {
                 'verdict' => $data['verdict'] ?? 'unknown',
                 'confidence_score' => $data['confidence_score'] ?? null,
                 'risk_score' => $data['risk_score'] ?? null,
-                'analysis_data' => json_encode($data['analysis_data']),
-                'dredd_response' => $data['dredd_response'],
-                'processing_time' => $data['processing_time'] ?? null,
+                'analysis_data' => $data['message'] ?? null,
+                'dredd_response' => $data['message'],
+                'processing_time' => $data['processing_time'] ?? 300,
                 'wp_post_id' => $data['wp_post_id'] ?? null,
-                'expires_at' => $expires_at ?? null
+                'expires_at' => $expires_at ?? null,
             ),
             array('%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%f', '%f', '%s', '%s', '%s', '%d', '%d', '%s')
         );
     }
-    
+
     /**
      * Store transaction
      */
-    public function store_transaction($data) {
+    public function store_transaction($data)
+    {
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
-        
+
         return $this->wpdb->insert(
             $transactions_table,
             array(
@@ -469,21 +487,22 @@ class Dredd_Database {
             array('%s', '%d', '%f', '%d', '%s', '%s', '%s', '%s', '%s', '%s')
         );
     }
-    
+
     /**
      * Update transaction status
      */
-    public function update_transaction_status($transaction_id, $status, $metadata = array()) {
+    public function update_transaction_status($transaction_id, $status, $metadata = array())
+    {
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
-        
+
         $update_data = array('status' => $status);
         $update_format = array('%s');
-        
+
         if (!empty($metadata)) {
             $update_data['metadata'] = json_encode($metadata);
             $update_format[] = '%s';
         }
-        
+
         return $this->wpdb->update(
             $transactions_table,
             $update_data,
@@ -492,51 +511,54 @@ class Dredd_Database {
             array('%s')
         );
     }
-    
+
     /**
      * Cleanup expired data
      */
-    public function cleanup_expired_analysis() {
+    public function cleanup_expired_analysis()
+    {
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        
+
         $deleted = $this->wpdb->query(
             "DELETE FROM {$analysis_table} WHERE expires_at < NOW()"
         );
-        
+
         dredd_ai_log("Cleaned up {$deleted} expired analysis records");
         return $deleted;
     }
-    
+
     /**
      * Cleanup expired cache
      */
-    public function cleanup_expired_cache() {
+    public function cleanup_expired_cache()
+    {
         $cache_table = $this->wpdb->prefix . 'dredd_cache';
-        
+
         $deleted = $this->wpdb->query(
             "DELETE FROM {$cache_table} WHERE expires_at < NOW()"
         );
-        
+
         dredd_ai_log("Cleaned up {$deleted} expired cache entries");
         return $deleted;
     }
-    
+
     /**
      * Get analytics data for admin dashboard
      */
-    public function get_analytics_data($date_from = null, $date_to = null) {
+    public function get_analytics_data($date_from = null, $date_to = null)
+    {
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
         $promotions_table = $this->wpdb->prefix . 'dredd_promotions';
-        
+
         $date_condition = '';
         $date_params = array();
-        
+
         if ($date_from && $date_to) {
             $date_condition = "WHERE created_at BETWEEN %s AND %s";
             $date_params = array($date_from, $date_to);
         }
-        
+
         // Analysis statistics
         $analysis_stats = $this->wpdb->get_row($this->wpdb->prepare(
             "SELECT 
@@ -551,7 +573,7 @@ class Dredd_Database {
             FROM {$analysis_table} {$date_condition}",
             $date_params
         ));
-        
+
         // Revenue statistics
         $revenue_stats = $this->wpdb->get_row($this->wpdb->prepare(
             "SELECT 
@@ -563,7 +585,7 @@ class Dredd_Database {
             FROM {$transactions_table} {$date_condition}",
             $date_params
         ));
-        
+
         // Active promotions
         $promotion_stats = $this->wpdb->get_row(
             "SELECT 
@@ -574,70 +596,72 @@ class Dredd_Database {
                 SUM(CASE WHEN payment_status = 'paid' THEN total_cost ELSE 0 END) as promotion_revenue
             FROM {$promotions_table}"
         );
-        
+
         return array(
             'analyses' => $analysis_stats,
             'revenue' => $revenue_stats,
             'promotions' => $promotion_stats
         );
     }
-    
+
     /**
      * Export user data for GDPR compliance
      */
-    public function export_user_data($user_id) {
+    public function export_user_data($user_id)
+    {
         $tokens_table = $this->wpdb->prefix . 'dredd_user_tokens';
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
         $sessions_table = $this->wpdb->prefix . 'dredd_user_sessions';
-        
+
         $data = array();
-        
+
         // User tokens
         $data['tokens'] = $this->wpdb->get_row($this->wpdb->prepare(
             "SELECT * FROM {$tokens_table} WHERE user_id = %d",
             $user_id
         ));
-        
+
         // Transactions
         $data['transactions'] = $this->wpdb->get_results($this->wpdb->prepare(
             "SELECT * FROM {$transactions_table} WHERE user_id = %d ORDER BY created_at DESC",
             $user_id
         ));
-        
+
         // Analysis history
         $data['analyses'] = $this->wpdb->get_results($this->wpdb->prepare(
             "SELECT * FROM {$analysis_table} WHERE user_id = %d ORDER BY created_at DESC",
             $user_id
         ));
-        
+
         // Sessions
         $data['sessions'] = $this->wpdb->get_results($this->wpdb->prepare(
             "SELECT * FROM {$sessions_table} WHERE user_id = %d ORDER BY created_at DESC",
             $user_id
         ));
-        
+
         return $data;
     }
-    
+
     /**
      * Delete all user data for GDPR compliance
      */
-    public function delete_user_data($user_id) {
+    public function delete_user_data($user_id)
+    {
         $tables = array(
             $this->wpdb->prefix . 'dredd_user_tokens',
             $this->wpdb->prefix . 'dredd_transactions',
             $this->wpdb->prefix . 'dredd_analysis_history',
             $this->wpdb->prefix . 'dredd_user_sessions'
         );
-        
+
         $deleted_records = 0;
-        
+
         foreach ($tables as $table) {
             $deleted = $this->wpdb->delete($table, array('user_id' => $user_id), array('%d'));
             $deleted_records += $deleted;
         }
-        
+
         dredd_ai_log("Deleted {$deleted_records} records for user {$user_id}");
         return $deleted_records;
     }
