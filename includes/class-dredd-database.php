@@ -437,11 +437,9 @@ class Dredd_Database
     {
 
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        var_dump($data);
         return $this->wpdb->insert(
             $analysis_table,
             array(
-                'analysis_id' => $data['analysis_id'],
                 'user_id' => $data['user_id'],
                 'session_id' => $data['session_id'],
                 'token_name' => $data['token_name'],
@@ -454,13 +452,13 @@ class Dredd_Database
                 'confidence_score' => $data['confidence_score'] ?? null,
                 'risk_score' => $data['risk_score'] ?? null,
                 'analysis_data' => $data['message'] ?? null,
-                'dredd_response' => $data['message'],
                 'processing_time' => $data['processing_time'] ?? 300,
                 'wp_post_id' => $data['wp_post_id'] ?? null,
                 'expires_at' => $expires_at ?? null,
             ),
-            array('%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%f', '%f', '%s', '%s', '%s', '%d', '%d', '%s')
+            array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s', '%f', '%f', '%s', '%d', '%d', '%s')
         );
+
     }
 
     /**
