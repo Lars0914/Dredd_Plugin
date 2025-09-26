@@ -437,7 +437,7 @@ class Dredd_Database
     {
 
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        return $this->wpdb->insert(
+        $result = $this->wpdb->insert(
             $analysis_table,
             array(
                 'user_id' => $data['user_id'],
@@ -459,6 +459,12 @@ class Dredd_Database
             array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s', '%f', '%f', '%s', '%d', '%d', '%s')
         );
 
+        var_dump($result);
+
+        if ($result === false) {
+            echo "DB Insert Failed:\n";
+            var_dump($this->wpdb->last_error);
+        }
     }
 
     /**
