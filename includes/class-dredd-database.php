@@ -182,7 +182,6 @@ class Dredd_Database
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             expires_at datetime DEFAULT NULL,
             PRIMARY KEY (id),
-            UNIQUE KEY unique_analysis_id (analysis_id),
         ) {$charset_collate};";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -436,7 +435,19 @@ class Dredd_Database
     public function store_analysis($data)
     {
 
-        $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
+        $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history ';
+        $user_table = $this->wpdb->prefix . 'dredd_chat_users';
+        $created_at = $this->wpdb->get_var($this->wpdb->prepare(
+            "SELECT created_at FROM $user_table WHERE id = %d",
+            $data['user_id']
+        ));
+
+        if ($created_at) {
+            $date = new DateTime($created_at);
+            $date->modify('+30 days');
+            $expires_at = $date->format('Y-m-d H:i:s');
+        }
+
         $result = $this->wpdb->insert(
             $analysis_table,
             array(
