@@ -475,14 +475,7 @@ class Dredd_Database
                 '%s', // expires_at
             )
         );
-
-
-        var_dump($result);
-
-        if ($result === false) {
-            echo "DB Insert Failed:\n";
-            var_dump($this->wpdb->last_error);
-        }
+        return $result;
     }
 
     /**

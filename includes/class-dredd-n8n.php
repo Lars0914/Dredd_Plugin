@@ -8,64 +8,71 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Dredd_N8N {
-    
+class Dredd_N8N
+{
+
     private $database;
     private $webhook_url;
     private $api_timeout;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->database = new Dredd_Database();
         $this->webhook_url = dredd_ai_get_option('n8n_webhook', '');
         $this->api_timeout = dredd_ai_get_option('api_timeout', 300);
     }
-    
+
     /**
      * Handle chat request - send directly to n8n and return response
      */
-    public function handle_chat_request() {
+    public function handle_chat_request()
+    {
         $message = sanitize_text_field($_POST['message'] ?? '');
         $session_id = sanitize_text_field($_POST['session_id'] ?? '');
         $user_id = get_current_user_id();
         $mode = sanitize_text_field($_POST['mode'] ?? 'standard');
         $selected_chain = sanitize_text_field($_POST['selected_chain'] ?? 'ethereum');
-        
+
         $extracted_data = $this->extract_token_information($message);
 
         $contract_addresses = null;
         $token_names = null;
-    
-        if(count($extracted_data['contract_addresses']) == 1) {
+
+        if (count($extracted_data['contract_addresses']) == 1) {
             $contract_addresses = $extracted_data['contract_addresses'][0];
             $token_names = $extracted_data['token_names'][0];
         }
-  
+
         $payload = array(
-            'user_message'       => $message,          // keep full text
-            'session_id'         => $session_id,
-            'user_id'            => $user_id,
-            'mode'               => $mode,
-            'blockchain'         => $selected_chain,
+            'user_message' => $message,          // keep full text
+            'session_id' => $session_id,
+            'user_id' => $user_id,
+            'mode' => $mode,
+            'blockchain' => $selected_chain,
             'contract_addresses' => $contract_addresses,
-            'token_names'        => $token_names,
-            'user_credits'       => dredd_ai_get_user_credits($user_id),
-            'timestamp'          => current_time('mysql')
+            'token_names' => $token_names,
+            'user_credits' => dredd_ai_get_user_credits($user_id),
+            'timestamp' => current_time('mysql')
         );
-                
+
         $response = $this->send_to_n8n_direct($payload);
 
         if ($response && isset($response['action'])) {
-            $this->database->store_analysis($response);
-            wp_send_json_success($response);
+            if ($this->database->store_analysis($response)) {
+                wp_send_json_success($response);
+            } else {
+                wp_send_json_error(array(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error')));
+            }
         } else {
-            wp_send_json_error($response ? $response : 'Analysis failed');
+            wp_send_json_error(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error'));
         }
     }
-    
+
     /**
      * Extract token information from user message
      */
-    private function extract_token_information($message) {
+    private function extract_token_information($message)
+    {
         $extracted = array(
             'token_names' => array(),
             'contract_addresses' => array(),
@@ -92,16 +99,17 @@ class Dredd_N8N {
         return $extracted;
     }
 
-    
+
     /**
      * Send data directly to n8n and wait for response
      */
-    private function send_to_n8n_direct($payload) {
+    private function send_to_n8n_direct($payload)
+    {
         if (empty($this->webhook_url)) {
             dredd_ai_log('DREDD N8N - No webhook URL configured', 'error');
             return array('message' => 'n8n webhook not configured', 'action' => 'error');
         }
-        
+
         $response = wp_remote_post($this->webhook_url, array(
             'timeout' => $this->api_timeout,
             'headers' => array(
@@ -110,60 +118,61 @@ class Dredd_N8N {
             ),
             'body' => json_encode($payload)
         ));
-        
+
         if (is_wp_error($response)) {
             return array('message' => 'Connection failed: ' . $response->get_error_message(), 'action' => 'error');
         }
-        
+
         $response_code = wp_remote_retrieve_response_code($response);
         $response_headers = wp_remote_retrieve_headers($response);
 
-        
+
         if ($response_code !== 200) {
             return array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error');
         }
-        
+
         $body = wp_remote_retrieve_body($response);
         return $this->parse_n8n_response($body);
     }
-    
+
     /**
      * Parse n8n response - separated for testing
      */
-    private function parse_n8n_response($body) {
+    private function parse_n8n_response($body)
+    {
         $n8n_response = json_decode($body, true);
         if ($n8n_response) {
-                $data = $n8n_response;
-                $action            = $data['action'] ?? '';
-                $message           = $data['message'] ?? '';
-                $mode              = $data['mode'] ?? '';
-                $token_name        = $data['token_name'] ?? '';
-                $token_symbol      = $data['token_symbol'] ?? '';
-                $contract_address  = $data['contract_address'] ?? '';
-                $chain             = $data['chain'] ?? '';
-                $verdict           = $data['verdict'] ?? '';
-                $token_cost        = $data['token_cost'] ?? 0;
-                $risk_score        = $data['risk_score'] ?? 0;
-                $confidence_score  = $data['confidence_score'] ?? 0;
-                $is_honeypot       = $data['isHoneypot'] ?? false;
-                $session_id        = $data['session_id'] ?? '';
-                $user_id           = $data['user_id'] ?? '';
-                return array(
-                    'action'            => $action,
-                    'message'           => $message,
-                    'mode'              => $mode,
-                    'token_name'        => $token_name,
-                    'token_symbol'      => $token_symbol,
-                    'contract_address'  => $contract_address,
-                    'chain'             => $chain,
-                    'verdict'           => $verdict,
-                    'token_cost'        => $token_cost,
-                    'risk_score'        => $risk_score,
-                    'confidence_score'  => $confidence_score,
-                    'is_honeypot'       => $is_honeypot,
-                    'session_id'        => $session_id,
-                    'user_id'           => $user_id,
-                );
+            $data = $n8n_response;
+            $action = $data['action'] ?? '';
+            $message = $data['message'] ?? '';
+            $mode = $data['mode'] ?? '';
+            $token_name = $data['token_name'] ?? '';
+            $token_symbol = $data['token_symbol'] ?? '';
+            $contract_address = $data['contract_address'] ?? '';
+            $chain = $data['chain'] ?? '';
+            $verdict = $data['verdict'] ?? '';
+            $token_cost = $data['token_cost'] ?? 0;
+            $risk_score = $data['risk_score'] ?? 0;
+            $confidence_score = $data['confidence_score'] ?? 0;
+            $is_honeypot = $data['isHoneypot'] ?? false;
+            $session_id = $data['session_id'] ?? '';
+            $user_id = $data['user_id'] ?? '';
+            return array(
+                'action' => $action,
+                'message' => $message,
+                'mode' => $mode,
+                'token_name' => $token_name,
+                'token_symbol' => $token_symbol,
+                'contract_address' => $contract_address,
+                'chain' => $chain,
+                'verdict' => $verdict,
+                'token_cost' => $token_cost,
+                'risk_score' => $risk_score,
+                'confidence_score' => $confidence_score,
+                'is_honeypot' => $is_honeypot,
+                'session_id' => $session_id,
+                'user_id' => $user_id,
+            );
         } else {
             if (empty($body) || strlen($body) < 5) {
                 return array(
@@ -181,24 +190,25 @@ class Dredd_N8N {
             return array('message' => 'Response too short or invalid: ' . substr($body, 0, 100) . '...', 'action' => 'error');
         }
     }
-    
+
     /**
      * Test n8n connection
      */
-    public function test_connection() {
+    public function test_connection()
+    {
         if (empty($this->webhook_url)) {
             return array(
                 'success' => false,
                 'message' => 'n8n webhook URL not configured'
             );
         }
-        
+
         $test_payload = array(
             'test' => true,
             'timestamp' => current_time('mysql'),
             'source' => 'dredd-ai-plugin'
         );
-        
+
         $response = wp_remote_post($this->webhook_url, array(
             'timeout' => 300,
             'headers' => array(
@@ -206,14 +216,14 @@ class Dredd_N8N {
             ),
             'body' => json_encode($test_payload)
         ));
-        
+
         if (is_wp_error($response)) {
             return array(
                 'success' => false,
                 'message' => 'Connection failed: ' . $response->get_error_message()
             );
         }
-        
+
         $response_code = wp_remote_retrieve_response_code($response);
         if ($response_code === 200) {
             return array(
