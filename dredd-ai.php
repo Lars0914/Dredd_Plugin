@@ -387,40 +387,25 @@ class DreddAI {
     }
     
     public function handle_chat_ajax() {
-        // Add comprehensive AJAX debugging
-        dredd_ai_log('DREDD AJAX - Chat request received', 'debug');
-        dredd_ai_log('DREDD AJAX - POST data: ' . json_encode($_POST), 'debug');
-        dredd_ai_log('DREDD AJAX - Request method: ' . $_SERVER['REQUEST_METHOD'], 'debug');
-        
         try {
             $security = new Dredd_Security();
-            dredd_ai_log('DREDD AJAX - Security class created', 'debug');
             
             // Check if user is logged in for debug info
             $is_logged_in = is_user_logged_in();
-            dredd_ai_log('DREDD AJAX - User logged in status: ' . ($is_logged_in ? 'yes' : 'no'), 'debug');
             
             // Pass false to allow non-logged in users for public chat
             if (!$security->verify_ajax_request(false)) {
-                dredd_ai_log('DREDD AJAX - Security check failed', 'error');
                 wp_die(__('Security check failed', 'dredd-ai'));
             }
             
-            dredd_ai_log('DREDD AJAX - Security check passed, creating N8N instance', 'debug');
             
             $n8n = new Dredd_N8N();
-            dredd_ai_log('DREDD AJAX - N8N instance created, calling handle_chat_request', 'debug');
             
             $n8n->handle_chat_request();
-            dredd_ai_log('DREDD AJAX - N8N handle_chat_request completed', 'debug');
             
         } catch (Exception $e) {
-            dredd_ai_log('DREDD AJAX - Exception caught: ' . $e->getMessage(), 'error');
-            dredd_ai_log('DREDD AJAX - Exception trace: ' . $e->getTraceAsString(), 'error');
             wp_send_json_error('Internal error: ' . $e->getMessage());
         } catch (Error $e) {
-            dredd_ai_log('DREDD AJAX - Fatal error caught: ' . $e->getMessage(), 'error');
-            dredd_ai_log('DREDD AJAX - Error trace: ' . $e->getTraceAsString(), 'error');
             wp_send_json_error('Fatal error: ' . $e->getMessage());
         }
     }

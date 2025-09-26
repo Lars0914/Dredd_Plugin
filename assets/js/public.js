@@ -474,46 +474,12 @@
       this.hideTypingIndicator();
       this.isProcessing = false;
 
-      // COMPREHENSIVE FRONTEND DEBUGGING
-      console.log("=== DREDD FRONTEND DEBUG START ===");
-      console.log("DREDD Frontend - Raw Response:", response);
-      console.log("DREDD Frontend - Response Type:", typeof response);
-      console.log("DREDD Frontend - Response Success:", response.success);
-
-      if (response.success) {
-        console.log("DREDD Frontend - Response Data:", response.data);
-        console.log("DREDD Frontend - Data Type:", typeof response.data);
-        if (response.data) {
-          console.log("DREDD Frontend - Data Action:", response.data.action);
-          console.log("DREDD Frontend - Data Message:", response.data.message);
-          console.log(
-            "DREDD Frontend - Message Length:",
-            response.data.message ? response.data.message.length : "N/A"
-          );
-        }
-      } else {
-        console.log("DREDD Frontend - Error Data:", response.data);
-      }
-      console.log("=== DREDD FRONTEND DEBUG END ===");
-
       if (response.success) {
         const data = response.data;
 
-        // Handle direct message response (most common from n8n)
         if (data.action === "response" && data.message) {
           console.log("DREDD Frontend - Adding message to chat:", data.message);
-
-          // DEBUG: Show alert for first few characters to verify
-          if (data.message.includes("test") || data.message.includes("TEST")) {
-            alert(
-              "DEBUG: Response received! Message starts with: " +
-                data.message.substring(0, 50) +
-                "..."
-            );
-          }
-
           this.addMessage(data.message, "dredd");
-          console.log("DREDD Frontend - Message added to chat successfully");
           return;
         }
 
@@ -533,7 +499,6 @@
               this.displayAnalysisResults(data.analysis_data);
             }
 
-            // Update user credits if applicable
             if (data.credits_used) {
               this.updateCreditsDisplay(data.remaining_credits);
             }

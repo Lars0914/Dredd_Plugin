@@ -152,7 +152,7 @@ class Dredd_Database {
 
         $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            analysis_id varchar(255) NOT NULL,
+            analysis_id bigint(20) NOT NULL AUTO_INCREMENT,
             user_id bigint(20) unsigned NOT NULL,
             session_id varchar(255) NOT NULL,
             token_name varchar(100) NOT NULL,
@@ -165,9 +165,7 @@ class Dredd_Database {
             confidence_score decimal(3,2) DEFAULT NULL,
             risk_score decimal(3,2) DEFAULT NULL,
             analysis_data longtext DEFAULT NULL,
-            dredd_response longtext DEFAULT NULL,
-            api_responses longtext DEFAULT NULL,
-            processing_time int(11) DEFAULT NULL,
+            processing_time int(11) DEFAULT 300,
             wp_post_id bigint(20) unsigned DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             expires_at datetime NOT NULL,
@@ -420,10 +418,8 @@ class Dredd_Database {
      * Store analysis result
      */
     public function store_analysis($data) {
+
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        
-        $retention_days = $this->get_user_retention_days($data['user_id']);
-        $expires_at = date('Y-m-d H:i:s', strtotime("+{$retention_days} days"));
         
         return $this->wpdb->insert(
             $analysis_table,
@@ -442,48 +438,11 @@ class Dredd_Database {
                 'risk_score' => $data['risk_score'] ?? null,
                 'analysis_data' => json_encode($data['analysis_data']),
                 'dredd_response' => $data['dredd_response'],
-                'api_responses' => json_encode($data['api_responses']),
                 'processing_time' => $data['processing_time'] ?? null,
                 'wp_post_id' => $data['wp_post_id'] ?? null,
-                'expires_at' => $expires_at
+                'expires_at' => $expires_at ?? null
             ),
             array('%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%f', '%f', '%s', '%s', '%s', '%d', '%d', '%s')
-        );
-    }
-    
-    /**
-     * Get cached analysis
-     */
-    public function get_cached_analysis($contract_address, $chain, $mode) {
-        $cache_table = $this->wpdb->prefix . 'dredd_cache';
-        $cache_key = md5($contract_address . '_' . $chain . '_' . $mode);
-        
-        $cached_data = $this->wpdb->get_row($this->wpdb->prepare(
-            "SELECT * FROM {$cache_table} WHERE cache_key = %s AND expires_at > NOW()",
-            $cache_key
-        ));
-        
-        return $cached_data ? json_decode($cached_data->cache_data, true) : false;
-    }
-    
-    /**
-     * Store analysis in cache
-     */
-    public function cache_analysis($contract_address, $chain, $mode, $data) {
-        $cache_table = $this->wpdb->prefix . 'dredd_cache';
-        $cache_key = md5($contract_address . '_' . $chain . '_' . $mode);
-        $cache_duration = dredd_ai_get_option('cache_duration', 24);
-        $expires_at = date('Y-m-d H:i:s', strtotime("+{$cache_duration} hours"));
-        
-        return $this->wpdb->replace(
-            $cache_table,
-            array(
-                'cache_key' => $cache_key,
-                'cache_data' => json_encode($data),
-                'cache_type' => 'analysis',
-                'expires_at' => $expires_at
-            ),
-            array('%s', '%s', '%s', '%s')
         );
     }
     
@@ -535,39 +494,6 @@ class Dredd_Database {
     }
     
     /**
-     * Get user session data
-     */
-    public function get_user_session($session_id) {
-        $sessions_table = $this->wpdb->prefix . 'dredd_user_sessions';
-        
-        return $this->wpdb->get_row($this->wpdb->prepare(
-            "SELECT * FROM {$sessions_table} WHERE session_id = %s",
-            $session_id
-        ));
-    }
-    
-    /**
-     * Update user session
-     */
-    public function update_user_session($session_id, $data) {
-        $sessions_table = $this->wpdb->prefix . 'dredd_user_sessions';
-        
-        return $this->wpdb->replace(
-            $sessions_table,
-            array(
-                'session_id' => $session_id,
-                'user_id' => $data['user_id'],
-                'chat_history' => json_encode($data['chat_history'] ?? array()),
-                'current_mode' => $data['current_mode'] ?? 'standard',
-                'selected_chain' => $data['selected_chain'] ?? 'ethereum',
-                'extracted_data' => json_encode($data['extracted_data'] ?? array()),
-                'last_activity' => current_time('mysql')
-            ),
-            array('%s', '%d', '%s', '%s', '%s', '%s', '%s')
-        );
-    }
-    
-    /**
      * Cleanup expired data
      */
     public function cleanup_expired_analysis() {
@@ -593,33 +519,6 @@ class Dredd_Database {
         
         dredd_ai_log("Cleaned up {$deleted} expired cache entries");
         return $deleted;
-    }
-    
-    /**
-     * Cleanup old sessions
-     */
-    public function cleanup_old_sessions() {
-        $sessions_table = $this->wpdb->prefix . 'dredd_user_sessions';
-        
-        $deleted = $this->wpdb->query(
-            "DELETE FROM {$sessions_table} WHERE last_activity < DATE_SUB(NOW(), INTERVAL 7 DAY)"
-        );
-        
-        dredd_ai_log("Cleaned up {$deleted} old sessions");
-        return $deleted;
-    }
-    
-    /**
-     * Get user retention days based on account type
-     */
-    private function get_user_retention_days($user_id) {
-        $user_credits = dredd_ai_get_user_credits($user_id);
-        
-        if ($user_credits > 0) {
-            return dredd_ai_get_option('data_retention_paid', 365);
-        } else {
-            return dredd_ai_get_option('data_retention_free', 90);
-        }
     }
     
     /**
