@@ -174,11 +174,11 @@ class Dredd_Public
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="bitcoin">
-
+                                            <div class="crypto-icon">₿</div>
                                             <span>Bitcoin</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="litecoin">
-
+                                            <div class="crypto-icon">Ł</div>
                                             <span>Litecoin</span>
                                         </div>
                                     </div>
@@ -190,27 +190,27 @@ class Dredd_Public
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
-
+                                            <div class="crypto-icon">Ξ</div>
                                             <span>Ethereum</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="usdcoin">
-
+                                            <div class="crypto-icon">$</div>
                                             <span>USD Coin</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-bep20">
-
+                                            <div class="crypto-icon">₮</div>
                                             <span>Tether BEP20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-erc20">
-
+                                            <div class="crypto-icon">₮</div>
                                             <span>Tether ERC20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-trc20">
-
+                                            <div class="crypto-icon">₮</div>
                                             <span>Tether TRC20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="pulsechain">
-
+                                            <div class="crypto-icon">♥</div>
                                             <span>PulseChain</span>
                                         </div>
                                     </div>
@@ -245,12 +245,12 @@ class Dredd_Public
                                 <div class="custom-amount-section">
                                     <h3>Custom Amount</h3>
                                     <div class="custom-amount-container">
-                                        <div class="amount-display">$<span id="custom-amount-value">3.00</span></div>
-                                        <div class="amount-slider-container">
+                                        <div class="amount-display">$<input type="number" id="custom-amount-value"></div>
+                                        <!-- <div class="amount-slider-container">
                                             <span class="slider-min">$3.00</span>
                                             <input type="range" id="amount-slider" min="3" max="100" value="3" step="0.50">
                                             <span class="slider-max">$100.00</span>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
 

@@ -65,6 +65,7 @@
 
       // Mode switching
       $(".mode-btn").on("click", (e) => this.switchMode(e));
+      $(".mode-btn").on("touchstart", (e) => this.switchMode(e));
 
       // Chain selection
       $("#blockchain-select").on("change", (e) => this.changeChain(e));
@@ -88,6 +89,9 @@
       $(document).on("click", ".payment-modal-close", () =>
         this.closePaymentModal()
       );
+      $(document).on("touchstart", ".payment-modal-close", () =>
+        this.closePaymentModal()
+      );
 
       // Payment method selection with enhanced debugging
       $(document).on("click", ".payment-method-card", (e) => {
@@ -102,15 +106,16 @@
       $("#amount-slider").on("input", (e) => this.updateCustomAmount(e));
 
       // Step navigation - using document delegation for dynamic content
-      $(document).on("click", ".payment-back-btn", (e) => {
+      $(document).on("click touchstart", ".payment-back-btn", (e) => {
         e.preventDefault();
         this.goBackStep();
       });
-      $(document).on("click", ".payment-continue-btn", (e) => {
+      $(document).on("click touchstart", ".payment-continue-btn", (e) => {
         e.preventDefault();
         console.log("Continue button clicked via document delegation");
         this.goNextStep();
       });
+
       $(document).on("click", ".payment-close-btn", (e) => {
         e.preventDefault();
         this.closePaymentModal();
@@ -396,6 +401,11 @@
     }
 
     showPaymentStep(stepNumber) {
+      if (stepNumber == 1)
+        $(".payment-method-card").removeClass("selected selecting");
+      if (stepNumber == 2 && !this.selectedAmount) {
+        $(".amount-option").removeClass("selected");
+      }
       $(".payment-step").removeClass("active");
       $(`#payment-step-${stepNumber}`).addClass("active");
       this.currentPaymentStep = stepNumber;
