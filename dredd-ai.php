@@ -531,7 +531,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -916,7 +916,7 @@ class DreddAI
         if (!$user) {
             // Don't reveal if email exists or not for security
             wp_send_json_success(array(
-                'message' => 'If this email is registered, you will receive a password reset link.'
+                'message' => 'This email was not registered, please check email address again.'
             ));
             return;
         }
@@ -943,34 +943,147 @@ class DreddAI
 
         $subject = 'DREDD AI - Password Reset Request';
         $message = "
-        <div style='font-family: Poppins, -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #c0c0c0;'>
-            <div style='background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #000000 100%); border: 2px solid #ffd700; border-radius: 20px; padding: 40px; margin: 20px; box-shadow: 0 0 60px rgba(255, 215, 0, 0.4);'>
-                <div style='text-align: center; margin-bottom: 30px;'>
-                    <h1 style='color: #ffffff; font-size: 28px; font-weight: 700; margin: 0;'>🔑 PASSWORD RESET REQUEST</h1>
-                    <div style='width: 60px; height: 4px; background: linear-gradient(90deg, #ffd700, #ffeb3b); margin: 15px auto; border-radius: 2px;'></div>
-                </div>
-                
-                <div style='background: rgba(255, 215, 0, 0.05); border: 2px solid #ffd700; border-radius: 15px; padding: 25px; margin-bottom: 30px; text-align: center;'>
-                    <p style='font-size: 18px; margin-bottom: 20px; color: #ffeb3b; font-weight: 600;'>A password reset was requested for your DREDD AI account.</p>
-                    
-                    <div style='background: rgba(26, 26, 26, 0.8); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;'>
-                        <p style='margin: 8px 0; color: #c0c0c0;'><strong style='color: #ffffff;'>Username:</strong> {$user->user_login}</p>
-                        <p style='margin: 8px 0; color: #c0c0c0;'><strong style='color: #ffffff;'>Email:</strong> {$user->user_email}</p>
-                    </div>
-                </div>
-                
-                <div style='text-align: center; margin: 30px 0;'>
-                    <p style='color: #c0c0c0; margin-bottom: 25px; font-size: 16px;'>Click the button below to reset your password:</p>
-                    <a href='{$reset_url}' style='display: inline-block; background: linear-gradient(135deg, #ffd700 0%, #ffeb3b 100%); color: #0a0a0a; padding: 18px 35px; text-decoration: none; border-radius: 25px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease;'>🔑 RESET PASSWORD</a>
-                </div>
-                
-                <div style='border-top: 1px solid rgba(255, 215, 0, 0.2); padding-top: 20px; text-align: center;'>
-                    <p style='font-size: 12px; color: rgba(192, 192, 192, 0.7); margin: 8px 0;'>If you didn't request this, you can safely ignore this email.</p>
-                    <p style='font-size: 12px; color: rgba(192, 192, 192, 0.7); margin: 8px 0;'>This link will expire in 24 hours.</p>
-                    <p style='font-size: 11px; color: rgba(192, 192, 192, 0.5); margin: 10px 0 0 0;'>Justice never forgets. I AM THE LAW!</p>
-                </div>
-            </div>
+        <div
+      style='
+        font-family: Poppins, -apple-system, BlinkMacSystemFont, sans-serif;
+        max-width: 500px;
+        margin: 0 auto;
+        background: #0a0a0a;
+        color: #c0c0c0;
+      '
+    >
+      <div
+        style='
+          background: linear-gradient(
+            135deg,
+            #0a0a0a 0%,
+            #1a1a1a 50%,
+            #000000 100%
+          );
+          border: 2px solid #29c6df;
+          border-radius: 20px;
+          padding: 32px;
+          margin: 20px;
+          box-shadow: 0 0 60px rgb(58 154 191 / 40%);
+        '
+      >
+        <div style='text-align: center; margin-bottom: 30px'>
+          <h1
+            style='color: #ffffff; font-size: 28px; font-weight: 700; margin: 0'
+          >
+            PASSWORD RESET REQUEST
+          </h1>
+          <div
+            style=' 
+              width: 60px;
+              height: 4px;
+              background: linear-gradient(90deg, #0066ff, #3bdbff);
+              margin: 15px auto;
+              border-radius: 2px;
+            '
+          ></div>
         </div>
+
+        <div
+          style='
+            background: rgba(255, 215, 0, 0.05);
+            border: 2px solid #00ffd0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+          '
+        >
+          <p
+            style='
+              font-size: 18px;
+              margin-bottom: 20px;
+              color: #ffffff;
+              font-weight: 600;
+            '
+          >
+            A password reset was requested for your DREDD AI account.
+          </p>
+
+          <div
+            style='
+              background: rgba(26, 26, 26, 0.8);
+              border: 1px solid rgba(255, 215, 0, 0.3);
+              border-radius: 10px;
+              padding: 20px;
+              margin: 20px 0;
+            '
+          >
+            <p style='margin: 8px 0; color: #c0c0c0'>
+              <strong style='color: #ffffff'>Username:</strong> " . $user->user_login . "
+            </p>
+            <p style='margin: 8px 0; color: #c0c0c0'>
+              <strong style='color: #ffffff'>Email:</strong> " . $user->user_email . "
+            </p>
+          </div>
+        </div>
+
+        <div style='text-align: center; margin: 30px 0'>
+          <p style='color: #c0c0c0; margin-bottom: 25px; font-size: 16px'>
+            Click the button below to reset your password:
+          </p>
+          <a
+            href='{$reset_url}'
+            style='
+              display: inline-block;
+              background: linear-gradient(135deg, #00ffdc 0%, #02abfb 100%);
+              color: #0a0a0a;
+              padding: 18px 35px;
+              text-decoration: none;
+              border-radius: 25px;
+              font-weight: 700;
+              font-size: 14px;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+              transition: all 0.3s ease;
+            '
+            >RESET PASSWORD</a
+          >
+        </div>
+
+        <div
+          style='
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            padding-top: 20px;
+            text-align: center;
+          '
+        >
+          <p
+            style='
+              font-size: 12px;
+              color: rgba(192, 192, 192, 0.7);
+              margin: 8px 0;
+            '
+          >
+            If you didn't request this, you can safely ignore this email.
+          </p>
+          <p
+            style='
+              font-size: 12px;
+              color: rgba(192, 192, 192, 0.7);
+              margin: 8px 0;
+            '
+          >
+            This link will expire in 24 hours.
+          </p>
+          <p
+            style='
+              font-size: 11px;
+              color: rgba(192, 192, 192, 0.5);
+              margin: 10px 0 0 0;
+            '
+          >
+            Justice never forgets. I AM THE LAW!
+          </p>
+        </div>
+      </div>
+    </div>
         ";
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
@@ -1130,21 +1243,22 @@ class DreddAI
                     exit;
                 }
 
-                // Reset the password
-                reset_password($user, $new_password);
+                global $wpdb;
+                $wpdb->update(
+                    $wpdb->prefix . 'dredd_chat_users',
+                    ['password' => $new_password],
+                    ['id' => $user->ID],
+                    ['%s'],
+                    ['%d']
+                );
 
-                dredd_ai_log('Password reset successfully for user: ' . $user->user_login, 'info');
-
-                // Get the stored return URL
                 $return_url = get_user_meta($user->ID, 'dredd_reset_return_url', true);
                 if (empty($return_url)) {
                     $return_url = home_url('/');
                 }
 
-                // Clean up the stored return URL
                 delete_user_meta($user->ID, 'dredd_reset_return_url');
 
-                // Redirect to the stored return URL with success message
                 $redirect_url = add_query_arg('password_reset', '1', $return_url);
 
                 wp_redirect($redirect_url);
