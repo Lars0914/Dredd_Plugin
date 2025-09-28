@@ -68,11 +68,6 @@ class DreddAI
         add_action('wp_ajax_nopriv_dredd_process_payment', array($this, 'handle_payment'));
         add_action('wp_ajax_dredd_get_user_data', array($this, 'get_user_data'));
 
-        // Wallet Connect AJAX actions
-        add_action('wp_ajax_dredd_verify_wallet_balance', array($this, 'handle_wallet_verify'));
-        add_action('wp_ajax_dredd_get_wallet_verification_status', array($this, 'handle_wallet_status'));
-        add_action('wp_ajax_dredd_disconnect_wallet', array($this, 'handle_wallet_disconnect'));
-
         // NOWPayments AJAX actions
         add_action('wp_ajax_dredd_create_nowpayments_payment', array($this, 'handle_nowpayments_create'));
         add_action('wp_ajax_dredd_check_nowpayments_status', array($this, 'handle_nowpayments_status'));
@@ -531,7 +526,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -582,30 +577,6 @@ class DreddAI
         $database->cleanup_expired_cache();
     }
 
-    /**
-     * Wallet Connect AJAX Handlers
-     */
-    public function handle_wallet_verify()
-    {
-        $wallet = new Dredd_Wallet();
-        $wallet->verify_wallet_balance();
-    }
-
-    public function handle_wallet_status()
-    {
-        $wallet = new Dredd_Wallet();
-        $wallet->get_wallet_verification_status();
-    }
-
-    public function handle_wallet_disconnect()
-    {
-        $wallet = new Dredd_Wallet();
-        $wallet->disconnect_wallet();
-    }
-
-    /**
-     * NOWPayments AJAX Handlers
-     */
     public function handle_nowpayments_create()
     {
         $nowpayments = new Dredd_NOWPayments();

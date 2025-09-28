@@ -88,11 +88,6 @@
       $(document).on("click", ".payment-modal-close", () =>
         this.closePaymentModal()
       );
-      $(document).on("click", ".payment-modal-overlay", (e) => {
-        if (e.target === e.currentTarget) {
-          this.closePaymentModal();
-        }
-      });
 
       // Payment method selection with enhanced debugging
       $(document).on("click", ".payment-method-card", (e) => {
@@ -1366,24 +1361,24 @@
       });
     }
 
-    handlePaymentSuccess(paymentIntent) {
-      this.closePaymentPanel();
-      this.addMessage(
-        `✅ Payment successful! ${this.selectedPackage.tokens} tokens added to your account.`,
-        "dredd",
-        "success"
-      );
+    // handlePaymentSuccess(paymentIntent) {
+    //   this.closePaymentPanel();
+    //   this.addMessage(
+    //     `✅ Payment successful! ${this.selectedPackage.tokens} tokens added to your account.`,
+    //     "dredd",
+    //     "success"
+    //   );
 
-      // Update credits display
-      this.checkUserCredits().then((credits) => {
-        this.updateCreditsDisplay(credits);
-      });
+    //   // Update credits display
+    //   this.checkUserCredits().then((credits) => {
+    //     this.updateCreditsDisplay(credits);
+    //   });
 
-      // Activate psycho mode if that was the intent
-      if (this.currentMode !== "psycho") {
-        this.activateMode("psycho");
-      }
-    }
+    //   // Activate psycho mode if that was the intent
+    //   if (this.currentMode !== "psycho") {
+    //     this.activateMode("psycho");
+    //   }
+    // }
 
     handlePaymentError(error) {
       this.addMessage(`❌ Payment failed: ${error}`, "dredd", "error");
@@ -1811,13 +1806,6 @@
       });
     }
 
-    // 🚨 DEMO/TEST SYSTEM COMPLETELY REMOVED
-    // Only live payments allowed
-
-    // 🚨 DEMO ADDRESS SYSTEM COMPLETELY REMOVED
-
-    // 🚨 DEMO AMOUNT SYSTEM COMPLETELY REMOVED
-
     displayCryptoPaymentInfo(paymentData) {
       console.log("Displaying crypto payment info:", paymentData);
 
@@ -2046,24 +2034,25 @@
 
     handlePaymentSuccess(method) {
       this.closePaymentModal();
+      alert("success");
       this.addMessage(
         `✅ Payment successful via ${method}! Credits added to your account.`,
         "dredd",
         "success"
       );
 
-      // Update credits display in header
-      this.checkUserCredits().then((credits) => {
-        this.updateCreditsDisplay(credits);
+      // // Update credits display in header
+      // this.checkUserCredits().then((credits) => {
+      //   this.updateCreditsDisplay(credits);
 
-        // Update global state for logged in status
-        dredd_ajax.is_logged_in = true;
+      //   // Update global state for logged in status
+      //   dredd_ajax.is_logged_in = true;
 
-        // Activate psycho mode if that was the intent
-        if (this.currentMode !== "psycho") {
-          this.activateMode("psycho");
-        }
-      });
+      //   // Activate psycho mode if that was the intent
+      //   if (this.currentMode !== "psycho") {
+      //     this.activateMode("psycho");
+      //   }
+      // });
     }
 
     copyToClipboard(e) {
@@ -2080,7 +2069,6 @@
       }, 2000);
     }
 
-    // Utility Functions
     showMessage(message, type = "info") {
       // Simple notification system
       const notification = $(`
@@ -2096,7 +2084,6 @@
       }, 5000);
     }
 
-    // Authentication Methods
     showAuthModal(formType = "login") {
       console.log("showAuthModal called with:", formType);
       console.log("Modal element found:", this.$authModal.length);
@@ -2184,8 +2171,6 @@
     toggleUserMenu() {
       $(".user-dropdown").toggle();
     }
-
-    // Legacy togglePassword method removed - now handled by document-level event handler
 
     handleLogin() {
       const $form = $("#dredd-login-form");
