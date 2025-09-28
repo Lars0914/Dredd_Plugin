@@ -1327,7 +1327,11 @@
 
     processStripePayment() {
       if (!this.selectedPackage) {
-        alert("Please select a token package first.");
+        this.addMessage(
+          "Please select a token package first.",
+          "dredd",
+          "warning"
+        );
         return;
       }
 
@@ -1398,65 +1402,6 @@
     initWeb3() {
       this.web3 = null;
       this.userAccount = null;
-
-      $("#connect-metamask").on("click", () => this.connectMetaMask());
-      $("#connect-walletconnect").on("click", () =>
-        this.connectWalletConnect()
-      );
-
-      $(".crypto-option").on("click", (e) => this.selectCrypto(e));
-    }
-
-    async connectMetaMask() {
-      if (typeof window.ethereum === "undefined") {
-        alert(
-          "MetaMask is not installed. Please install MetaMask to continue."
-        );
-        return;
-      }
-
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        this.userAccount = accounts[0];
-        this.web3 = window.ethereum;
-
-        $("#connect-metamask").text(
-          "Connected: " +
-            this.userAccount.substr(0, 6) +
-            "..." +
-            this.userAccount.substr(-4)
-        );
-
-        // Enable crypto payment options
-        $(".crypto-option").prop("disabled", false);
-      } catch (error) {
-        console.error("MetaMask connection failed:", error);
-        alert("Failed to connect to MetaMask");
-      }
-    }
-
-    async connectWalletConnect() {
-      // WalletConnect integration would go here
-      alert("WalletConnect integration coming soon!");
-    }
-
-    selectCrypto(e) {
-      if (!this.userAccount) {
-        alert("Please connect your wallet first");
-        return;
-      }
-
-      const currency = $(e.currentTarget).data("currency");
-      const chain = $("#crypto-chain").val();
-
-      if (!this.selectedPackage) {
-        alert("Please select a token package first");
-        return;
-      }
-
-      this.processCryptoPayment(currency, chain);
     }
 
     async processCryptoPayment(currency, chain) {
@@ -1488,7 +1433,11 @@
         }
       } catch (error) {
         console.error("Crypto payment failed:", error);
-        alert("Crypto payment failed: " + error.message);
+        this.addMessage(
+          "Crypto payment failed: " + error.message,
+          "dredd",
+          "warning"
+        );
       }
     }
 
@@ -1586,14 +1535,18 @@
 
       if (this.currentPaymentStep === 1) {
         if (!this.selectedPaymentMethod) {
-          alert("Please select a payment method first");
+          this.addMessage(
+            "Please select a payment method first.",
+            "dredd",
+            "warning"
+          );
           return;
         }
         console.log("Moving to step 2");
         this.showPaymentStep(2);
       } else if (this.currentPaymentStep === 2) {
-        if (!this.selectedAmount || this.selectedAmount < 3) {
-          alert("Please enter an amount (minimum $3.00)");
+        if (!this.selectedAmount) {
+          this.addMessage("Please select plan.", "dredd", "warning");
           return;
         }
         console.log("Moving to step 3, setting up payment form");
@@ -1704,7 +1657,7 @@
 
     processStripePayment() {
       if (!this.stripe || !this.stripeCardElement) {
-        alert("Stripe not properly initialized");
+        this.addMessage("Stripe not properly initialized.", "dredd", "warning");
         return;
       }
 
@@ -1730,19 +1683,27 @@
               })
               .then((result) => {
                 if (result.error) {
-                  alert("Payment failed: " + result.error.message);
+                  this.addMessage(
+                    "Payment failed: " + result.error.message,
+                    "dredd",
+                    "warning"
+                  );
                 } else {
                   this.handlePaymentSuccess("stripe");
                 }
                 $btn.prop("disabled", false).text("Complete Payment");
               });
           } else {
-            alert("Payment setup failed: " + response.data);
+            this.addMessage(
+              "Payment setup failed:" + response.data,
+              "dredd",
+              "warning"
+            );
             $btn.prop("disabled", false).text("Complete Payment");
           }
         },
         error: () => {
-          alert("Payment processing failed");
+          this.addMessage("Payment processing failed", "dredd", "warning");
           $btn.prop("disabled", false).text("Complete Payment");
         },
       });
@@ -1780,7 +1741,11 @@
               errorMsg.includes("address") ||
               errorMsg.includes("configured")
             ) {
-              alert("🚨 Address Configuration Error: " + errorMsg);
+              this.addMessage(
+                "Address Configuration Error: " + errorMsg,
+                "dredd",
+                "warning"
+              );
               $("#payment-address").val("ERROR: " + errorMsg);
               $("#payment-address").css({
                 background: "linear-gradient(135deg, #c62828, #d32f2f)",
@@ -1788,7 +1753,7 @@
                 border: "2px solid #f44336",
               });
             } else {
-              alert("🚨 Payment Error: " + errorMsg);
+              this.addMessage("Payment Error: " + errorMsg, "dredd", "warning");
             }
 
             // 🚨 NO DEMO/TEST SYSTEM - ONLY SHOW REAL ERRORS
@@ -1802,8 +1767,10 @@
         error: (xhr, status, error) => {
           // 🚨 AJAX ERROR
           console.error("AJAX payment error:", xhr, status, error);
-          alert(
-            "🚨 Connection Error: Could not connect to payment system. Please try again."
+          this.addMessage(
+            "Connection Error: Could not connect to payment system. Please try again.",
+            "dredd",
+            "warning"
           );
 
           $("#payment-address").val("ERROR: Connection failed");
@@ -1838,10 +1805,13 @@
         });
 
         // Show error message
-        alert(
+
+        this.addMessage(
           "🚨 Payment Error: No wallet address configured for " +
             (paymentData.currency || "this currency") +
-            ". Please contact administrator."
+            ". Please contact administrator.",
+          "dredd",
+          "warning"
         );
         return;
       }
@@ -1901,7 +1871,8 @@
 
         if (timeLeft < 0) {
           clearInterval(this.paymentTimer);
-          alert("Payment timer expired");
+
+          this.addMessage("Payment timer expired", "dredd", "warning");
           this.closePaymentModal();
         }
       }, 1000);
@@ -2969,7 +2940,7 @@
 
             // Add welcome message for password reset return
             window.dreddChat.addMessage(
-              "🔑 Password reset complete! Welcome back, citizen. Ready to Analyze some tokens?",
+              "Password reset complete! Welcome back, citizen. Ready to Analyze some tokens?",
               "dredd",
               "success"
             );

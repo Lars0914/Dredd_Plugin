@@ -175,7 +175,11 @@
   scrollbar-width: thin;
   scrollbar-color: var(--primary-cyan) rgba(0, 0, 0, 0.2);
   min-height: 0;
-  max-height: 100%;
+  /* max-height: 100%; */
+  justify-content: space-around;
+  /* align-items: center; */
+  display: flex;
+  flex-direction: column;
 }
 
 .payment-modal-content::-webkit-scrollbar {
@@ -382,8 +386,8 @@
 }
 
 .amount-option {
-  background: #34495e;
-  border: 2px solid #5a6c7d;
+  background: #000202;
+  border: 2px solid #00ffff;
   border-radius: 8px;
   padding: 16px;
   text-align: center;
@@ -392,6 +396,18 @@
   color: #ecf0f1;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.amount-option span:first-of-type {
+  border-bottom: 1px solid;
+  padding-bottom: 10px;
+}
+.amount-option span {
+  padding-bottom: 10px;
 }
 
 .amount-option:hover {
@@ -433,7 +449,7 @@
 }
 #custom-amount-value {
   color: #3498db;
-  width: 120px;
+  width: 102px;
   background: #34495e;
   margin-left: 7px;
   padding: 0px;
@@ -594,8 +610,8 @@
 }
 
 .payment-summary {
-  background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
-  border: 1px solid #ffffff;
+  background: linear-gradient(135deg, #00ffff00 0%, #287991 100%);
+  border: 1px solid #00ffff;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
@@ -1164,7 +1180,7 @@
 /* 🎯 SPECIFIC STYLING FOR PAYMENT ADDRESS VISIBILITY */
 #payment-address {
   background: linear-gradient(135deg, #1a252f, #2c3e50) !important;
-  border: 2px solid var(--primary-cyan, #00bcd4) !important;
+  border: 2px solid #00ffff !important;
   color: #ffffff !important;
   font-family: "Poppins", monospace !important;
   font-size: 14px !important;
@@ -1179,13 +1195,15 @@
 
 #crypto-amount {
   background: linear-gradient(135deg, #1a252f, #2c3e50) !important;
-  border: 2px solid var(--secondary-purple, #9c27b0) !important;
+  border: 2px solid #00ffff !important;
   color: #ffffff !important;
   font-family: "Poppins", monospace !important;
   font-size: 14px !important;
   font-weight: 700 !important;
   letter-spacing: 1px !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
-  box-shadow: 0 0 10px rgba(156, 39, 176, 0.3),
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.3),
     inset 0 1px 3px rgba(255, 255, 255, 0.1) !important;
+  line-height: 0;
+  padding: 0px 5px;
 }

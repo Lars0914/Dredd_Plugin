@@ -174,13 +174,13 @@ class Dredd_Public
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="bitcoin">
-                                            <div class="crypto-icon">₿</div>
+                                            >
                                             <span>Bitcoin</span>
                                         </div>
-                                        <div class="payment-method-card crypto-card" data-method="litecoin">
-                                            <div class="crypto-icon">Ł</div>
-                                            <span>Litecoin</span>
+                                        <div class="payment-method-card crypto-card" data-method="ethereum">
+                                            <span>Ethereum</span>
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -189,30 +189,23 @@ class Dredd_Public
                                     <h3>Other Cryptocurrencies</h3>
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
-                                        <div class="payment-method-card crypto-card" data-method="ethereum">
-                                            <div class="crypto-icon">Ξ</div>
-                                            <span>Ethereum</span>
-                                        </div>
+
                                         <div class="payment-method-card crypto-card" data-method="usdcoin">
-                                            <div class="crypto-icon">$</div>
                                             <span>USD Coin</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-bep20">
-                                            <div class="crypto-icon">₮</div>
-                                            <span>Tether BEP20</span>
+
+                                            <span>USDT BEP20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-erc20">
-                                            <div class="crypto-icon">₮</div>
-                                            <span>Tether ERC20</span>
+
+                                            <span>USDT ERC20</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="tether-trc20">
-                                            <div class="crypto-icon">₮</div>
-                                            <span>Tether TRC20</span>
+
+                                            <span>USDT TRC20</span>
                                         </div>
-                                        <div class="payment-method-card crypto-card" data-method="pulsechain">
-                                            <div class="crypto-icon">♥</div>
-                                            <span>PulseChain</span>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -233,26 +226,29 @@ class Dredd_Public
                                 <div class="amount-section">
                                     <h3>Choose An Amount</h3>
                                     <div class="amount-grid">
-                                        <div class="amount-option" data-amount="3.00">$3</div>
-                                        <div class="amount-option" data-amount="5.00">$5</div>
-                                        <div class="amount-option" data-amount="10.00">$10</div>
-                                        <div class="amount-option" data-amount="25.00">$25</div>
-                                        <div class="amount-option" data-amount="50.00">$50</div>
-                                        <div class="amount-option" data-amount="100.00">$100</div>
+                                        <div class="amount-option" data-amount="10.00">
+                                            <span>$10</span><span>1</span><span>Month<span>
+                                        </div>
+                                        <div class="amount-option" data-amount="40.00"><span>$40</span><span>6</span>
+                                            <span>Month<span>
+                                        </div>
+                                        <div class="amount-option" data-amount="90.00"><span>$90</span><span>1</span>
+                                            <span>Year<span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="custom-amount-section">
+                                <!-- <div class="custom-amount-section">
                                     <h3>Custom Amount</h3>
                                     <div class="custom-amount-container">
                                         <div class="amount-display">$<input type="number" id="custom-amount-value"></div>
-                                        <!-- <div class="amount-slider-container">
+                                        <div class="amount-slider-container">
                                             <span class="slider-min">$3.00</span>
                                             <input type="range" id="amount-slider" min="3" max="100" value="3" step="0.50">
                                             <span class="slider-max">$100.00</span>
-                                        </div> -->
+                                        </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="payment-step-actions">
                                     <button class="payment-back-btn">Back</button>
