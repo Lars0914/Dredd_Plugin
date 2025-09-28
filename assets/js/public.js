@@ -2034,25 +2034,11 @@
 
     handlePaymentSuccess(method) {
       this.closePaymentModal();
-      alert("success");
       this.addMessage(
         `✅ Payment successful via ${method}! Credits added to your account.`,
         "dredd",
         "success"
       );
-
-      // // Update credits display in header
-      // this.checkUserCredits().then((credits) => {
-      //   this.updateCreditsDisplay(credits);
-
-      //   // Update global state for logged in status
-      //   dredd_ajax.is_logged_in = true;
-
-      //   // Activate psycho mode if that was the intent
-      //   if (this.currentMode !== "psycho") {
-      //     this.activateMode("psycho");
-      //   }
-      // });
     }
 
     copyToClipboard(e) {

@@ -169,41 +169,42 @@ class Dredd_NOWPayments
 
             if ($response['success']) {
                 $payment_info = $response['data'];
-
+                // var_dump($payment_info);
                 // Get appropriate payment address based on mode
-                $configured_addresses = $this->get_payment_addresses();
+                // $configured_addresses = $this->get_payment_addresses();
                 $payment_address = $payment_info['pay_address']; // Default to API address
-                $is_live = !$this->is_sandbox_mode();
+
+                // $is_live = !$this->is_sandbox_mode();
 
                 // Debug logging
                 $sandbox_setting = dredd_ai_get_option(option: 'nowpayments_sandbox', default: '1');
 
                 // 🎯 MAP NOWPayments currencies to our address keys
-                $mapped_currency = $this->map_currency_to_address_key($currency_to_use);
-                dredd_ai_log("DEBUG: Currency: " . $currency . ", Used currency: " . $currency_to_use . ", Mapped to: " . $mapped_currency, 'debug');
+                // $mapped_currency = $this->map_currency_to_address_key($currency_to_use);
+                // dredd_ai_log("DEBUG: Currency: " . $currency . ", Used currency: " . $currency_to_use . ", Mapped to: " . $mapped_currency, 'debug');
 
-                // Override with configured address if available
-                if (!empty($configured_addresses)) {
-                    if (is_array($configured_addresses)) {
-                        // Use mapped currency to find the RIGHT address - NO FALLBACK!
-                        if (isset($configured_addresses[$mapped_currency])) {
-                            $payment_address = $configured_addresses[$mapped_currency];
-                            dredd_ai_log("DEBUG: ✅ FOUND! Using mapped currency address: " . $payment_address, 'debug');
-                        } else {
-                            // 🚨 SPECIFIC CURRENCY NOT FOUND - MUST ERROR!
-                            $available_currencies = implode(', ', array_keys($configured_addresses));
-                            dredd_ai_log("ERROR: No address configured for {$mapped_currency}. Available: {$available_currencies}", 'error');
-                            throw new Exception("No wallet address configured for {$mapped_currency}. Please add your {$mapped_currency} address in admin settings. Available currencies: {$available_currencies}");
-                        }
-                    } else {
-                        $payment_address = $configured_addresses; // Single address
-                        dredd_ai_log("DEBUG: Using single configured address: " . $payment_address, 'debug');
-                    }
-                } else {
-                    // 🚨 NO CONFIGURED ADDRESSES - ALWAYS ERROR IN LIVE-ONLY MODE
-                    dredd_ai_log("ERROR: No live addresses configured for payment!", 'error');
-                    throw new Exception('No wallet addresses configured. Please add your wallet addresses in admin settings to accept payments.');
-                }
+                // // Override with configured address if available
+                // if (!empty($configured_addresses)) {
+                //     if (is_array($configured_addresses)) {
+                //         // Use mapped currency to find the RIGHT address - NO FALLBACK!
+                //         if (isset($configured_addresses[$mapped_currency])) {
+                //             $payment_address = $configured_addresses[$mapped_currency];
+                //             dredd_ai_log("DEBUG: ✅ FOUND! Using mapped currency address: " . $payment_address, 'debug');
+                //         } else {
+                //             // 🚨 SPECIFIC CURRENCY NOT FOUND - MUST ERROR!
+                //             $available_currencies = implode(', ', array_keys($configured_addresses));
+                //             dredd_ai_log("ERROR: No address configured for {$mapped_currency}. Available: {$available_currencies}", 'error');
+                //             throw new Exception("No wallet address configured for {$mapped_currency}. Please add your {$mapped_currency} address in admin settings. Available currencies: {$available_currencies}");
+                //         }
+                //     } else {
+                //         $payment_address = $configured_addresses; // Single address
+                //         dredd_ai_log("DEBUG: Using single configured address: " . $payment_address, 'debug');
+                //     }
+                // } else {
+                //     // 🚨 NO CONFIGURED ADDRESSES - ALWAYS ERROR IN LIVE-ONLY MODE
+                //     dredd_ai_log("ERROR: No live addresses configured for payment!", 'error');
+                //     throw new Exception('No wallet addresses configured. Please add your wallet addresses in admin settings to accept payments.');
+                // }
 
                 // Store payment in database
                 $package_data = array(
@@ -488,7 +489,6 @@ class Dredd_NOWPayments
         $response_body = wp_remote_retrieve_body($response);
 
         $decoded_response = json_decode($response_body, true);
-        var_dump($decoded_response);
 
         if ($response_code >= 200 && $response_code < 300) {
             return array(
