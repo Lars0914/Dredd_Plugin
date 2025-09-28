@@ -524,7 +524,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -852,10 +852,10 @@ class DreddAI
             update_user_meta($user_id, 'dredd_email_verified', true);
 
             // Give welcome credits only if paid mode is enabled
-            if (dredd_ai_is_paid_mode_enabled()) {
-                $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
-                dredd_ai_add_credits($user_id, $welcome_credits);
-            }
+            // if (dredd_ai_is_paid_mode_enabled()) {
+            //     $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
+            //     dredd_ai_add_credits($user_id, $welcome_credits);
+            // }
         }
 
         wp_send_json_success(array(
@@ -1630,7 +1630,8 @@ class DreddAI
                     'id' => $user_id,
                     'display_name' => $user->display_name,
                     'email' => $user->user_email,
-                    'credits' => $user_data['tokens']->token_balance ?? 0
+                    'credits' => $user_data['tokens']->token_balance ?? 0,
+                    'expires_at' => $user_data['user_data']->expires_at,
                 ),
                 'stats' => array(
                     'total_analyses' => $user_data['stats']->total_analyses ?? 0,
@@ -1647,6 +1648,16 @@ class DreddAI
             wp_send_json_error('Failed to load dashboard data');
         }
     }
+    public function get_user_data()
+    {
+        $database = new Dredd_Database();
+        $user_id = get_current_user_id();
+        $user_data = $database->get_user_data($user_id);
+        wp_send_json_success([
+            'expires_at' => $user_data['user_data']->expires_at
+        ]);
+    }
+
 
     /**
      * Handle promotion submission

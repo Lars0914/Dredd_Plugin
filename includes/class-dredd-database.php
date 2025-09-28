@@ -74,6 +74,7 @@ class Dredd_Database
             password varchar(255) NOT NULL,
             email varchar(100) NOT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            expires_at datetime DEFAULT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY unique_username (username),
             UNIQUE KEY unique_email (email),
@@ -341,6 +342,12 @@ class Dredd_Database
         $tokens_table = $this->wpdb->prefix . 'dredd_user_tokens';
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
+        $user_table = $this->wpdb->prefix . 'dredd_chat_users';
+
+        $user_data = $this->wpdb->get_row($this->wpdb->prepare(
+            "SELECT * FROM {$user_table} WHERE id = %d",
+            $user_id
+        ));
 
         // Get token balance
         $token_data = $this->wpdb->get_row($this->wpdb->prepare(
@@ -368,6 +375,7 @@ class Dredd_Database
         ));
 
         return array(
+            'user_data' => $user_data,
             'tokens' => $token_data,
             'transactions' => $recent_transactions,
             'stats' => $analysis_stats

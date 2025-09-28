@@ -64,8 +64,7 @@
       console.log("Signup buttons in DOM:", $(".signup-btn").length);
 
       // Mode switching
-      $(".mode-btn").on("click", (e) => this.switchMode(e));
-      $(".mode-btn").on("touchstart", (e) => this.switchMode(e));
+      $(".mode-btn").on("click touchstart", (e) => this.switchMode(e));
 
       // Chain selection
       $("#blockchain-select").on("change", (e) => this.changeChain(e));
@@ -305,7 +304,7 @@
 
         // Check user credits for logged-in users
         this.checkUserCredits().then((credits) => {
-          if (credits >= parseInt(dredd_ajax.analysis_cost)) {
+          if (credits != 0) {
             this.activateMode(mode);
           } else {
             this.showPaymentModal();
@@ -737,8 +736,13 @@
             nonce: dredd_ajax.nonce,
           },
           success: (response) => {
-            if (response.success && response.data.tokens) {
-              resolve(response.data.tokens.token_balance || 0);
+            if (
+              response.success &&
+              response.data.expires_at &&
+              response.success &&
+              response.data.expires_at != "0000-00-00 00:00:00"
+            ) {
+              resolve(response.data.expires_at || 0);
             } else {
               resolve(0);
             }
@@ -2385,7 +2389,7 @@
         if (dredd_ajax.paid_mode_enabled === "true") {
           // Check user credits
           this.checkUserCredits().then((credits) => {
-            if (credits >= parseInt(dredd_ajax.analysis_cost)) {
+            if (credits != 0) {
               this.activateMode("psycho");
             } else {
               // Show payment modal for psycho mode
@@ -3075,35 +3079,27 @@ function initializeRealTimeUpdates() {
   function checkForUserUpdates() {
     if (!window.dreddChat) return;
 
-    // Check current credit balance
     window.dreddChat.checkUserCredits().then((currentCredits) => {
       if (lastKnownCredits !== null && lastKnownCredits !== currentCredits) {
         console.log(
           `💰 Credits changed: ${lastKnownCredits} → ${currentCredits}`
         );
 
-        // Update UI
         window.dreddChat.updateCreditsDisplay(currentCredits);
 
-        // Show notification
-        const difference = currentCredits - lastKnownCredits;
-        const action = difference > 0 ? "added" : "deducted";
-        const emoji = difference > 0 ? "💰" : "📉";
+        const action = "added";
+        const emoji = "💰";
 
         if (window.dreddChat && window.dreddChat.showMessage) {
           window.dreddChat.showMessage(
-            `${emoji} Admin Update: ${Math.abs(
-              difference
-            )} credits ${action} to your account!`,
+            `${emoji} Admin Update: Your psycho mode period has been extended.!`,
             "dredd",
             "info"
           );
         } else {
-          // Fallback notification
           console.log(`${emoji} Credits ${action}: ${Math.abs(difference)}`);
         }
 
-        // Refresh dashboard if open
         if ($("#dredd-dashboard-modal:visible").length > 0) {
           setTimeout(() => {
             window.dreddChat.loadDashboardData();
