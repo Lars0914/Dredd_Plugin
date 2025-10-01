@@ -24,7 +24,7 @@ class Dredd_Public
     {
         $atts = shortcode_atts(array(
             'width' => '100%',
-            'height' => '600px',
+            'height' => '700px',
             'theme' => 'default'
         ), $atts);
 
