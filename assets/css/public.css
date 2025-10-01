@@ -4695,9 +4695,8 @@ body.modal-open {
 }
 
 .e-con>.e-con-inner {
-  gap: var(--row-gap) var(--column-gap);
-  height: 100%;
-  margin: 0 100px;
-  padding-inline-end: 0;
-  padding-inline-start: 0;
+  gap: var(--row-gap) var(--column-gap) !important;
+  height: 100% !important;
+  padding: 0 139px !important;
+  max-width: none !important;
 }
