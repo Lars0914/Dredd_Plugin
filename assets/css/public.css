@@ -9,10 +9,12 @@
     box-shadow: 0 0 40px rgba(0, 255, 255, 0.6),
       0 0 80px rgba(64, 224, 208, 0.3), 0 0 120px rgba(0, 128, 255, 0.2);
   }
+
   50% {
     box-shadow: 0 0 60px rgba(0, 255, 255, 0.8),
       0 0 120px rgba(64, 224, 208, 0.5), 0 0 180px rgba(0, 128, 255, 0.3);
   }
+
   100% {
     box-shadow: 0 0 40px rgba(0, 255, 255, 0.6),
       0 0 80px rgba(64, 224, 208, 0.3), 0 0 120px rgba(0, 128, 255, 0.2);
@@ -106,11 +108,13 @@ h6 {
 }
 
 @keyframes realtimePulse {
+
   0%,
   100% {
     transform: scale(1);
     opacity: 0.7;
   }
+
   50% {
     transform: scale(1.2);
     opacity: 1;
@@ -138,12 +142,10 @@ h6 {
 
 /* Chat Header */
 .dredd-chat-header {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 255, 255, 0.15) 0%,
-    rgba(64, 224, 208, 0.15) 50%,
-    rgba(160, 32, 240, 0.15) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(0, 255, 255, 0.15) 0%,
+      rgba(64, 224, 208, 0.15) 50%,
+      rgba(160, 32, 240, 0.15) 100%);
   color: var(--text-primary);
   padding: 8px 15px;
   display: flex;
@@ -388,11 +390,9 @@ select.chain-dropdown option {
 
 /* Payment Panel */
 .dredd-payment-panel {
-  background: linear-gradient(
-    135deg,
-    var(--dredd-dark-gray),
-    var(--dredd-black)
-  );
+  background: linear-gradient(135deg,
+      var(--dredd-dark-gray),
+      var(--dredd-black));
   border-bottom: 2px solid var(--dredd-gold);
   padding: 20px;
   color: var(--dredd-silver);
@@ -659,9 +659,11 @@ select.chain-dropdown option {
   flex-direction: row-reverse;
   word-break: break-all !important;
 }
+
 .user-message p {
   word-break: break-all !important;
 }
+
 .message-avatar {
   width: 40px;
   height: 40px;
@@ -671,15 +673,15 @@ select.chain-dropdown option {
   justify-content: center;
   font-size: 24px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.1),
-    rgba(160, 32, 240, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.1),
+      rgba(160, 32, 240, 0.1));
 }
+
 .message-avatar img {
   border-radius: 50% !important;
 }
+
 .message-content {
   flex: 1;
 }
@@ -700,19 +702,15 @@ select.chain-dropdown option {
 
 .dredd-message {
   border-color: var(--border-secondary);
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.05),
-    rgba(64, 224, 208, 0.05)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.05),
+      rgba(64, 224, 208, 0.05));
 }
 
 .user-message .message-bubble {
-  background: linear-gradient(
-    135deg,
-    rgba(160, 32, 240, 0.1),
-    rgba(0, 128, 255, 0.05)
-  );
+  background: linear-gradient(135deg,
+      rgba(160, 32, 240, 0.1),
+      rgba(0, 128, 255, 0.05));
   border-color: var(--secondary-purple);
 }
 
@@ -810,11 +808,9 @@ select.chain-dropdown option {
 #dredd-message-input {
   flex: 1;
   padding: 8px 14px;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.9),
-    rgba(0, 0, 0, 0.9)
-  );
+  background: linear-gradient(135deg,
+      rgba(26, 26, 26, 0.9),
+      rgba(0, 0, 0, 0.9));
   border: 2px solid var(--border-secondary);
   border-radius: 15px;
   color: var(--text-primary);
@@ -838,11 +834,9 @@ select.chain-dropdown option {
 
 .send-button {
   padding: 8px 15px;
-  background: linear-gradient(
-    90deg,
-    var(--primary-cyan),
-    var(--primary-turquoise)
-  );
+  background: linear-gradient(90deg,
+      var(--primary-cyan),
+      var(--primary-turquoise));
   border: none;
   border-radius: 15px;
   color: var(--dark-bg);
@@ -860,16 +854,15 @@ select.chain-dropdown option {
   animation: borderGlow 2.5s ease-in-out infinite;
   color: black !important;
 }
+
 .send-button span {
   color: black !important;
 }
 
 .send-button:hover {
-  background: linear-gradient(
-    90deg,
-    var(--primary-turquoise),
-    var(--accent-blue)
-  );
+  background: linear-gradient(90deg,
+      var(--primary-turquoise),
+      var(--accent-blue));
   box-shadow: 0 5px 25px rgba(64, 224, 208, 0.6),
     0 0 30px rgba(0, 255, 255, 0.8);
   transform: translateY(-3px);
@@ -888,11 +881,9 @@ select.chain-dropdown option {
   right: -350px;
   width: 320px;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    var(--dredd-dark-gray),
-    var(--dredd-black)
-  );
+  background: linear-gradient(135deg,
+      var(--dredd-dark-gray),
+      var(--dredd-black));
   border-left: 2px solid var(--dredd-gold);
   border-radius: 0 15px 15px 0;
   transition: right 0.3s ease;
@@ -1128,11 +1119,9 @@ select.chain-dropdown option {
 .dredd-user-dashboard {
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.9),
-    rgba(10, 10, 10, 0.95)
-  );
+  background: linear-gradient(135deg,
+      rgba(26, 26, 26, 0.9),
+      rgba(10, 10, 10, 0.95));
   color: var(--text-primary);
   padding: 30px;
   border-radius: 15px;
@@ -1189,11 +1178,9 @@ select.chain-dropdown option {
 }
 
 .dashboard-section {
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.9),
-    rgba(10, 10, 10, 0.95)
-  );
+  background: linear-gradient(135deg,
+      rgba(26, 26, 26, 0.9),
+      rgba(10, 10, 10, 0.95));
   border: 2px solid var(--border-secondary);
   border-radius: 15px;
   padding: 25px;
@@ -1508,11 +1495,9 @@ select.chain-dropdown option {
 }
 
 .modal-content {
-  background: linear-gradient(
-    135deg,
-    rgba(10, 10, 10, 0.9),
-    rgba(0, 0, 0, 0.9)
-  );
+  background: linear-gradient(135deg,
+      rgba(10, 10, 10, 0.9),
+      rgba(0, 0, 0, 0.9));
   border: 2px solid #00ffff;
   border-radius: 15px;
   max-width: 600px;
@@ -1522,11 +1507,9 @@ select.chain-dropdown option {
 }
 
 .modal-header {
-  background: linear-gradient(
-    90deg,
-    rgba(64, 224, 208, 0.2),
-    rgba(0, 255, 255, 0.2)
-  );
+  background: linear-gradient(90deg,
+      rgba(64, 224, 208, 0.2),
+      rgba(0, 255, 255, 0.2));
   color: #00ffff;
   padding: 15px 20px;
   display: flex;
@@ -1574,6 +1557,7 @@ select.chain-dropdown option {
     border: none;
     margin: 0;
   }
+
   footer {
     display: none;
   }
@@ -1631,6 +1615,7 @@ select.chain-dropdown option {
     margin-bottom: 12px;
     word-break: break-all !important;
   }
+
   .chat-message p {
     word-break: break-all !important;
   }
@@ -1775,6 +1760,7 @@ select.chain-dropdown option {
 
 /* Enhanced Mobile Responsive - Small screens */
 @media (max-width: 480px) {
+
   /* Dashboard improvements */
   .overview-grid {
     grid-template-columns: 1fr;
@@ -1895,11 +1881,13 @@ select.chain-dropdown option {
 
 /* Animations */
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.7;
     transform: scale(1.05);
@@ -1907,11 +1895,13 @@ select.chain-dropdown option {
 }
 
 @keyframes typing {
+
   0%,
   60%,
   100% {
     transform: translateY(0);
   }
+
   30% {
     transform: translateY(-10px);
   }
@@ -1923,6 +1913,7 @@ select.chain-dropdown option {
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1930,10 +1921,12 @@ select.chain-dropdown option {
 }
 
 @keyframes fadeInOut {
+
   0%,
   100% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 1;
   }
@@ -1944,6 +1937,7 @@ select.chain-dropdown option {
     transform: translateY(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -1954,28 +1948,33 @@ select.chain-dropdown option {
   0% {
     background-position: -200px 0;
   }
+
   100% {
     background-position: calc(200px + 100%) 0;
   }
 }
 
 @keyframes borderGlow {
+
   0%,
   100% {
     border-color: var(--primary-cyan);
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.3),
       inset 0 0 10px rgba(0, 255, 255, 0.1);
   }
+
   25% {
     border-color: var(--primary-turquoise);
     box-shadow: 0 0 25px rgba(64, 224, 208, 0.8),
       0 0 50px rgba(64, 224, 208, 0.4), inset 0 0 15px rgba(64, 224, 208, 0.2);
   }
+
   50% {
     border-color: var(--accent-blue);
     box-shadow: 0 0 35px rgba(0, 128, 255, 0.9), 0 0 70px rgba(0, 128, 255, 0.5),
       inset 0 0 20px rgba(0, 128, 255, 0.2);
   }
+
   75% {
     border-color: var(--primary-turquoise);
     box-shadow: 0 0 25px rgba(64, 224, 208, 0.8),
@@ -1987,21 +1986,21 @@ select.chain-dropdown option {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
 
 .progress-fill {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--dredd-gold),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      var(--dredd-gold),
+      transparent);
   background-size: 200px 100%;
   animation: shimmer 2s infinite;
 }
@@ -2394,11 +2393,9 @@ select.chain-dropdown option {
 }
 
 .signup-btn {
-  background: linear-gradient(
-    90deg,
-    var(--primary-turquoise),
-    var(--accent-blue)
-  );
+  background: linear-gradient(90deg,
+      var(--primary-turquoise),
+      var(--accent-blue));
   border-color: var(--primary-turquoise);
   color: var(--dark-bg);
 }
@@ -2421,11 +2418,9 @@ select.chain-dropdown option {
 .user-menu-btn {
   padding: 6px 12px;
   border: 2px solid var(--border-primary);
-  background: linear-gradient(
-    90deg,
-    var(--primary-cyan),
-    var(--primary-turquoise)
-  );
+  background: linear-gradient(90deg,
+      var(--primary-cyan),
+      var(--primary-turquoise));
   color: var(--dark-bg);
   font-family: inherit;
   font-size: 10px;
@@ -2483,7 +2478,8 @@ select.chain-dropdown option {
 /* Prevent background scrolling when modal is open */
 body.modal-open {
   overflow: hidden;
-  padding-right: 15px; /* Compensate for scrollbar */
+  padding-right: 15px;
+  /* Compensate for scrollbar */
 }
 
 /* User Dashboard Modal - Chat Window Popup */
@@ -2531,11 +2527,9 @@ body.modal-open {
   max-width: 800px;
   height: 90%;
   max-height: 500px;
-  background: linear-gradient(
-    145deg,
-    rgba(15, 15, 15, 0.98) 0%,
-    rgba(25, 25, 25, 0.98) 100%
-  );
+  background: linear-gradient(145deg,
+      rgba(15, 15, 15, 0.98) 0%,
+      rgba(25, 25, 25, 0.98) 100%);
   border: 2px solid var(--primary-cyan);
   border-radius: 12px;
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), 0 0 60px rgba(64, 224, 208, 0.2),
@@ -2547,11 +2541,9 @@ body.modal-open {
 }
 
 .dashboard-modal-header {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.08),
-    rgba(64, 224, 208, 0.08)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.08),
+      rgba(64, 224, 208, 0.08));
   padding: 12px 20px;
   border-bottom: 1px solid rgba(0, 255, 255, 0.3);
   display: flex;
@@ -2569,12 +2561,10 @@ body.modal-open {
   left: 20px;
   right: 20px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--primary-cyan) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--primary-cyan) 50%,
+      transparent 100%);
 }
 
 .dashboard-modal-header h2 {
@@ -2589,11 +2579,9 @@ body.modal-open {
 }
 
 .dashboard-modal-close {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 107, 107, 0.1),
-    rgba(255, 68, 68, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 107, 107, 0.1),
+      rgba(255, 68, 68, 0.1));
   border: 1.5px solid rgba(255, 107, 107, 0.3);
   color: #ff6b6b;
   font-size: 18px;
@@ -2612,11 +2600,9 @@ body.modal-open {
 
 .dashboard-modal-close:hover {
   color: #ffffff;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 107, 107, 0.2),
-    rgba(255, 68, 68, 0.2)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 107, 107, 0.2),
+      rgba(255, 68, 68, 0.2));
   border-color: #ff6b6b;
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
@@ -2648,6 +2634,7 @@ body.modal-open {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -2704,11 +2691,9 @@ body.modal-open {
 }
 
 .nav-btn.active {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.1),
-    rgba(64, 224, 208, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.1),
+      rgba(64, 224, 208, 0.1));
   color: var(--primary-cyan);
   border-bottom: 2px solid var(--primary-cyan);
 }
@@ -2766,6 +2751,7 @@ body.modal-open {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -2781,11 +2767,9 @@ body.modal-open {
 }
 
 .stat-card {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.05),
-    rgba(64, 224, 208, 0.05)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.05),
+      rgba(64, 224, 208, 0.05));
   border: 1px solid rgba(0, 255, 255, 0.2);
   border-radius: 12px;
   padding: 25px 20px;
@@ -2831,11 +2815,9 @@ body.modal-open {
 }
 
 .action-card {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.4),
-    rgba(20, 20, 20, 0.4)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.4),
+      rgba(20, 20, 20, 0.4));
   border: 1.5px solid rgba(0, 255, 255, 0.3);
   border-radius: 12px;
   padding: 25px 20px;
@@ -2854,11 +2836,9 @@ body.modal-open {
 
 .action-card:hover {
   border-color: var(--primary-cyan);
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.1),
-    rgba(64, 224, 208, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.1),
+      rgba(64, 224, 208, 0.1));
   transform: translateY(-3px);
   box-shadow: 0 15px 40px rgba(0, 255, 255, 0.3);
 }
@@ -2902,11 +2882,9 @@ body.modal-open {
 }
 
 .filter-select {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.6),
-    rgba(20, 20, 20, 0.6)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.6),
+      rgba(20, 20, 20, 0.6));
   border: 1px solid rgba(0, 255, 255, 0.3);
   border-radius: 6px;
   color: var(--text-primary);
@@ -3085,11 +3063,9 @@ body.modal-open {
 .form-group input,
 .form-group select,
 .form-group textarea {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.6),
-    rgba(20, 20, 20, 0.6)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.6),
+      rgba(20, 20, 20, 0.6));
   border: 1px solid rgba(0, 255, 255, 0.3);
   border-radius: 6px;
   color: var(--text-primary);
@@ -3108,11 +3084,9 @@ body.modal-open {
 }
 
 .submit-promotion-btn {
-  background: linear-gradient(
-    135deg,
-    var(--primary-cyan),
-    var(--primary-turquoise)
-  );
+  background: linear-gradient(135deg,
+      var(--primary-cyan),
+      var(--primary-turquoise));
   border: none;
   border-radius: 8px;
   color: var(--dark-bg);
@@ -3125,11 +3099,9 @@ body.modal-open {
 }
 
 .submit-promotion-btn:hover {
-  background: linear-gradient(
-    135deg,
-    var(--primary-turquoise),
-    var(--accent-blue)
-  );
+  background: linear-gradient(135deg,
+      var(--primary-turquoise),
+      var(--accent-blue));
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
 }
@@ -3433,11 +3405,9 @@ body.modal-open {
   max-width: 350px;
   height: 500px;
   max-height: 500px;
-  background: linear-gradient(
-    145deg,
-    rgba(15, 15, 15, 0.95) 0%,
-    rgba(25, 25, 25, 0.95) 100%
-  );
+  background: linear-gradient(145deg,
+      rgba(15, 15, 15, 0.95) 0%,
+      rgba(25, 25, 25, 0.95) 100%);
   border: 2px solid var(--primary-cyan);
   border-radius: 15px;
   box-shadow: 0 0 40px rgba(0, 255, 255, 0.4), 0 0 80px rgba(64, 224, 208, 0.2),
@@ -3455,6 +3425,7 @@ body.modal-open {
     transform: scale(0.95) translateY(-10px);
     filter: blur(2px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -3475,11 +3446,9 @@ body.modal-open {
 }
 
 .auth-modal-header {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.08),
-    rgba(64, 224, 208, 0.08)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.08),
+      rgba(64, 224, 208, 0.08));
   padding: 15px 20px 13px 20px;
   border-bottom: 1px solid rgba(0, 255, 255, 0.3);
   display: flex;
@@ -3497,12 +3466,10 @@ body.modal-open {
   left: 25px;
   right: 25px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--primary-cyan) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--primary-cyan) 50%,
+      transparent 100%);
 }
 
 .auth-modal-header h2 {
@@ -3563,22 +3530,18 @@ body.modal-open {
 }
 
 .auth-modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    45deg,
-    var(--primary-cyan),
-    var(--primary-turquoise)
-  );
+  background: linear-gradient(45deg,
+      var(--primary-cyan),
+      var(--primary-turquoise));
   border-radius: 4px;
   transition: all 0.3s ease;
   border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
 .auth-modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    45deg,
-    var(--primary-turquoise),
-    var(--accent-blue)
-  );
+  background: linear-gradient(45deg,
+      var(--primary-turquoise),
+      var(--accent-blue));
   box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
   border-color: var(--primary-cyan);
 }
@@ -3590,11 +3553,9 @@ body.modal-open {
 }
 
 .dredd-quote {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.03),
-    rgba(64, 224, 208, 0.03)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.03),
+      rgba(64, 224, 208, 0.03));
   border-left: 3px solid var(--primary-cyan);
   padding: 12px 16px;
   margin-bottom: 20px;
@@ -3625,8 +3586,10 @@ body.modal-open {
   margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Consistent spacing between form elements */
-  min-height: 0; /* Ensures proper flex behavior */
+  gap: 16px;
+  /* Consistent spacing between form elements */
+  min-height: 0;
+  /* Ensures proper flex behavior */
 }
 
 .form-group {
@@ -3651,11 +3614,9 @@ body.modal-open {
 .form-group input[type="password"] {
   width: 100%;
   padding: 12px 16px;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.6),
-    rgba(20, 20, 20, 0.6)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.6),
+      rgba(20, 20, 20, 0.6));
   border: 1.5px solid rgba(0, 255, 255, 0.3);
   border-radius: 12px;
   color: #ffffff !important;
@@ -3778,11 +3739,9 @@ body.modal-open {
   border-color: var(--primary-cyan);
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.1),
     inset 0 1px 0 rgba(0, 255, 255, 0.2);
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.03),
-    rgba(64, 224, 208, 0.03)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.03),
+      rgba(64, 224, 208, 0.03));
   transform: translateY(-1px);
   color: #ffffff !important;
   caret-color: #00ffff !important;
@@ -3910,6 +3869,7 @@ body.modal-open {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -4024,18 +3984,16 @@ body.modal-open {
   box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
 }
 
-.checkbox-label input[type="checkbox"]:checked + .checkmark {
-  background: linear-gradient(
-    135deg,
-    var(--primary-cyan),
-    var(--primary-turquoise)
-  );
+.checkbox-label input[type="checkbox"]:checked+.checkmark {
+  background: linear-gradient(135deg,
+      var(--primary-cyan),
+      var(--primary-turquoise));
   border-color: var(--primary-cyan);
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
   transform: scale(1.1);
 }
 
-.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+.checkbox-label input[type="checkbox"]:checked+.checkmark::after {
   content: "✓";
   color: var(--dark-bg);
   font-weight: bold;
@@ -4181,11 +4139,9 @@ body.modal-open {
 }
 
 .error-message {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 68, 68, 0.08),
-    rgba(255, 102, 102, 0.08)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 68, 68, 0.08),
+      rgba(255, 102, 102, 0.08));
   border: 1px solid rgba(255, 68, 68, 0.4);
   color: #ff8888;
   padding: 10px 14px;
@@ -4203,10 +4159,12 @@ body.modal-open {
     opacity: 0;
     transform: translateY(-10px) scale(0.95);
   }
+
   50% {
     opacity: 0.8;
     transform: translateY(-2px) scale(1.02);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -4232,6 +4190,7 @@ body.modal-open {
     opacity: 0;
     transform: translateX(100%);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -4301,20 +4260,25 @@ body.modal-open {
     opacity: 0;
     transform: translateX(100%);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
   }
 }
+
 .blockchain-select-mobile {
   display: none;
 }
+
 /* Enhanced Modal Responsive Design */
 @media (max-width: 768px) {
+
   /* Auth Modal - Mobile Responsive */
   .blockchain-select-mobile {
     display: block;
   }
+
   .blockchain-select {
     display: none;
   }
@@ -4511,9 +4475,11 @@ body.modal-open {
   .blockchain-select-mobile {
     display: block;
   }
+
   .blockchain-select {
     display: none;
   }
+
   .dredd-auth-modal {
     top: 10px !important;
     left: 5px !important;
@@ -4635,6 +4601,7 @@ body.modal-open {
 
 /* Touch-friendly improvements */
 @media (hover: none) and (pointer: coarse) {
+
   .auth-btn:hover,
   .mode-btn:hover,
   .payment-method-card:hover {
@@ -4728,9 +4695,9 @@ body.modal-open {
 }
 
 .e-con>.e-con-inner {
-    gap: var(--row-gap) var(--column-gap);
-    height: 100%;
-    margin: 0 100px;
-    padding-inline-end: 0;
-    padding-inline-start: 0;
+  gap: var(--row-gap) var(--column-gap);
+  height: 100%;
+  margin: 0 100px;
+  padding-inline-end: 0;
+  padding-inline-start: 0;
 }
