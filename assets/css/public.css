@@ -2385,7 +2385,8 @@ select.chain-dropdown option {
   text-transform: uppercase;
 }
 
-.auth-btn:hover {
+.auth-btn:hover,
+.auth-btn:focus {
   background: var(--border-primary);
   color: var(--dark-bg);
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
@@ -2400,7 +2401,8 @@ select.chain-dropdown option {
   color: var(--dark-bg);
 }
 
-.signup-btn:hover {
+.signup-btn:hover,
+.signup-btn:focus {
   background: var(--border-primary);
   border-color: var(--border-primary);
   color: var(--dark-bg);
