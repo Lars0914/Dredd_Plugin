@@ -168,42 +168,29 @@ class Dredd_Public
                                     </div>
                                 </div>
 
-                                <!-- No-Fee Cryptocurrencies -->
+                                <!-- Pay With Crypto  -->
                                 <div class="payment-method-section">
-                                    <h3>No-Fee Cryptocurrencies</h3>
+                                    <h3>Pay With Crypto </h3>
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="bitcoin">
-                                            >
-                                            <span>Bitcoin</span>
+                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/usdc.png" alt="USDC"
+                                                class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
+                                            <span>USDC</span>
+                                            <span>USD Coin</span>
+
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
+                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/eth.svg" alt="ETH"
+                                                class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
+                                            <span>ETH</span>
                                             <span>Ethereum</span>
                                         </div>
-
-                                    </div>
-                                </div>
-
-                                <!-- Other Cryptocurrencies -->
-                                <div class="payment-method-section">
-                                    <h3>Other Cryptocurrencies</h3>
-                                    <p class="payment-range">(Variable - $2000)</p>
-                                    <div class="crypto-grid">
-
-                                        <div class="payment-method-card crypto-card" data-method="usdcoin">
-                                            <span>USD Coin</span>
-                                        </div>
-                                        <div class="payment-method-card crypto-card" data-method="tether-bep20">
-
-                                            <span>USDT BEP20</span>
-                                        </div>
-                                        <div class="payment-method-card crypto-card" data-method="tether-erc20">
-
-                                            <span>USDT ERC20</span>
-                                        </div>
-                                        <div class="payment-method-card crypto-card" data-method="tether-trc20">
-
-                                            <span>USDT TRC20</span>
+                                        <div class="payment-method-card crypto-card" data-method="ethereum">
+                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/pls.svg" alt="ETH"
+                                                class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
+                                            <span>PLS</span>
+                                            <span>Pulsechain</span>
                                         </div>
 
                                     </div>
