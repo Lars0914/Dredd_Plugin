@@ -38,7 +38,7 @@ class Dredd_NOWPayments
     public function get_available_currencies()
     {
         // Don't use cache during debugging - always fetch fresh
-        $response = $this->make_api_request('currencies');
+        $response = $this->make_api_request('full-currencies');
 
         if ($response['success']) {
             $currencies = $response['data']['currencies'] ?? array();
@@ -534,7 +534,7 @@ class Dredd_NOWPayments
         $status_response = $this->make_api_request('status');
 
         // Test 2: Get available currencies
-        $currencies_response = $this->make_api_request('currencies');
+        $currencies_response = $this->make_api_request('full-currencies');
 
         return array(
             'success' => true,
