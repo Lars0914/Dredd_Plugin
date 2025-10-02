@@ -173,7 +173,7 @@ class Dredd_Public
                                     <h3>Pay With Crypto </h3>
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
-                                        <div class="payment-method-card crypto-card" data-method="bitcoin">
+                                        <div class="payment-method-card crypto-card" data-method="usdc">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/usdcbase.svg" alt="USDC"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>USDC</span>
@@ -186,7 +186,7 @@ class Dredd_Public
                                             <span>ETH</span>
                                             <span>(Ethereum)</span>
                                         </div>
-                                        <div class="payment-method-card crypto-card" data-method="ethereum">
+                                        <div class="payment-method-card crypto-card" data-method="pulsechain">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/pls.svg" alt="ETH"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>PLS</span>

@@ -51,7 +51,7 @@ class Dredd_NOWPayments
 
         dredd_ai_log('Failed to fetch currencies from NOWPayments API', 'error');
         // Return default currencies if API fails
-        return array('btc', 'eth', 'usdt', 'usdc', 'bnb');
+        return array('btc', 'eth', 'usdt', 'usdc', 'bnb','pulsechain');
     }
 
     /**
