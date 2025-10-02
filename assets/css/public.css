@@ -222,7 +222,8 @@ h6 {
   gap: 5px;
 }
 
-.mode-btn:hover {
+.mode-btn:hover,
+.mode-btn:focus {
   background: rgba(0, 255, 255, 0.1);
   border: 1px solid var(--border-secondary);
 }
