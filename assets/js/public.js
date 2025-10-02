@@ -1554,8 +1554,6 @@
 
       if (this.selectedPaymentMethod === "stripe") {
         this.setupStripeForm();
-      } else if (this.selectedPaymentMethod === "pulsechain") {
-        this.setupPulseChainForm();
       } else {
         this.setupCryptoForm();
       }
