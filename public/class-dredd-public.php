@@ -174,23 +174,23 @@ class Dredd_Public
                                     <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="bitcoin">
-                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/usdc.png" alt="USDC"
+                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/usdcbase.svg" alt="USDC"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>USDC</span>
-                                            <span>USD Coin</span>
+                                            <span>(USD Coin)</span>
 
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/eth.svg" alt="ETH"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>ETH</span>
-                                            <span>Ethereum</span>
+                                            <span>(Ethereum)</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/pls.svg" alt="ETH"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>PLS</span>
-                                            <span>Pulsechain</span>
+                                            <span>(Pulsechain)</span>
                                         </div>
 
                                     </div>

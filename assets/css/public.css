@@ -2505,12 +2505,11 @@ body.modal-open {
 /* Payment Modal - Chat Window Positioning */
 .dredd-payment-modal {
   position: absolute !important;
-  top: 50px !important;
-  left: 15px !important;
-  right: 15px !important;
-  bottom: 15px !important;
+  top: 67px !important;
+  left: 0px !important;
+  right: 0px !important;
+  bottom: 0px !important;
   z-index: 1000 !important;
-  background: rgba(0, 0, 0, 0.85) !important;
   backdrop-filter: blur(12px) !important;
   border-radius: 10px !important;
 }
