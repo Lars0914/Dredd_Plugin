@@ -3377,10 +3377,10 @@ body.modal-open {
 /* Authentication Modal - Chat Window Popup */
 .dredd-auth-modal {
   position: absolute !important;
-  top: 50px !important;
-  left: 15px !important;
-  right: 15px !important;
-  bottom: 15px !important;
+  top: 55px !important;
+  left: 0px !important;
+  right: 0px !important;
+  bottom: 0px !important;
   z-index: 1000 !important;
   backdrop-filter: blur(12px) !important;
   border-radius: 10px !important;
@@ -3405,8 +3405,8 @@ body.modal-open {
   position: relative;
   width: 100%;
   max-width: 350px;
-  height: 500px;
-  max-height: 500px;
+  height: 100%;
+  /* max-height: 500px; */
   background: linear-gradient(145deg,
       rgba(15, 15, 15, 0.95) 0%,
       rgba(25, 25, 25, 0.95) 100%);
@@ -3588,7 +3588,7 @@ body.modal-open {
   margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  /* gap: 16px; */
   /* Consistent spacing between form elements */
   min-height: 0;
   /* Ensures proper flex behavior */
@@ -3941,7 +3941,6 @@ body.modal-open {
 
 /* Captcha styling */
 .captcha-group {
-  margin: 15px 0;
   display: flex;
   justify-content: center;
 }
@@ -4083,7 +4082,7 @@ body.modal-open {
 
 .form-links {
   text-align: center;
-  margin-top: 12px;
+  /* margin-top: 12px; */
 }
 
 .form-links a {

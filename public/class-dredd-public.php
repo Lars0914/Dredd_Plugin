@@ -24,7 +24,7 @@ class Dredd_Public
     {
         $atts = shortcode_atts(array(
             'width' => '100%',
-            'height' => '700px',
+            'height' => '750px',
             'theme' => 'default'
         ), $atts);
 
@@ -470,7 +470,7 @@ class Dredd_Public
                                         </div>
                                     </div>
 
-                                    <div class="form-group checkbox-group">
+                                    <!-- <div class="form-group checkbox-group">
                                         <label class="checkbox-label">
                                             <input type="checkbox" id="signup-terms" name="terms" required>
                                             <span class="checkmark"></span>
@@ -484,7 +484,7 @@ class Dredd_Public
                                             <span class="checkmark"></span>
                                             Send me justice updates and crypto alerts
                                         </label>
-                                    </div>
+                                    </div> -->
 
                                     <!-- reCAPTCHA -->
                                     <div class="form-group captcha-group">
