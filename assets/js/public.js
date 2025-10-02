@@ -518,9 +518,8 @@
               this.addMessage(data.message, "dredd");
             } else {
               console.warn("DREDD Frontend - Unknown response format:", data);
-              this.addMessage(
+              this.showMessage(
                 "Analysis completed but response format was unexpected.",
-                "dredd",
                 "warning"
               );
             }
@@ -553,27 +552,25 @@
 
       let messageHtml = `
                 <div class="chat-message ${messageClass}">
-                    ${
-                      sender !== "user"
-                        ? `
+                    ${sender !== "user"
+          ? `
                         <div class="message-avatar">
                             <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="DREDD Avatar" />
                         </div>
                     `
-                        : ""
-                    }
+          : ""
+        }
                     <div class="message-content">
                         <div class="message-bubble ${bubbleClass} ${type}">
                             <p>${content}</p>
                         </div>
                     </div>
-                    ${
-                      sender === "user"
-                        ? `
+                    ${sender === "user"
+          ? `
                         <div class="message-avatar">👤</div>
                     `
-                        : ""
-                    }
+          : ""
+        }
                 </div>
             `;
 
@@ -790,9 +787,8 @@
 
       // Redirect to main chat with pre-filled message
       const message = `Re-analyze ${contract} on ${chain}`;
-      window.location.href = `${
-        window.location.origin
-      }?dredd_message=${encodeURIComponent(message)}`;
+      window.location.href = `${window.location.origin
+        }?dredd_message=${encodeURIComponent(message)}`;
     }
 
     openPaymentPanel(e) {
@@ -875,30 +871,26 @@
                         <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-icon">💰</div>
-                                <div class="stat-value">${
-                                  data.user.credits || 0
-                                }</div>
+                                <div class="stat-value">${data.user.credits || 0
+        }</div>
                                 <div class="stat-label">Credits</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-icon">📈</div>
-                                <div class="stat-value">${
-                                  data.stats.total_analyses || 0
-                                }</div>
+                                <div class="stat-value">${data.stats.total_analyses || 0
+        }</div>
                                 <div class="stat-label">Analyses</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-icon">🚨</div>
-                                <div class="stat-value">${
-                                  data.stats.scams_detected || 0
-                                }</div>
+                                <div class="stat-value">${data.stats.scams_detected || 0
+        }</div>
                                 <div class="stat-label">Scams Detected</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-icon">💀</div>
-                                <div class="stat-value">${
-                                  data.stats.psycho_analyses || 0
-                                }</div>
+                                <div class="stat-value">${data.stats.psycho_analyses || 0
+        }</div>
                                 <div class="stat-label">Psycho Mode</div>
                             </div>
                         </div>
@@ -914,9 +906,8 @@
                                 <div class="action-title">Export Data</div>
                                 <div class="action-desc">Download your data</div>
                             </button>
-                            <button class="action-card" onclick="window.open('${
-                              window.location.origin
-                            }', '_blank')">
+                            <button class="action-card" onclick="window.open('${window.location.origin
+        }', '_blank')">
                                 <div class="action-icon">⚡</div>
                                 <div class="action-title">New Analysis</div>
                                 <div class="action-desc">Analyze tokens</div>
@@ -1004,15 +995,13 @@
                                 <form class="dashboard-settings-form">
                                     <div class="form-group">
                                         <label>Display Name</label>
-                                        <input type="text" name="display_name" value="${
-                                          data.user.display_name || ""
-                                        }" required>
+                                        <input type="text" name="display_name" value="${data.user.display_name || ""
+        }" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Email Address</label>
-                                        <input type="email" name="email" value="${
-                                          data.user.email || ""
-                                        }" required>
+                                        <input type="email" name="email" value="${data.user.email || ""
+        }" required>
                                     </div>
                                     <button type="submit" class="save-settings-btn">
                                         💾 Save Profile
@@ -1084,37 +1073,31 @@
           (item) => `
                 <div class="history-item">
                     <div class="history-token">
-                        <div class="token-name">${
-                          item.token_name || "Unknown Token"
-                        }</div>
-                        <div class="token-address">${
-                          item.contract_address
-                            ? item.contract_address.substring(0, 10) + "..."
-                            : "N/A"
-                        }</div>
+                        <div class="token-name">${item.token_name || "Unknown Token"
+            }</div>
+                        <div class="token-address">${item.contract_address
+              ? item.contract_address.substring(0, 10) + "..."
+              : "N/A"
+            }</div>
                     </div>
                     <div class="history-details">
                         <span class="chain-badge">${item.chain}</span>
-                        <span class="mode-badge ${item.mode}">${
-            item.mode
-          }</span>
-                        <span class="verdict-badge ${item.verdict}">${
-            item.verdict
-          }</span>
+                        <span class="mode-badge ${item.mode}">${item.mode
+            }</span>
+                        <span class="verdict-badge ${item.verdict}">${item.verdict
+            }</span>
                     </div>
                     <div class="history-meta">
                         <div class="history-date">${new Date(
-                          item.created_at
-                        ).toLocaleDateString()}</div>
+              item.created_at
+            ).toLocaleDateString()}</div>
                         <div class="history-cost">${item.token_cost} 💰</div>
                     </div>
                     <div class="history-actions">
-                        <button class="history-btn dashboard-view-analysis" data-id="${
-                          item.analysis_id
-                        }">🔍 View</button>
-                        <button class="history-btn dashboard-reanalyze" data-contract="${
-                          item.contract_address
-                        }" data-chain="${item.chain}">♾️ Re-analyze</button>
+                        <button class="history-btn dashboard-view-analysis" data-id="${item.analysis_id
+            }">🔍 View</button>
+                        <button class="history-btn dashboard-reanalyze" data-contract="${item.contract_address
+            }" data-chain="${item.chain}">♾️ Re-analyze</button>
                     </div>
                 </div>
             `
@@ -1331,9 +1314,8 @@
 
     processStripePayment() {
       if (!this.selectedPackage) {
-        this.addMessage(
+        this.showMessage(
           "Please select a token package first.",
-          "dredd",
           "warning"
         );
         return;
@@ -1399,7 +1381,10 @@
     // }
 
     handlePaymentError(error) {
-      this.addMessage(`❌ Payment failed: ${error}`, "dredd", "error");
+      this.showMessage(
+        `❌ Payment failed: ${error}`,
+        "error"
+      );
     }
 
     // Web3 Integration
@@ -1437,9 +1422,8 @@
         }
       } catch (error) {
         console.error("Crypto payment failed:", error);
-        this.addMessage(
+        this.showMessage(
           "Crypto payment failed: " + error.message,
-          "dredd",
           "warning"
         );
       }
@@ -1539,9 +1523,8 @@
 
       if (this.currentPaymentStep === 1) {
         if (!this.selectedPaymentMethod) {
-          this.addMessage(
+          this.showMessage(
             "Please select a payment method first.",
-            "dredd",
             "warning"
           );
           return;
@@ -1550,7 +1533,10 @@
         this.showPaymentStep(2);
       } else if (this.currentPaymentStep === 2) {
         if (!this.selectedAmount) {
-          this.addMessage("Please select plan.", "dredd", "warning");
+          this.showMessage(
+            "Please select plan.",
+            "warning"
+          );
           return;
         }
         console.log("Moving to step 3, setting up payment form");
@@ -1661,7 +1647,10 @@
 
     processStripePayment() {
       if (!this.stripe || !this.stripeCardElement) {
-        this.addMessage("Stripe not properly initialized.", "dredd", "warning");
+        this.showMessage(
+          "Stripe not properly initialized.",
+          "warning"
+        );
         return;
       }
 
@@ -1687,9 +1676,8 @@
               })
               .then((result) => {
                 if (result.error) {
-                  this.addMessage(
+                  this.showMessage(
                     "Payment failed: " + result.error.message,
-                    "dredd",
                     "warning"
                   );
                 } else {
@@ -1698,16 +1686,18 @@
                 $btn.prop("disabled", false).text("Complete Payment");
               });
           } else {
-            this.addMessage(
+            this.showMessage(
               "Payment setup failed:" + response.data,
-              "dredd",
               "warning"
             );
             $btn.prop("disabled", false).text("Complete Payment");
           }
         },
         error: () => {
-          this.addMessage("Payment processing failed", "dredd", "warning");
+          this.showMessage(
+            "Payment processing failed.",
+            "warning"
+          );
           $btn.prop("disabled", false).text("Complete Payment");
         },
       });
@@ -1745,9 +1735,8 @@
               errorMsg.includes("address") ||
               errorMsg.includes("configured")
             ) {
-              this.addMessage(
+              this.showMessage(
                 "Address Configuration Error: " + errorMsg,
-                "dredd",
                 "warning"
               );
               $("#payment-address").val("ERROR: " + errorMsg);
@@ -1757,7 +1746,10 @@
                 border: "2px solid #f44336",
               });
             } else {
-              this.addMessage("Payment Error: " + errorMsg, "dredd", "warning");
+              this.showMessage(
+                "Payment Error: " + errorMsg,
+                "warning"
+              );
             }
 
             // 🚨 NO DEMO/TEST SYSTEM - ONLY SHOW REAL ERRORS
@@ -1771,9 +1763,8 @@
         error: (xhr, status, error) => {
           // 🚨 AJAX ERROR
           console.error("AJAX payment error:", xhr, status, error);
-          this.addMessage(
+          this.showMessage(
             "Connection Error: Could not connect to payment system. Please try again.",
-            "dredd",
             "warning"
           );
 
@@ -1809,12 +1800,10 @@
         });
 
         // Show error message
-
-        this.addMessage(
+        this.showMessage(
           "🚨 Payment Error: No wallet address configured for " +
-            (paymentData.currency || "this currency") +
-            ". Please contact administrator.",
-          "dredd",
+          (paymentData.currency || "this currency") +
+          ". Please contact administrator.",
           "warning"
         );
         return;
@@ -1875,8 +1864,10 @@
 
         if (timeLeft < 0) {
           clearInterval(this.paymentTimer);
-
-          this.addMessage("Payment timer expired", "dredd", "warning");
+          this.showMessage(
+            "Payment timer expired.",
+            "warning"
+          );
           this.closePaymentModal();
         }
       }, 1000);
@@ -2019,9 +2010,8 @@
 
     handlePaymentSuccess(method) {
       this.closePaymentModal();
-      this.addMessage(
+      this.showMessage(
         `✅ Payment successful via ${method}! Credits added to your account.`,
-        "dredd",
         "success"
       );
     }

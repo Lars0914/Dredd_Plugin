@@ -20,7 +20,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 10px;
@@ -33,7 +32,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3);
 }
 
 /* Modal Container - Match Dashboard Style */
@@ -43,16 +41,15 @@
   max-width: 400px;
   height: 90%;
   max-height: 500px;
-  background: linear-gradient(
-    145deg,
-    rgba(15, 15, 15, 0.98) 0%,
-    rgba(25, 25, 25, 0.98) 100%
-  );
+  background: linear-gradient(145deg,
+      rgba(15, 15, 15, 0.98) 0%,
+      rgba(25, 25, 25, 0.98) 100%);
   border: 2px solid var(--primary-cyan);
   border-radius: 12px;
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), 0 0 60px rgba(64, 224, 208, 0.2),
     0 8px 25px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(0, 255, 255, 0.2);
-  animation: modalPopIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Faster, smoother animation */
+  animation: modalPopIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Faster, smoother animation */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -65,6 +62,7 @@
     opacity: 0;
     transform: scale(0.95) translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -90,11 +88,9 @@
 
 /* Modal Header - Match Dashboard Header */
 .payment-modal-header {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.08),
-    rgba(64, 224, 208, 0.08)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.08),
+      rgba(64, 224, 208, 0.08));
   padding: 8px 15px;
   border-bottom: 1px solid rgba(0, 255, 255, 0.3);
   display: flex;
@@ -112,12 +108,10 @@
   left: 20px;
   right: 20px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--primary-cyan) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--primary-cyan) 50%,
+      transparent 100%);
 }
 
 .payment-modal-header h2 {
@@ -133,11 +127,9 @@
 }
 
 .payment-modal-close {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 107, 107, 0.1),
-    rgba(255, 68, 68, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 107, 107, 0.1),
+      rgba(255, 68, 68, 0.1));
   border: 1.5px solid rgba(255, 107, 107, 0.3);
   color: #ff6b6b;
   font-size: 18px;
@@ -156,11 +148,9 @@
 
 .payment-modal-close:hover {
   color: #ffffff;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 107, 107, 0.2),
-    rgba(255, 68, 68, 0.2)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 107, 107, 0.2),
+      rgba(255, 68, 68, 0.2));
   border-color: #ff6b6b;
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
@@ -193,22 +183,18 @@
 }
 
 .payment-modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    45deg,
-    var(--primary-cyan),
-    var(--primary-turquoise)
-  );
+  background: linear-gradient(45deg,
+      var(--primary-cyan),
+      var(--primary-turquoise));
   border-radius: 4px;
   transition: all 0.3s ease;
   border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
 .payment-modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    45deg,
-    var(--primary-turquoise),
-    var(--accent-blue)
-  );
+  background: linear-gradient(45deg,
+      var(--primary-turquoise),
+      var(--accent-blue));
   box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
   border-color: var(--primary-cyan);
 }
@@ -250,11 +236,9 @@
 
 /* Payment Method Cards - Smaller Crypto Buttons */
 .payment-method-card {
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.8) 0%,
-    rgba(35, 35, 35, 0.8) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(26, 26, 26, 0.8) 0%,
+      rgba(35, 35, 35, 0.8) 100%);
   border: 2px solid rgba(64, 224, 208, 0.3);
   border-radius: 8px;
   padding: 6px 8px;
@@ -271,21 +255,17 @@
 
 .payment-method-card:hover {
   border-color: var(--primary-cyan);
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.05) 0%,
-    rgba(64, 224, 208, 0.05) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.05) 0%,
+      rgba(64, 224, 208, 0.05) 100%);
   transform: translateY(-1px);
 }
 
 .payment-method-card.selected {
   border-color: var(--primary-cyan);
-  background: linear-gradient(
-    135deg,
-    rgba(0, 255, 255, 0.15) 0%,
-    rgba(64, 224, 208, 0.15) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 255, 255, 0.15) 0%,
+      rgba(64, 224, 208, 0.15) 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
 }
@@ -406,6 +386,7 @@
   border-bottom: 1px solid;
   padding-bottom: 10px;
 }
+
 .amount-option span {
   padding-bottom: 10px;
 }
@@ -447,6 +428,7 @@
   align-items: center;
   margin-bottom: 20px;
 }
+
 #custom-amount-value {
   color: #3498db;
   width: 102px;
@@ -515,11 +497,9 @@
   display: flex;
   gap: 6px;
   padding: 10px 15px;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.3),
-    rgba(26, 26, 26, 0.3)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.3),
+      rgba(26, 26, 26, 0.3));
   border-top: 1px solid rgba(0, 255, 255, 0.2);
   flex-shrink: 0;
   flex-grow: 0;
@@ -578,7 +558,8 @@
   min-height: 30px;
 }
 
-.payment-continue-btn:hover {
+.payment-continue-btn:hover,
+.payment-continue-btn:focus  {
   background: var(--primary-cyan);
   color: var(--dark-bg);
   transform: translateY(-3px);
@@ -748,6 +729,20 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
 }
+.copy-address-btn:focus,
+.copy-address-btn:hover{
+  background: var(--primary-cyan);
+  color: var(--dark-bg);
+  transform: translateY(-3px);
+}
+
+.copy-amount-btn:focus,
+.copy-amount-btn:hover{
+  background: var(--primary-cyan);
+  color: var(--dark-bg);
+  transform: translateY(-3px);
+}
+
 
 .payment-status {
   margin-top: 12px;
@@ -1078,7 +1073,8 @@
 
 /* Selection Animation - Optimized */
 .payment-method-card.selecting {
-  animation: cardSelection 0.2s ease-out; /* Faster animation */
+  animation: cardSelection 0.2s ease-out;
+  /* Faster animation */
 }
 
 /* Optimized Card Selection Animation */
@@ -1087,10 +1083,12 @@
     transform: scale(1);
     box-shadow: 0 2px 8px rgba(64, 224, 208, 0.3);
   }
+
   50% {
     transform: scale(1.02);
     box-shadow: 0 4px 15px rgba(0, 255, 255, 0.5);
   }
+
   100% {
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(0, 255, 255, 0.6),
@@ -1103,6 +1101,7 @@
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1114,6 +1113,7 @@
     opacity: 1;
     transform: translateX(0);
   }
+
   to {
     opacity: 0;
     transform: translateX(-30px);
@@ -1144,12 +1144,14 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
 
 @keyframes borderGlowModal {
+
   0%,
   100% {
     border-color: #00ffff;
@@ -1157,18 +1159,21 @@
       0 0 80px rgba(64, 224, 208, 0.4), 0 0 120px rgba(0, 255, 255, 0.2),
       inset 0 0 20px rgba(0, 255, 255, 0.1);
   }
+
   25% {
     border-color: #40e0d0;
     box-shadow: 0 0 50px rgba(64, 224, 208, 0.8),
       0 0 100px rgba(0, 128, 255, 0.5), 0 0 150px rgba(64, 224, 208, 0.3),
       inset 0 0 25px rgba(64, 224, 208, 0.15);
   }
+
   50% {
     border-color: #0080ff;
     box-shadow: 0 0 60px rgba(0, 128, 255, 0.9),
       0 0 120px rgba(0, 255, 255, 0.6), 0 0 180px rgba(0, 128, 255, 0.3),
       inset 0 0 30px rgba(0, 128, 255, 0.2);
   }
+
   75% {
     border-color: #40e0d0;
     box-shadow: 0 0 50px rgba(64, 224, 208, 0.8),
