@@ -2489,10 +2489,10 @@ body.modal-open {
 /* User Dashboard Modal - Chat Window Popup */
 .dredd-dashboard-modal {
   position: absolute;
-  top: 50px;
-  left: 15px;
-  right: 15px;
-  bottom: 15px;
+  top: 57px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -2529,7 +2529,7 @@ body.modal-open {
   width: 95%;
   max-width: 800px;
   height: 90%;
-  max-height: 500px;
+  max-height: 100%;
   background: linear-gradient(145deg,
       rgba(15, 15, 15, 0.98) 0%,
       rgba(25, 25, 25, 0.98) 100%);
@@ -2724,12 +2724,14 @@ body.modal-open {
 .dashboard-section {
   display: none;
   padding: 30px;
-  height: 100%;
+  margin: 10px;
+  height: 96%;
   box-sizing: border-box;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--primary-cyan) rgba(0, 0, 0, 0.2);
 }
+
 
 .dashboard-section::-webkit-scrollbar {
   width: 6px;
@@ -3130,12 +3132,13 @@ body.modal-open {
 }
 
 .settings-tab:hover {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
 }
 
 .settings-tab.active {
-  color: var(--primary-cyan);
-  border-bottom-color: var(--primary-cyan);
+  color: var(--primary-cyan) !important;
+  border-bottom-color: var(--primary-cyan) !important;
+  background-color: none !important;
 }
 
 .settings-content {
@@ -3160,21 +3163,21 @@ body.modal-open {
 .save-settings-btn,
 .save-password-btn {
   background: transparent;
-  border: 2px solid var(--primary-cyan);
-  border-radius: 15px;
-  color: var(--primary-cyan);
-  padding: 10px 20px;
-  font-weight: 600;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  border: 2px solid var(--primary-cyan) !important;
+  border-radius: 15px !important;
+  color: var(--primary-cyan) !important;
+  padding: 10px 20px !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
   margin-top: 15px;
 }
 
 .save-settings-btn:hover,
 .save-password-btn:hover {
-  background: var(--primary-cyan);
-  color: var(--dark-bg);
+  background: var(--primary-cyan) !important;
+  color: var(--dark-bg) !important;
   transform: translateY(-3px);
 }
 

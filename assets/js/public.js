@@ -860,8 +860,6 @@
       const dashboardHtml = `
                 <div class="dashboard-nav">
                     <button class="nav-btn active" data-section="overview">📊 Overview</button>
-                    <button class="nav-btn" data-section="history">📈 History</button>
-                    <button class="nav-btn" data-section="promotions">🚀 Promotions</button>
                     <button class="nav-btn" data-section="settings">⚙️ Settings</button>
                 </div>
                 
@@ -869,12 +867,6 @@
                     <!-- Overview Section -->
                     <div class="dashboard-section active" id="overview-section">
                         <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">💰</div>
-                                <div class="stat-value">${data.user.credits || 0
-        }</div>
-                                <div class="stat-label">Credits</div>
-                            </div>
                             <div class="stat-card">
                                 <div class="stat-icon">📈</div>
                                 <div class="stat-value">${data.stats.total_analyses || 0
@@ -893,91 +885,6 @@
         }</div>
                                 <div class="stat-label">Psycho Mode</div>
                             </div>
-                        </div>
-                        
-                        <div class="quick-actions-grid">
-                            <button class="action-card dashboard-buy-credits">
-                                <div class="action-icon">💳</div>
-                                <div class="action-title">Buy Credits</div>
-                                <div class="action-desc">Purchase analysis credits</div>
-                            </button>
-                            <button class="action-card dashboard-export-data">
-                                <div class="action-icon">📁</div>
-                                <div class="action-title">Export Data</div>
-                                <div class="action-desc">Download your data</div>
-                            </button>
-                            <button class="action-card" onclick="window.open('${window.location.origin
-        }', '_blank')">
-                                <div class="action-icon">⚡</div>
-                                <div class="action-title">New Analysis</div>
-                                <div class="action-desc">Analyze tokens</div>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- History Section -->
-                    <div class="dashboard-section" id="history-section">
-                        <div class="history-header">
-                            <h3>Analysis History</h3>
-                            <div class="history-filters">
-                                <select class="filter-select" id="mode-filter">
-                                    <option value="">All Modes</option>
-                                    <option value="standard">Standard</option>
-                                    <option value="psycho">Psycho</option>
-                                </select>
-                                <select class="filter-select" id="verdict-filter">
-                                    <option value="">All Verdicts</option>
-                                    <option value="scam">Scam</option>
-                                    <option value="legit">Legit</option>
-                                    <option value="caution">Caution</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="history-list">
-                            ${this.renderHistoryItems(data.history || [])}
-                        </div>
-                    </div>
-                    
-                    <!-- Promotions Section -->
-                    <div class="dashboard-section" id="promotions-section">
-                        <h3>Submit Token for Promotion</h3>
-                        <div class="promotion-form">
-                            <form class="promotion-submit-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Token Name</label>
-                                        <input type="text" name="token_name" required placeholder="Enter token name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Contract Address</label>
-                                        <input type="text" name="contract_address" required placeholder="0x...">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Chain</label>
-                                        <select name="chain" required>
-                                            <option value="ethereum">Ethereum</option>
-                                            <option value="bsc">BSC</option>
-                                            <option value="polygon">Polygon</option>
-                                            <option value="arbitrum">Arbitrum</option>
-                                            <option value="pulsechain">PulseChain</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Website URL</label>
-                                        <input type="url" name="website" placeholder="https://...">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea name="description" rows="3" placeholder="Brief description of your token..."></textarea>
-                                </div>
-                                <button type="submit" class="submit-promotion-btn dashboard-submit-promotion">
-                                    🚀 Submit for Promotion
-                                </button>
-                            </form>
                         </div>
                     </div>
                     
@@ -1107,7 +1014,7 @@
 
     bindDashboardNavigation() {
       // Navigation between sections
-      $(document).on("click", ".nav-btn", function () {
+      $(document).on("click touchstart", ".nav-btn", function () {
         const section = $(this).data("section");
 
         $(".nav-btn").removeClass("active");

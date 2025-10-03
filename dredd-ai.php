@@ -1610,7 +1610,7 @@ class DreddAI
      */
     public function handle_get_user_dashboard_data()
     {
-        if (!wp_verify_nonce($_POST['nonce'], 'dredd_ai_nonce') || !is_user_logged_in()) {
+        if (!wp_verify_nonce($_POST['nonce'], 'dredd_admin_nonce') || !is_user_logged_in()) {
             wp_send_json_error('Invalid request');
         }
 
@@ -1625,12 +1625,13 @@ class DreddAI
             // Get recent analysis history (last 10)
             $history = $database->get_user_analysis_history($user_id, 10, 0, array());
 
+
+
             $response_data = array(
                 'user' => array(
                     'id' => $user_id,
                     'display_name' => $user->display_name,
                     'email' => $user->user_email,
-                    'credits' => $user_data['tokens']->token_balance ?? 0,
                     'expires_at' => $user_data['user_data']->expires_at,
                 ),
                 'stats' => array(
@@ -1640,7 +1641,7 @@ class DreddAI
                 ),
                 'history' => $history['results'] ?? array()
             );
-
+            
             wp_send_json_success($response_data);
 
         } catch (Exception $e) {
@@ -1664,7 +1665,7 @@ class DreddAI
      */
     public function handle_submit_promotion()
     {
-        if (!wp_verify_nonce($_POST['nonce'], 'dredd_ai_nonce') || !is_user_logged_in()) {
+        if (!wp_verify_nonce($_POST['nonce'], 'dredd_admin_nonce') || !is_user_logged_in()) {
             wp_send_json_error('Invalid request');
         }
 
@@ -1736,7 +1737,7 @@ class DreddAI
      */
     public function handle_update_user_settings()
     {
-        if (!wp_verify_nonce($_POST['nonce'], 'dredd_ai_nonce') || !is_user_logged_in()) {
+        if (!wp_verify_nonce($_POST['nonce'], 'dredd_admin_nonce') || !is_user_logged_in()) {
             wp_send_json_error('Invalid request');
         }
 
@@ -1782,7 +1783,7 @@ class DreddAI
      */
     public function handle_update_user_password()
     {
-        if (!wp_verify_nonce($_POST['nonce'], 'dredd_ai_nonce') || !is_user_logged_in()) {
+        if (!wp_verify_nonce($_POST['nonce'], 'dredd_admin_nonce') || !is_user_logged_in()) {
             wp_send_json_error('Invalid request');
         }
 
@@ -1828,7 +1829,7 @@ class DreddAI
      */
     public function handle_check_user_updates()
     {
-        if (!wp_verify_nonce($_POST['nonce'], 'dredd_ai_nonce') || !is_user_logged_in()) {
+        if (!wp_verify_nonce($_POST['nonce'], 'dredd_admin_nonce') || !is_user_logged_in()) {
             wp_send_json_error('Invalid request');
         }
 

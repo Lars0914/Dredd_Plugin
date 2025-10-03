@@ -339,7 +339,6 @@ class Dredd_Database
      */
     public function get_user_data($user_id)
     {
-        $tokens_table = $this->wpdb->prefix . 'dredd_user_tokens';
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
         $user_table = $this->wpdb->prefix . 'dredd_chat_users';
@@ -348,13 +347,7 @@ class Dredd_Database
             "SELECT * FROM {$user_table} WHERE id = %d",
             $user_id
         ));
-
-        // Get token balance
-        $token_data = $this->wpdb->get_row($this->wpdb->prepare(
-            "SELECT * FROM {$tokens_table} WHERE user_id = %d",
-            $user_id
-        ));
-
+        
         // Get recent transactions
         $recent_transactions = $this->wpdb->get_results($this->wpdb->prepare(
             "SELECT * FROM {$transactions_table} WHERE user_id = %d ORDER BY created_at DESC LIMIT 10",
@@ -376,7 +369,6 @@ class Dredd_Database
 
         return array(
             'user_data' => $user_data,
-            'tokens' => $token_data,
             'transactions' => $recent_transactions,
             'stats' => $analysis_stats
         );
