@@ -524,7 +524,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -1761,36 +1761,31 @@ class DreddAI
 
         try {
             global $wpdb;
-            $result = wp_update_user(array(
-                'ID' => $user_id,
-                'display_name' => $display_name,
-                'user_email' => $email,
-                'user_login' => $display_name,
-                'user_nicename' => $display_name
-            ));
-            if (is_wp_error($result)) {
-                echo '❌ Error updating WordPress user: ' . $result->get_error_message();
-            } else {
+            $users_table = $wpdb->prefix . 'users';
+            $chat_table = $wpdb->prefix . 'dredd_chat_users';
 
-                $chat_table = $wpdb->prefix . 'dredd_chat_users';
-
-                $update_chat_user = $wpdb->update(
-                    $chat_table,
-                    array(
-                        'username' => $display_name, // or $display_name, depending on your logic
-                        'email' => $email
-                    ),
-                    array('id' => $user_id), // assumes same ID
-                    array('%s', '%s'),
-                    array('%d')
-                );
-
-                if ($update_chat_user === false) {
-                    echo '❌ Error updating chat user: ' . $wpdb->last_error;
-                } else {
-                    echo '✅ Both user tables updated successfully!';
-                }
-            }
+            $user_update_result = $wpdb->update(
+                $users_table,
+                array(
+                    'user_login' => $display_name,
+                    'user_email' => $email,
+                    'display_name' => $display_name,
+                    'user_nicename' => $display_name
+                ),
+                array('ID' => $user_id),
+                array('%s', '%s', '%s', '%s'),
+                array('%d')
+            );
+            $result = $wpdb->update(
+                $chat_table,
+                array(
+                    'username' => $display_name, // or $display_name if preferred
+                    'email' => $email
+                ),
+                array('id' => $user_id),
+                array('%s', '%s'),
+                array('%d')
+            );
 
             if (is_wp_error($result)) {
                 wp_send_json_error($result->get_error_message());
