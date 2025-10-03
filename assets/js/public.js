@@ -1769,6 +1769,7 @@
 
                 if (timeLeft < 0) {
                     clearInterval(this.paymentTimer);
+                    clearInterval(this.statusChecker);
                     this.showMessage(
                         "Payment timer expired.",
                         "warning"
@@ -1777,7 +1778,6 @@
                 }
             }, 1000);
 
-            // Check payment status periodically
             this.statusChecker = setInterval(() => {
                 this.checkPaymentStatus();
             }, 10000);
