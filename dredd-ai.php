@@ -524,7 +524,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -1812,7 +1812,6 @@ class DreddAI
         $current_password = $_POST['current_password'] ?? '';
         $new_password = $_POST['new_password'] ?? '';
 
-        // Validation
         if (empty($current_password) || empty($new_password)) {
             wp_send_json_error('Please fill in all fields');
         }
@@ -1821,17 +1820,24 @@ class DreddAI
             wp_send_json_error('New password must be at least 6 characters long');
         }
 
-        // Verify current password
-        $user = wp_get_current_user();
-        if (!wp_check_password($current_password, $user->user_pass, $user_id)) {
-            wp_send_json_error('Current password is incorrect');
+        global $wpdb;
+        $chat_table = $wpdb->prefix . 'dredd_chat_users';
+        $chat_user = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM $chat_table WHERE id = %d", $user_id)
+        );
+        if ($chat_user->password !== $current_password) {
+            wp_send_json_error('Current password is incorrect.');
         }
 
         try {
-            $result = wp_update_user(array(
-                'ID' => $user_id,
-                'user_pass' => $new_password
-            ));
+
+            $result = $wpdb->update(
+                $chat_table,
+                array('password' => $new_password),
+                array('id' => $user_id),
+                array('%s'),
+                array('%d')
+            );
 
             if (is_wp_error($result)) {
                 wp_send_json_error($result->get_error_message());
