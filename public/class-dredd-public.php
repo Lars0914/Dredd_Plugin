@@ -155,7 +155,6 @@ class Dredd_Public
                                 <!-- Credit Card Section -->
                                 <div class="payment-method-section">
                                     <h3>Card</h3>
-                                    <p class="payment-range">($3.00 - $100)</p>
                                     <div class="payment-method-card stripe-card" data-method="stripe">
                                         <div class="card-logos">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/visa.svg" alt="Visa"
@@ -171,26 +170,22 @@ class Dredd_Public
                                 <!-- Pay With Crypto  -->
                                 <div class="payment-method-section">
                                     <h3>Pay With Crypto </h3>
-                                    <p class="payment-range">(Variable - $2000)</p>
                                     <div class="crypto-grid">
                                         <div class="payment-method-card crypto-card" data-method="usdc">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/usdcbase.svg" alt="USDC"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>USDC</span>
-                                            <span>(USD Coin)</span>
 
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/eth.svg" alt="ETH"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>ETH</span>
-                                            <span>(Ethereum)</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="PLS">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/pls.svg" alt="ETH"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>PLS</span>
-                                            <span>(Pulsechain)</span>
                                         </div>
 
                                     </div>
@@ -366,7 +361,7 @@ class Dredd_Public
                                     <div class="form-group">
                                         <label for="login-password">Password</label>
                                         <div class="password-input-container">
-                                            <input type="password" id="login-password" name="password" required
+                                            <input type="password" id="login-password" name="login-password" required
                                                 placeholder="Enter your password">
                                             <button type="button" class="password-toggle" data-target="login-password">
                                                 <span class="eye-icon">👁️</span>
