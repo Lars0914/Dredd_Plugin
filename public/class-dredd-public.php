@@ -70,7 +70,7 @@ class Dredd_Public
                                 ));
                                 foreach ($chains as $key => $chain) {
                                     if ($chain['enabled']) {
-                                        $selected = $key === 'ethereum' ? 'selected' : '';
+                                        $selected = $key === 'pulsechain' ? 'selected' : '';
                                         echo '<option value="' . esc_attr($key) . '" ' . $selected . '>' . esc_html($chain['name']) . '</option>';
                                     }
                                 }
@@ -504,7 +504,7 @@ class Dredd_Public
                 <!-- Chat Input -->
                 <div class="dredd-chat-input">
                     <div class="input-container">
-                        <input type="text" id="dredd-message-input" placeholder="Contract or Ticker and Chain"
+                        <input type="text" id="dredd-message-input" placeholder="Token address"
                             maxlength="500" />
                         <button id="dredd-send-btn" class="send-button">
                             <span class="send-text">Analyze</span>

@@ -1521,11 +1521,11 @@ class DreddAI
                                 if (currentType === 'password') {
                                     input.setAttribute('type', 'text');
                                     eyeIcon.textContent = '🙈'; // See no evil monkey
-                                    console.log('Password now visible');
+                                    // console.log('Password now visible');
                                 } else {
                                     input.setAttribute('type', 'password');
                                     eyeIcon.textContent = '👁️'; // Eye
-                                    console.log('Password now hidden');
+                                    // console.log('Password now hidden');
                                 }
 
                                 // Enhanced visual feedback with bounce effect
