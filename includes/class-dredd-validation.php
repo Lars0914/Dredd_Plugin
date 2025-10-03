@@ -142,7 +142,7 @@ class Dredd_Validation
             'binancecoin' => 'bnb',
             'bnb' => 'bnb',
             'stripe' => 'stripe',
-            'pulsechain' => 'pulsechain'
+            'PLS' => 'PLS'
         );
 
         return $method_mapping[strtolower($method)] ?? strtolower($method);
@@ -167,7 +167,7 @@ class Dredd_Validation
             'usdc',      // Generic USDC
             'usdcbsc',   // BSC USDC
             'bnb',
-            'pulsechain'
+            'pls'
         );
 
         if (!in_array($normalized_method, $allowed_methods)) {

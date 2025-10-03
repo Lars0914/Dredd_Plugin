@@ -186,7 +186,7 @@ class Dredd_Public
                                             <span>ETH</span>
                                             <span>(Ethereum)</span>
                                         </div>
-                                        <div class="payment-method-card crypto-card" data-method="pulsechain">
+                                        <div class="payment-method-card crypto-card" data-method="PLS">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/pls.svg" alt="ETH"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>PLS</span>

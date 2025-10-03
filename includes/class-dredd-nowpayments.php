@@ -51,7 +51,7 @@ class Dredd_NOWPayments
 
         dredd_ai_log('Failed to fetch currencies from NOWPayments API', 'error');
         // Return default currencies if API fails
-        return array('btc', 'eth', 'usdt', 'usdc', 'bnb','pulsechain');
+        return array('btc', 'eth', 'usdt', 'usdc', 'bnb', 'pulsechain');
     }
 
     /**
@@ -65,10 +65,10 @@ class Dredd_NOWPayments
             $response = $this->make_api_request("min-amount?currency_from={$currency}&currency_to=usd");
 
             // Log the API response for debugging
-            dredd_ai_log("Minimum amount API response for {$currency}: " . json_encode($response), 'debug');
+            // dredd_ai_log("Minimum amount API response for {$currency}: " . json_encode($response), 'debug');
 
             if ($response['success'] && isset($response['data'])) {
-                $min_amount = $response['data']['min_amount'] ?? null;
+                $min_amount = $response['data']['fiat_equivalent'] ?? null;
 
                 if ($min_amount !== null && is_numeric($min_amount)) {
                     dredd_ai_log("Found minimum amount for {$currency}: {$min_amount} USD", 'debug');
@@ -115,7 +115,6 @@ class Dredd_NOWPayments
         if (!$user_id) {
             $user_id = 0; // Use 0 for anonymous users
         }
-
         try {
             // Log the currency mapping for debugging
             dredd_ai_log("Currency mapping: Raw '{$raw_currency}' -> Normalized '{$currency}'", 'debug');
@@ -123,8 +122,10 @@ class Dredd_NOWPayments
 
             // Validate currency is supported by NOWPayments
             $supported_currencies = $this->get_available_currencies();
-            if (!empty($supported_currencies) && !in_array(strtolower($currency), array_map('strtolower', $supported_currencies))) {
-                dredd_ai_log("Currency '{$currency}' not in supported list. Available: " . implode(', ', array_slice($supported_currencies, 0, 20)) . '...', 'error');
+            $currency_codes = array_column($supported_currencies, 'code');
+
+            if (!empty($supported_currencies) && !in_array(strtolower($currency), array_map('strtolower', $currency_codes))) {
+                // dredd_ai_log("Currency '{$currency}' not in supported list. Available: " . implode(', ', array_slice($supported_currencies, 0, 20)) . '...', 'error');
                 throw new Exception("Currency '{$currency}' is not supported by NOWPayments. Please check admin settings for supported currencies.");
             }
 
@@ -159,54 +160,12 @@ class Dredd_NOWPayments
                 'cancel_url' => home_url('/dredd-payment-cancel/')
             );
 
-            // Log payment data being sent to NOWPayments
-            dredd_ai_log(message: "NOWPayments request data: " . json_encode(value: $payment_data), level: 'debug');
-
             $response = $this->make_api_request(endpoint: 'payment', data: $payment_data, method: 'POST');
-
-            // Log the response from NOWPayments
-            dredd_ai_log(message: "NOWPayments response: " . json_encode(value: $response), level: 'debug');
 
             if ($response['success']) {
                 $payment_info = $response['data'];
-                // var_dump($payment_info);
-                // Get appropriate payment address based on mode
-                // $configured_addresses = $this->get_payment_addresses();
+
                 $payment_address = $payment_info['pay_address']; // Default to API address
-
-                // $is_live = !$this->is_sandbox_mode();
-
-                // Debug logging
-                $sandbox_setting = dredd_ai_get_option(option: 'nowpayments_sandbox', default: '1');
-
-                // 🎯 MAP NOWPayments currencies to our address keys
-                // $mapped_currency = $this->map_currency_to_address_key($currency_to_use);
-                // dredd_ai_log("DEBUG: Currency: " . $currency . ", Used currency: " . $currency_to_use . ", Mapped to: " . $mapped_currency, 'debug');
-
-                // // Override with configured address if available
-                // if (!empty($configured_addresses)) {
-                //     if (is_array($configured_addresses)) {
-                //         // Use mapped currency to find the RIGHT address - NO FALLBACK!
-                //         if (isset($configured_addresses[$mapped_currency])) {
-                //             $payment_address = $configured_addresses[$mapped_currency];
-                //             dredd_ai_log("DEBUG: ✅ FOUND! Using mapped currency address: " . $payment_address, 'debug');
-                //         } else {
-                //             // 🚨 SPECIFIC CURRENCY NOT FOUND - MUST ERROR!
-                //             $available_currencies = implode(', ', array_keys($configured_addresses));
-                //             dredd_ai_log("ERROR: No address configured for {$mapped_currency}. Available: {$available_currencies}", 'error');
-                //             throw new Exception("No wallet address configured for {$mapped_currency}. Please add your {$mapped_currency} address in admin settings. Available currencies: {$available_currencies}");
-                //         }
-                //     } else {
-                //         $payment_address = $configured_addresses; // Single address
-                //         dredd_ai_log("DEBUG: Using single configured address: " . $payment_address, 'debug');
-                //     }
-                // } else {
-                //     // 🚨 NO CONFIGURED ADDRESSES - ALWAYS ERROR IN LIVE-ONLY MODE
-                //     dredd_ai_log("ERROR: No live addresses configured for payment!", 'error');
-                //     throw new Exception('No wallet addresses configured. Please add your wallet addresses in admin settings to accept payments.');
-                // }
-
-                // Store payment in database
                 $package_data = array(
                     'amount' => $amount,
                     'credits' => $credits,
@@ -234,7 +193,6 @@ class Dredd_NOWPayments
                     'qr_code' => $qr_code_url,
                     'expires_at' => date('Y-m-d H:i:s', strtotime('+30 minutes'))
                 ));
-
             } else {
                 throw new Exception($response['message']);
             }
