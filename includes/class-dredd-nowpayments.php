@@ -148,7 +148,9 @@ class Dredd_NOWPayments
             } else {
                 dredd_ai_log("Skipping minimum amount validation for {$currency_to_use} (minimum amount could not be determined)", 'debug');
             }
-
+            if (strtolower($currency_to_use) === 'pls') {
+                $amount += 1;
+            }
             $payment_data = array(
                 'price_amount' => $amount,
                 'price_currency' => 'usd',
@@ -167,7 +169,7 @@ class Dredd_NOWPayments
 
                 $payment_address = $payment_info['pay_address']; // Default to API address
                 $package_data = array(
-                    'amount' => $amount+1,
+                    'amount' => $amount,
                     'credits' => $credits,
                     'currency' => $currency_to_use, // Use the validated currency
                     'tokens' => $credits, // Add tokens for compatibility
