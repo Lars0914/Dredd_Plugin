@@ -152,21 +152,6 @@ class Dredd_Public
                             </div>
 
                             <div class="payment-modal-content">
-                                <!-- Credit Card Section -->
-                                <div class="payment-method-section">
-                                    <h3>Card</h3>
-                                    <div class="payment-method-card stripe-card" data-method="stripe">
-                                        <div class="card-logos">
-                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/visa.svg" alt="Visa"
-                                                class="card-logo">
-                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/mastercard.svg"
-                                                alt="Mastercard" class="card-logo">
-                                            <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/amex.svg"
-                                                alt="American Express" class="card-logo">
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- Pay With Crypto  -->
                                 <div class="payment-method-section">
                                     <h3>Pay With Crypto </h3>
@@ -175,7 +160,7 @@ class Dredd_Public
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/usdcbase.svg" alt="USDC"
                                                 class="card-logo" style="height: 24px; width: auto; margin-right: 8px;">
                                             <span>USDC</span>
-
+                                            <span>(Base)</span>
                                         </div>
                                         <div class="payment-method-card crypto-card" data-method="ethereum">
                                             <img src="<?php echo DREDD_AI_PLUGIN_URL; ?>assets/images/eth.svg" alt="ETH"
@@ -247,22 +232,6 @@ class Dredd_Public
                             </div>
 
                             <div class="payment-modal-content">
-                                <!-- Stripe Payment Form -->
-                                <div class="payment-form stripe-form" id="stripe-payment-form" style="display: none;">
-                                    <div class="payment-summary">
-                                        <div class="summary-item">
-                                            <span>Amount:</span>
-                                            <span class="payment-amount">$0.00</span>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span>Credits:</span>
-                                            <span class="payment-credits">0</span>
-                                        </div>
-                                    </div>
-                                    <div id="stripe-card-element"></div>
-                                    <div id="stripe-card-errors" class="stripe-card-errors"></div>
-                                    <button class="payment-submit-btn" id="stripe-submit-btn">Complete Payment</button>
-                                </div>
 
                                 <!-- Crypto Payment Form -->
                                 <div class="payment-form crypto-form" id="crypto-payment-form" style="display: none;">
@@ -299,31 +268,6 @@ class Dredd_Public
                                         <div class="status-indicator">Waiting for payment...</div>
                                         <div class="status-timer">Time remaining: <span id="payment-timer">30:00</span></div>
                                     </div>
-                                </div>
-
-                                <!-- PulseChain Payment Form -->
-                                <div class="payment-form pulsechain-form" id="pulsechain-payment-form" style="display: none;">
-                                    <div class="payment-summary">
-                                        <div class="summary-item">
-                                            <span>Amount:</span>
-                                            <span class="payment-amount">$0.00</span>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span>Network:</span>
-                                            <span>PulseChain</span>
-                                        </div>
-                                    </div>
-                                    <div class="wallet-connection">
-                                        <button class="connect-wallet-btn" id="connect-pulsechain-wallet">
-                                            Connect PulseChain Wallet
-                                        </button>
-                                        <div class="wallet-info" id="pulsechain-wallet-info" style="display: none;">
-                                            <div class="connected-address"></div>
-                                            <div class="wallet-balance"></div>
-                                        </div>
-                                    </div>
-                                    <button class="payment-submit-btn" id="pulsechain-submit-btn" style="display: none;">Send
-                                        Payment</button>
                                 </div>
 
                                 <div class="payment-step-actions">

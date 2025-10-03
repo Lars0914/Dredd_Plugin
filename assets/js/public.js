@@ -39,7 +39,7 @@
             this.$messageInput = $("#dredd-message-input");
 
             this.bindEvents();
-            this.initStripe();
+            // this.initStripe();
             this.initWeb3();
             this.loadPromotions();
             this.checkForNotifications();
@@ -121,13 +121,7 @@
             });
 
             // Payment processing
-            $("#stripe-submit-btn").on("click", () => this.processStripePayment());
-            $("#connect-pulsechain-wallet").on("click", () =>
-                this.connectPulseChainWallet()
-            );
-            $("#pulsechain-submit-btn").on("click", () =>
-                this.processPulseChainPayment()
-            );
+            // $("#stripe-submit-btn").on("click", () => this.processStripePayment());
 
             // Copy buttons
             $(document).on("click", ".copy-address-btn, .copy-amount-btn", (e) =>
@@ -1179,114 +1173,6 @@
             });
         }
 
-        // Payment Processing
-        initStripe() {
-            if (typeof Stripe === "undefined") {
-                console.warn("Stripe.js not loaded");
-                $("#stripe-submit")
-                    .prop("disabled", true)
-                    .text("STRIPE NOT CONFIGURED");
-                return;
-            }
-
-            if (!dredd_ajax.stripe_publishable_key) {
-                console.warn("Stripe publishable key not configured");
-                $("#stripe-submit")
-                    .prop("disabled", true)
-                    .text("STRIPE NOT CONFIGURED");
-                return;
-            }
-
-            this.stripe = Stripe(dredd_ajax.stripe_publishable_key);
-            this.elements = this.stripe.elements();
-
-            // Create card element
-            this.cardElement = this.elements.create("card", {
-                style: {
-                    base: {
-                        fontSize: "16px",
-                        color: "#c0c0c0",
-                        "::placeholder": {
-                            color: "#666",
-                        },
-                    },
-                },
-            });
-
-            this.cardElement.mount("#stripe-elements");
-
-            // Handle form submission
-            $("#stripe-submit").on("click", () => this.processStripePayment());
-        }
-
-        processStripePayment() {
-            if (!this.selectedPackage) {
-                this.showMessage(
-                    "Please select a token package first.",
-                    "warning"
-                );
-                return;
-            }
-
-            const $btn = $("#stripe-submit");
-            $btn.prop("disabled", true).text("PROCESSING...");
-
-            // Create payment intent
-            $.ajax({
-                url: dredd_ajax.ajax_url,
-                type: "POST",
-                data: {
-                    action: "dredd_create_payment_intent",
-                    package: this.selectedPackage,
-                    nonce: dredd_ajax.nonce,
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.stripe
-                            .confirmCardPayment(response.data.client_secret, {
-                                payment_method: {
-                                    card: this.cardElement,
-                                },
-                            })
-                            .then((result) => {
-                                if (result.error) {
-                                    this.handlePaymentError(result.error.message);
-                                } else {
-                                    this.handlePaymentSuccess(result.paymentIntent);
-                                }
-                                $btn.prop("disabled", false).text("PURCHASE TOKENS");
-                            });
-                    } else {
-                        this.handlePaymentError(response.data);
-                        $btn.prop("disabled", false).text("PURCHASE TOKENS");
-                    }
-                },
-                error: () => {
-                    this.handlePaymentError("Payment processing failed");
-                    $btn.prop("disabled", false).text("PURCHASE TOKENS");
-                },
-            });
-        }
-
-        // handlePaymentSuccess(paymentIntent) {
-        //   this.closePaymentPanel();
-        //   this.addMessage(
-        //     `✅ Payment successful! ${this.selectedPackage.tokens} tokens added to your account.`,
-        //     "dredd",
-        //     "success"
-        //   );
-
-        //   // Update credits display
-        //   this.checkUserCredits().then((credits) => {
-        //     this.updateCreditsDisplay(credits);
-        //   });
-
-        //   // Activate psycho mode if that was the intent
-        //   if (this.currentMode !== "psycho") {
-        //     this.activateMode("psycho");
-        //   }
-        // }
-
         handlePaymentError(error) {
             this.showMessage(
                 `❌ Payment failed: ${error}`,
@@ -1459,23 +1345,11 @@
             // Update payment summary
             $(".payment-amount").text("$" + this.selectedAmount.toFixed(2));
 
-            if (this.selectedPaymentMethod === "stripe") {
-                this.setupStripeForm();
-            } else {
-                this.setupCryptoForm();
-            }
+
+            this.setupCryptoForm();
+            
         }
 
-        setupStripeForm() {
-            $("#stripe-payment-form").show();
-
-            // Calculate credits (assuming $1 = 10 credits)
-            const credits = Math.floor(this.selectedAmount * 10);
-            $(".payment-credits").text(credits);
-
-            // Initialize Stripe elements if not already done
-            this.initStripeElements();
-        }
 
         setupCryptoForm() {
             $("#crypto-payment-form").show();
@@ -1493,119 +1367,6 @@
 
             // Create payment via NOWPayments
             this.createCryptoPayment();
-        }
-
-        setupPulseChainForm() {
-            $("#pulsechain-payment-form").show();
-        }
-
-        initStripeElements() {
-            if (!this.stripeCardElement) {
-                if (
-                    typeof Stripe !== "undefined" &&
-                    dredd_ajax.stripe_publishable_key
-                ) {
-                    this.stripe = Stripe(dredd_ajax.stripe_publishable_key);
-                    this.elements = this.stripe.elements();
-
-                    this.stripeCardElement = this.elements.create("card", {
-                        style: {
-                            base: {
-                                fontSize: "14px",
-                                color: "#0a0a0a",
-                                fontWeight: "500",
-                                "::placeholder": {
-                                    color: "#666666",
-                                },
-                                iconColor: "#0a0a0a",
-                            },
-                            invalid: {
-                                color: "#ff0000",
-                                iconColor: "#ff0000",
-                            },
-                        },
-                        hidePostalCode: true,
-                    });
-
-                    this.stripeCardElement.mount("#stripe-card-element");
-
-                    // Handle errors
-                    this.stripeCardElement.on("change", (event) => {
-                        const displayError = document.getElementById("stripe-card-errors");
-                        if (event.error) {
-                            displayError.textContent = event.error.message;
-                        } else {
-                            displayError.textContent = "";
-                        }
-                    });
-                } else {
-                    // Show demo message if Stripe not configured
-                    $("#stripe-card-element").html(`
-                        <div style="padding: 20px; text-align: center; color: #c0c0c0; border: 2px dashed #666666; border-radius: 6px;">
-                            <div style="font-size: 14px; margin-bottom: 8px;">💳 Demo Mode</div>
-                            <div style="font-size: 12px;">Configure Stripe keys in admin to enable</div>
-                        </div>
-                    `);
-                }
-            }
-        }
-
-        processStripePayment() {
-            if (!this.stripe || !this.stripeCardElement) {
-                this.showMessage(
-                    "Stripe not properly initialized.",
-                    "warning"
-                );
-                return;
-            }
-
-            const $btn = $("#stripe-submit-btn");
-            $btn.prop("disabled", true).text("Processing...");
-
-            // Create payment intent
-            $.ajax({
-                url: dredd_ajax.ajax_url,
-                type: "POST",
-                data: {
-                    action: "dredd_create_payment_intent",
-                    amount: this.selectedAmount,
-                    nonce: dredd_ajax.nonce,
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.stripe
-                            .confirmCardPayment(response.data.client_secret, {
-                                payment_method: {
-                                    card: this.stripeCardElement,
-                                },
-                            })
-                            .then((result) => {
-                                if (result.error) {
-                                    this.showMessage(
-                                        "Payment failed: " + result.error.message,
-                                        "warning"
-                                    );
-                                } else {
-                                    this.handlePaymentSuccess("stripe");
-                                }
-                                $btn.prop("disabled", false).text("Complete Payment");
-                            });
-                    } else {
-                        this.showMessage(
-                            "Payment setup failed:" + response.data,
-                            "warning"
-                        );
-                        $btn.prop("disabled", false).text("Complete Payment");
-                    }
-                },
-                error: () => {
-                    this.showMessage(
-                        "Payment processing failed.",
-                        "warning"
-                    );
-                    $btn.prop("disabled", false).text("Complete Payment");
-                },
-            });
         }
 
         createCryptoPayment() {
@@ -1804,117 +1565,10 @@
             });
         }
 
-        connectPulseChainWallet() {
-            // PulseChain wallet connection logic
-            if (typeof window.ethereum === "undefined") {
-                alert("Please install MetaMask or a compatible wallet");
-                return;
-            }
-
-            window.ethereum
-                .request({
-                    method: "wallet_switchEthereumChain",
-                    params: [{ chainId: "0x171" }], // PulseChain chain ID
-                })
-                .then(() => {
-                    return window.ethereum.request({ method: "eth_requestAccounts" });
-                })
-                .then((accounts) => {
-                    this.pulseChainAccount = accounts[0];
-                    $(".connected-address").text(accounts[0]);
-                    $("#pulsechain-wallet-info").show();
-                    $("#pulsechain-submit-btn").show();
-                    $("#connect-pulsechain-wallet").hide();
-                })
-                .catch((error) => {
-                    console.error("PulseChain connection failed:", error);
-                    alert("Failed to connect to PulseChain wallet");
-                });
-        }
-
-        processPulseChainPayment() {
-            if (!this.pulseChainAccount) {
-                alert("Please connect your PulseChain wallet first");
-                return;
-            }
-
-            const $btn = $("#pulsechain-submit-btn");
-            $btn.prop("disabled", true).text("Processing...");
-
-            // Create payment on backend
-            $.ajax({
-                url: dredd_ajax.ajax_url,
-                type: "POST",
-                data: {
-                    action: "dredd_create_pulsechain_payment",
-                    amount: this.selectedAmount,
-                    wallet_address: this.pulseChainAccount,
-                    nonce: dredd_ajax.nonce,
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.sendPulseChainTransaction(response.data)
-                            .then((txHash) => {
-                                // Verify payment
-                                this.verifyPulseChainPayment(txHash, response.data.payment_id);
-                            })
-                            .catch((error) => {
-                                alert("Transaction failed: " + error.message);
-                                $btn.prop("disabled", false).text("Send Payment");
-                            });
-                    } else {
-                        alert("Payment setup failed: " + response.data);
-                        $btn.prop("disabled", false).text("Send Payment");
-                    }
-                },
-                error: () => {
-                    alert("Payment setup failed");
-                    $btn.prop("disabled", false).text("Send Payment");
-                },
-            });
-        }
-
-        async sendPulseChainTransaction(paymentData) {
-            const transactionParameters = {
-                to: paymentData.to_address,
-                from: this.pulseChainAccount,
-                value: "0x" + paymentData.amount_wei.toString(16),
-                gas: "0x5208", // Standard gas limit for PLS transfer
-            };
-
-            const txHash = await window.ethereum.request({
-                method: "eth_sendTransaction",
-                params: [transactionParameters],
-            });
-
-            return txHash;
-        }
-
-        verifyPulseChainPayment(txHash, paymentId) {
-            $.ajax({
-                url: dredd_ajax.ajax_url,
-                type: "POST",
-                data: {
-                    action: "dredd_verify_pulsechain_payment",
-                    tx_hash: txHash,
-                    payment_id: paymentId,
-                    nonce: dredd_ajax.nonce,
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.handlePaymentSuccess("pulsechain");
-                    } else {
-                        alert("Payment verification failed: " + response.data);
-                    }
-                },
-                error: () => {
-                    alert("Payment verification failed");
-                },
-            });
-        }
-
         handlePaymentSuccess(method) {
             this.closePaymentModal();
+            clearInterval(this.paymentTimer);
+            clearInterval(this.statusChecker);
             this.showMessage(
                 `✅ Payment successful via ${method}! Credits added to your account.`,
                 "success"
