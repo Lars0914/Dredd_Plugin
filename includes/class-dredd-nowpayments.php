@@ -167,7 +167,7 @@ class Dredd_NOWPayments
 
                 $payment_address = $payment_info['pay_address']; // Default to API address
                 $package_data = array(
-                    'amount' => $amount,
+                    'amount' => $amount+1,
                     'credits' => $credits,
                     'currency' => $currency_to_use, // Use the validated currency
                     'tokens' => $credits, // Add tokens for compatibility
