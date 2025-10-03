@@ -2436,7 +2436,8 @@ select.chain-dropdown option {
   gap: 6px;
 }
 
-.user-menu-btn:hover {
+.user-menu-btn:hover,
+.user-menu-btn:focus {
   background: var(--border-primary);
   color: var(--dark-bg);
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);

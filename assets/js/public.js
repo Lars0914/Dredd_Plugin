@@ -150,7 +150,7 @@
       $("#export-data").on("click", (e) => this.exportUserData(e));
 
       // Dashboard modal events
-      $(document).on("click", ".dashboard-modal-close", () =>
+      $(document).on("click touchstart", ".dashboard-modal-close", () =>
         this.closeDashboardModal()
       );
       $(document).on("click", ".dashboard-modal-overlay", (e) => {
@@ -527,7 +527,7 @@
         }
       } else {
         console.error("DREDD Frontend - Error response:", response);
-        this.handleError(response.data || "Unknown error occurred");
+        this.handleError(response.data.message || "Unknown error occurred");
       }
     }
 
