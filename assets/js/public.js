@@ -2339,10 +2339,6 @@
                         <a href="${window.location.href}" class="logout-link">🚪 Logout</a>
                     </div>
                 </div>
-                <div class="dredd-credits">
-                    <span class="credits-icon">🪙</span>
-                    <span class="credits-count">${user.credits}</span>
-                </div>
             `);
 
             $authButtons.replaceWith($userMenu);
