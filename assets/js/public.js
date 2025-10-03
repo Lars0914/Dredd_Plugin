@@ -1025,7 +1025,7 @@
             });
 
             // Settings tabs
-            $(document).on("click", ".settings-tab", function () {
+            $(document).on("click touchstart", ".settings-tab", function () {
                 const tab = $(this).data("tab");
 
                 $(".settings-tab").removeClass("active");
@@ -2724,12 +2724,6 @@
             const targetId = $button.data("target");
             const $input = $(`input[name="${targetId}"]`);
             const $eyeIcon = $button.find(".eye-icon");
-
-            console.log("🔍 Password toggle clicked for:", targetId);
-            console.log("🔍 Button element:", $button[0]);
-            console.log("🔍 Input found:", $input.length);
-            console.log("🔍 Eye icon found:", $eyeIcon.length);
-            console.log("🔍 Current input type:", $input.attr("type"));
 
             if ($input.length === 0) {
                 console.error("❌ Password input not found for target:", targetId);
