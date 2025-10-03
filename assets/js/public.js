@@ -2241,12 +2241,6 @@
         return { valid: false, message: "Passwords do not match" };
       }
 
-      if (!formData.terms) {
-        return {
-          valid: false,
-          message: "You must agree to the terms of service",
-        };
-      }
 
       return { valid: true };
     }

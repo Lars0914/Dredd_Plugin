@@ -3120,7 +3120,7 @@ body.modal-open {
 
 .settings-tab {
   padding: 12px 20px;
-  background: none;
+  background: none !important;
   border: none;
   color: var(--text-secondary);
   font-family: inherit;
@@ -3133,12 +3133,13 @@ body.modal-open {
 
 .settings-tab:hover {
   color: var(--text-primary) !important;
+  background: none !important;
 }
 
 .settings-tab.active {
   color: var(--primary-cyan) !important;
   border-bottom-color: var(--primary-cyan) !important;
-  background-color: none !important;
+  background: none !important;
 }
 
 .settings-content {
