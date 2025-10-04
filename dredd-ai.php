@@ -115,9 +115,7 @@ class DreddAI
     {
         require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-database.php';
         require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-n8n.php';
-        require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-payments.php';
         require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-nowpayments.php';
-        require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-pulsechain.php';
         require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-analytics.php';
         require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-promotions.php';
         require_once DREDD_AI_PLUGIN_DIR . 'includes/class-dredd-security.php';

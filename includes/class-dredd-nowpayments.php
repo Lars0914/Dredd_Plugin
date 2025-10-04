@@ -356,6 +356,7 @@ class Dredd_NOWPayments
         dredd_ai_update_user_credits($user_id, $new_credits);
         dredd_ai_update_user_expires_at($user_id, $date);
         
+        
 
 
         // Log the transaction

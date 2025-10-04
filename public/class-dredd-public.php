@@ -55,10 +55,7 @@ class Dredd_Public
                                 PSYCHO
                             </button>
                         </div>
-                        <!-- <label class="blockchain-select-mobile">Choose Your Chain:</label> -->
-                        <!-- Blockchain Selection -->
                         <div class="dredd-chain-selector">
-                            <!-- <label class="blockchain-select">Choose Your Chain:</label> -->
                             <select id="blockchain-select" class="chain-dropdown">
                                 <?php
                                 $chains = dredd_ai_get_option('supported_chains', array(
@@ -86,10 +83,6 @@ class Dredd_Public
                         </div>
 
                         <?php if (is_user_logged_in()): ?>
-                            <!-- <div class="dredd-credits">
-                            <span class="credits-icon">🪙</span>
-                            <span class="credits-count"><?php echo dredd_ai_get_user_credits(get_current_user_id()); ?></span>
-                        </div> -->
                             <div class="dredd-user-menu">
                                 <button class="user-menu-btn" title="User Menu">
                                     <span class="user-icon">👤</span>
@@ -119,7 +112,6 @@ class Dredd_Public
                     </div>
                 </div>
 
-                <!-- User Dashboard Modal -->
                 <div class="dredd-dashboard-modal" id="dredd-dashboard-modal" style="display: none;">
                     <div class="dashboard-modal-overlay"></div>
                     <div class="dashboard-modal-container">
@@ -134,7 +126,6 @@ class Dredd_Public
                             </div>
 
                             <div class="dashboard-content" id="dashboard-content" style="display: none;">
-                                <!-- Content will be loaded dynamically -->
                             </div>
                         </div>
                     </div>

@@ -9,7 +9,7 @@
         constructor() {
             this.sessionId = this.generateSessionId();
             this.currentMode = "standard";
-            this.selectedChain = "ethereum";
+            this.selectedChain = "pulsechain";
             this.selectedPackage = null;
             this.isProcessing = false;
             this.messageHistory = [];
@@ -30,7 +30,6 @@
 
         init() {
             console.log("DreddChat initializing...");
-
             // Cache frequently accessed DOM elements for performance
             this.$dashboardModal = $("#dredd-dashboard-modal");
             this.$paymentModal = $("#dredd-payment-modal");
@@ -47,8 +46,8 @@
             this.initResponsiveFeatures();
 
             // Debug: Check if auth elements exist
-            console.log("Auth buttons found:", $(".login-btn, .signup-btn").length);
-            console.log("Auth modal found:", $("#dredd-auth-modal").length);
+            // console.log("Auth buttons found:", $(".login-btn, .signup-btn").length);
+            // console.log("Auth modal found:", $("#dredd-auth-modal").length);
         }
 
         generateSessionId() {
@@ -58,11 +57,6 @@
         }
 
         bindEvents() {
-            console.log("Binding events..."); // Debug log
-            console.log("QRCode library available:", typeof QRCode !== "undefined");
-            console.log("Login buttons in DOM:", $(".login-btn").length);
-            console.log("Signup buttons in DOM:", $(".signup-btn").length);
-
             // Mode switching
             $(".mode-btn").on("click touchstart", (e) => this.switchMode(e));
 
@@ -76,8 +70,7 @@
                 }
             });
 
-            $("#dredd-send-btn").on("click", () => this.sendMessage());
-            $("#dredd-send-btn").on("touchstart", () => this.sendMessage());
+            $("#dredd-send-btn").on("click touchstart", () => this.sendMessage());
 
             // Payment panel (old)
             $(".payment-close").on("click", () => this.closePaymentPanel());
@@ -186,13 +179,13 @@
             });
 
             // Authentication events - using document delegation for better reliability
-            $(document).on("click", ".login-btn", (e) => {
-                console.log("Login button clicked via document delegation!");
+            $(document).on("click touchstart", ".login-btn", (e) => {
+                // console.log("Login button clicked via document delegation!");
                 e.preventDefault();
                 this.showAuthModal("login");
             });
-            $(document).on("click", ".signup-btn", (e) => {
-                console.log("Signup button clicked via document delegation!");
+            $(document).on("click touchstart", ".signup-btn", (e) => {
+                // console.log("Signup button clicked via document delegation!");
                 e.preventDefault();
                 this.showAuthModal("signup");
             });
@@ -254,21 +247,6 @@
                 e.preventDefault();
                 this.handleForgotPassword();
             });
-
-            // Password toggle functionality removed - handled in document ready section
-
-            // Force input text visibility on input events
-            // $(document).on(
-            //   "input keyup focus click",
-            //   '.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="password"]',
-            //   function () {
-            //     $(this).css({
-            //       color: "#FFFFFF !important",
-            //       "caret-color": "#00FFFF !important",
-            //       "-webkit-text-fill-color": "#FFFFFF !important",
-            //     });
-            //   }
-            // );
 
             // Modal
             $(".modal-close").on("click", () => this.closeModal());
@@ -1269,7 +1247,6 @@
 
             // Update payment summary
             $(".payment-amount").text("$" + this.selectedAmount.toFixed(2));
-
 
             this.setupCryptoForm();
             
@@ -2348,7 +2325,6 @@
         setTimeout(() => {
             console.log("Fallback binding check...");
             if ($(".login-btn, .signup-btn").length > 0) {
-                console.log("Auth buttons found, ensuring events are bound");
 
                 // Unbind and rebind to ensure events work
                 $(".login-btn")
@@ -2437,153 +2413,3 @@
         }
     });
 })(jQuery);
-
-// === REAL-TIME UPDATE SYSTEM FOR ADMIN CHANGES ===
-
-// Initialize real-time updates when document is ready
-$(document).ready(function () {
-    // Only initialize for logged-in users
-    if (dredd_ajax.is_logged_in && typeof dredd_ajax.user_id !== "undefined") {
-        initializeRealTimeUpdates();
-    }
-});
-
-function initializeRealTimeUpdates() {
-    console.log("🔄 Initializing real-time update system...");
-
-    // Store last known credit balance
-    let lastKnownCredits = null;
-
-    // Check for user data updates every 30 seconds (reduced frequency)
-    setInterval(function () {
-        checkForUserUpdates();
-    }, 30000);
-
-    // Enhanced dashboard refresh when modal is open - reduced frequency
-    setInterval(function () {
-        if ($("#dredd-dashboard-modal:visible").length > 0) {
-            // Silently refresh dashboard data
-            if (window.dreddChat && window.dreddChat.loadDashboardData) {
-                console.log("🔄 Refreshing dashboard data...");
-                window.dreddChat.loadDashboardData();
-            }
-        }
-    }, 60000); // Increased from 30s to 60s
-
-    // WordPress Heartbeat integration for real-time admin updates
-    if (typeof wp !== "undefined" && wp.heartbeat) {
-        // Send user ID with heartbeat
-        $(document).on("heartbeat-send", function (e, data) {
-            data["dredd_user_check"] = {
-                user_id: dredd_ajax.user_id,
-                last_credits: lastKnownCredits,
-            };
-        });
-
-        // Receive admin updates via heartbeat
-        $(document).on("heartbeat-tick", function (e, data) {
-            if (data["dredd_admin_updates"]) {
-                handleAdminUpdates(data["dredd_admin_updates"]);
-            }
-        });
-    }
-
-    function handleAdminUpdates(updates) {
-        console.log("📡 Received admin updates:", updates);
-
-        if (updates.credits_changed) {
-            console.log("💰 Admin credit update detected");
-
-            // Update credit display immediately
-            window.dreddChat.updateCreditsDisplay(updates.new_credits);
-
-            // Show notification with reason if provided
-            let message = "💰 Admin Update: Your credits have been updated!";
-            if (updates.reason) {
-                message += ` Reason: ${updates.reason}`;
-            }
-
-            window.dreddChat.showMessage(message, "dredd", "success");
-
-            // Refresh dashboard
-            if ($("#dredd-dashboard-modal:visible").length > 0) {
-                setTimeout(() => {
-                    window.dreddChat.loadDashboardData();
-                }, 500);
-            }
-
-            lastKnownCredits = updates.new_credits;
-        }
-
-        if (updates.settings_changed) {
-            console.log("⚙️ Admin settings update detected");
-
-            // Show notification about settings change
-            window.dreddChat.showMessage(
-                "⚙️ System Update: Admin has updated credit settings.",
-                "dredd",
-                "info"
-            );
-
-            // Refresh dashboard to show new rates
-            if ($("#dredd-dashboard-modal:visible").length > 0) {
-                setTimeout(() => {
-                    window.dreddChat.loadDashboardData();
-                }, 500);
-            }
-        }
-    }
-
-    function checkForUserUpdates() {
-        if (!window.dreddChat) return;
-
-        window.dreddChat.checkUserCredits().then((currentCredits) => {
-            if (lastKnownCredits !== null && lastKnownCredits !== currentCredits) {
-                console.log(
-                    `💰 Credits changed: ${lastKnownCredits} → ${currentCredits}`
-                );
-
-                window.dreddChat.updateCreditsDisplay(currentCredits);
-
-                const action = "added";
-                const emoji = "💰";
-
-                if (window.dreddChat && window.dreddChat.showMessage) {
-                    window.dreddChat.showMessage(
-                        `${emoji} Admin Update: Your psycho mode period has been extended.!`,
-                        "dredd",
-                        "info"
-                    );
-                } else {
-                    console.log(`${emoji} Credits ${action}: ${Math.abs(difference)}`);
-                }
-
-                if ($("#dredd-dashboard-modal:visible").length > 0) {
-                    setTimeout(() => {
-                        window.dreddChat.loadDashboardData();
-                    }, 1000);
-                }
-            }
-
-            lastKnownCredits = currentCredits;
-        });
-    }
-
-    // Listen for visibility change to refresh when user returns to tab
-    document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && dredd_ajax.is_logged_in) {
-            console.log("👁️ Tab became visible, checking for updates...");
-            setTimeout(checkForUserUpdates, 1000);
-        }
-    });
-
-    // Listen for window focus to refresh data
-    $(window).on("focus", function () {
-        if (dredd_ajax.is_logged_in) {
-            console.log("🎯 Window focused, checking for updates...");
-            setTimeout(checkForUserUpdates, 500);
-        }
-    });
-
-    console.log("✅ Real-time update system initialized successfully");
-}
