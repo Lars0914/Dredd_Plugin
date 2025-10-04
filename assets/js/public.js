@@ -221,29 +221,17 @@
             });
 
             // Auth form submissions
-            $(document).on("click", ".login-submit", (e) => {
-                e.preventDefault();
-                this.handleLogin();
-            });
-            $(document).on("touchstart", ".login-submit", (e) => {
+            $(document).on("click touchstart", ".login-submit", (e) => {
                 e.preventDefault();
                 this.handleLogin();
             });
 
-            $(document).on("click", ".signup-submit", (e) => {
-                e.preventDefault();
-                this.handleSignup();
-            });
-            $(document).on("touchstart", ".signup-submit", (e) => {
+            $(document).on("click touchstart", ".signup-submit", (e) => {
                 e.preventDefault();
                 this.handleSignup();
             });
 
-            $(document).on("click", ".forgot-submit", (e) => {
-                e.preventDefault();
-                this.handleForgotPassword();
-            });
-            $(document).on("touchstart", ".forgot-submit", (e) => {
+            $(document).on("click touchstart", ".forgot-submit", (e) => {
                 e.preventDefault();
                 this.handleForgotPassword();
             });
@@ -1659,7 +1647,6 @@
             const $form = $("#dredd-signup-form");
             const $submitBtn = $(".signup-submit");
 
-            // Get reCAPTCHA response
             let recaptchaResponse = "";
             if (typeof grecaptcha !== "undefined") {
                 recaptchaResponse = grecaptcha.getResponse(
@@ -2128,12 +2115,6 @@
                 }
             );
 
-            // Enhanced password toggle for touch
-            $(document).on("touchend", ".password-toggle", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                $(this).trigger("click");
-            });
         }
 
         initMobileAdjustments() {
@@ -2268,7 +2249,7 @@
         window.dreddChat = new DreddChat();
 
         // Password toggle functionality - Enhanced version with better debugging
-        $(document).on("click", ".password-toggle", function (e) {
+        $(document).on("click touchstart", ".password-toggle", function (e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -2314,7 +2295,7 @@
         });
 
         // Additional click handler for eye-icon specifically
-        $(document).on("click", ".eye-icon", function (e) {
+        $(document).on("click touchstart", ".eye-icon", function (e) {
             e.preventDefault();
             e.stopPropagation();
             console.log("🔍 Eye icon clicked directly, triggering parent button");

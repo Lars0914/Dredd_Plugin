@@ -368,7 +368,7 @@ class Dredd_Public
                                     <div class="form-group">
                                         <label for="signup-password">Password</label>
                                         <div class="password-input-container">
-                                            <input type="password" id="signup-password" name="password" required
+                                            <input type="password" id="signup-password" name="signup-password" required
                                                 placeholder="Create a secure password">
                                             <button type="button" class="password-toggle" data-target="signup-password">
                                                 <span class="eye-icon">👁️</span>
@@ -379,29 +379,13 @@ class Dredd_Public
                                     <div class="form-group">
                                         <label for="signup-confirm-password">Confirm Password</label>
                                         <div class="password-input-container">
-                                            <input type="password" id="signup-confirm-password" name="confirm_password" required
+                                            <input type="password" id="signup-confirm-password" name="signup-confirm-password" required
                                                 placeholder="Confirm your password">
                                             <button type="button" class="password-toggle" data-target="signup-confirm-password">
                                                 <span class="eye-icon">👁️</span>
                                             </button>
                                         </div>
                                     </div>
-
-                                    <!-- <div class="form-group checkbox-group">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="signup-terms" name="terms" required>
-                                            <span class="checkmark"></span>
-                                            I agree to serve justice and follow the law
-                                        </label>
-                                    </div>
-
-                                    <div class="form-group checkbox-group">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="signup-newsletter" name="newsletter">
-                                            <span class="checkmark"></span>
-                                            Send me justice updates and crypto alerts
-                                        </label>
-                                    </div> -->
 
                                     <!-- reCAPTCHA -->
                                     <div class="form-group captcha-group">

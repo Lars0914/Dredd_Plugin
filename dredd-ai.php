@@ -830,16 +830,9 @@ class DreddAI
             dredd_ai_log('WordPress user creation failed: ' . $user_id->get_error_message(), 'error');
             $user_id = 0;
         } else {
-            // Update user meta only if WordPress user was created
             update_user_meta($user_id, 'dredd_newsletter_subscription', $newsletter);
             update_user_meta($user_id, 'dredd_registration_date', current_time('mysql'));
             update_user_meta($user_id, 'dredd_email_verified', true);
-
-            // Give welcome credits only if paid mode is enabled
-            // if (dredd_ai_is_paid_mode_enabled()) {
-            //     $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
-            //     dredd_ai_add_credits($user_id, $welcome_credits);
-            // }
         }
 
         wp_send_json_success(array(
