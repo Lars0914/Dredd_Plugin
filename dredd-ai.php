@@ -92,11 +92,9 @@ class DreddAI
 
         // Real-time update handlers
         add_action('wp_ajax_dredd_check_user_updates', array($this, 'handle_check_user_updates'));
-        add_filter('heartbeat_received', array($this, 'heartbeat_received'), 10, 2);
         add_filter('heartbeat_send', array($this, 'heartbeat_send'));
 
         // Email verification handler
-        add_action('init', array($this, 'handle_email_verification'));
         add_action('init', array($this, 'handle_password_reset'));
 
         // Logout handler
@@ -104,7 +102,6 @@ class DreddAI
 
         // Shortcode registration
         add_shortcode('dredd_chat', array($this, 'chat_shortcode'));
-        add_shortcode('dredd_user_dashboard', array($this, 'user_dashboard_shortcode'));
 
         // Cron hooks
         add_action('dredd_cleanup_expired_data', array($this, 'cleanup_expired_data'));
@@ -180,7 +177,6 @@ class DreddAI
 
             // Drop custom tables
             $tables = array(
-                $wpdb->prefix . 'dredd_user_tokens',
                 $wpdb->prefix . 'dredd_transactions',
                 $wpdb->prefix . 'dredd_analysis_history',
                 $wpdb->prefix . 'dredd_promotions',
@@ -360,7 +356,7 @@ class DreddAI
                 'id' => get_current_user_id(),
                 'username' => wp_get_current_user()->user_login,
                 'display_name' => wp_get_current_user()->display_name,
-                'credits' => dredd_ai_get_user_credits(get_current_user_id())
+                'expires_at' => null
             ) : null,
             'strings' => array(
                 'loading' => __('Analyzing...', 'dredd-ai'),
@@ -389,12 +385,6 @@ class DreddAI
     {
         $public = new Dredd_Public();
         return $public->render_chat_interface($atts);
-    }
-
-    public function user_dashboard_shortcode($atts)
-    {
-        $public = new Dredd_Public();
-        return $public->render_user_dashboard($atts);
     }
 
     public function handle_chat_ajax()
@@ -730,7 +720,7 @@ class DreddAI
                     'id' => $user->ID,
                     'username' => $user->user_login,
                     'display_name' => $user->display_name,
-                    'credits' => dredd_ai_get_user_credits($user->ID)
+                    'expires_at' => $chat_user->expires_at
                 )
             ));
             return;
@@ -1042,53 +1032,6 @@ class DreddAI
         } else {
             dredd_ai_log('Failed to send password reset email to: ' . $email, 'error');
             wp_send_json_error('Failed to send reset email. Please try again.');
-        }
-    }
-
-    public function handle_email_verification()
-    {
-        // Check if this is an email verification request
-        if (isset($_GET['dredd_verify_email'])) {
-            $token = sanitize_text_field($_GET['dredd_verify_email']);
-
-            if (empty($token)) {
-                wp_die('Invalid verification token.');
-            }
-
-            // Find user by verification token
-            $users = get_users(array(
-                'meta_key' => 'dredd_email_verification_token',
-                'meta_value' => $token
-            ));
-
-            if (empty($users)) {
-                wp_die('Invalid or expired verification token.');
-            }
-
-            $user = $users[0];
-
-            // Get the stored return URL
-            $return_url = get_user_meta($user->ID, 'dredd_verification_return_url', true);
-            if (empty($return_url)) {
-                $return_url = home_url('/');
-            }
-
-            // Mark email as verified
-            update_user_meta($user->ID, 'dredd_email_verified', true);
-            delete_user_meta($user->ID, 'dredd_email_verification_token');
-            delete_user_meta($user->ID, 'dredd_verification_return_url'); // Clean up
-
-            // Give welcome credits
-            $welcome_credits = dredd_ai_get_option('welcome_credits', 10);
-            dredd_ai_add_credits($user->ID, $welcome_credits);
-
-            dredd_ai_log('Email verified for user: ' . $user->user_login . ' (ID: ' . $user->ID . ')', 'info');
-
-            // Redirect to the stored return URL with success message
-            $redirect_url = add_query_arg('email_verified', '1', $return_url);
-
-            wp_redirect($redirect_url);
-            exit;
         }
     }
 
@@ -1863,50 +1806,6 @@ class DreddAI
     }
 
     /**
-     * WordPress Heartbeat integration for real-time updates
-     */
-    public function heartbeat_received($response, $data)
-    {
-        if (isset($data['dredd_user_check']) && is_user_logged_in()) {
-            $user_id = get_current_user_id();
-            $user_data = $data['dredd_user_check'];
-
-            // Check for credit changes
-            $current_credits = dredd_ai_get_user_credits($user_id);
-            $last_credits = $user_data['last_credits'] ?? null;
-
-            $updates = array();
-
-            if ($last_credits !== null && $last_credits !== $current_credits) {
-                $updates['credits_changed'] = true;
-                $updates['new_credits'] = $current_credits;
-                $updates['old_credits'] = $last_credits;
-
-                // Check if this was an admin adjustment
-                $last_transaction = $this->get_last_admin_transaction($user_id);
-                if ($last_transaction && $last_transaction->created_at > date('Y-m-d H:i:s', strtotime('-1 minute'))) {
-                    $updates['reason'] = $last_transaction->notes ?? 'Admin adjustment';
-                }
-            }
-
-            // Check for settings changes
-            $settings_updated = get_option('dredd_settings_last_updated', 0);
-            $user_last_check = get_user_meta($user_id, 'dredd_settings_last_check', true) ?: 0;
-
-            if ($settings_updated > $user_last_check) {
-                $updates['settings_changed'] = true;
-                update_user_meta($user_id, 'dredd_settings_last_check', $settings_updated);
-            }
-
-            if (!empty($updates)) {
-                $response['dredd_admin_updates'] = $updates;
-            }
-        }
-
-        return $response;
-    }
-
-    /**
      * Send data with heartbeat
      */
     public function heartbeat_send()
@@ -1968,69 +1867,6 @@ function dredd_ai_is_paid_mode_enabled()
     return (bool) dredd_ai_get_option('paid_mode_enabled', false);
 }
 
-function dredd_ai_get_user_credits($user_id)
-{
-    global $wpdb;
-    $table = $wpdb->prefix . 'dredd_user_tokens';
-
-    $credits = $wpdb->get_var($wpdb->prepare(
-        "SELECT token_balance FROM {$table} WHERE user_id = %d",
-        $user_id
-    ));
-
-    return $credits ? intval($credits) : 0;
-}
-
-function dredd_ai_deduct_credits($user_id, $amount)
-{
-    global $wpdb;
-    $table = $wpdb->prefix . 'dredd_user_tokens';
-
-    return $wpdb->query($wpdb->prepare(
-        "UPDATE {$table} SET token_balance = GREATEST(0, token_balance - %d), updated_at = NOW() WHERE user_id = %d",
-        $amount,
-        $user_id
-    ));
-}
-
-function dredd_ai_add_credits($user_id, $amount)
-{
-    global $wpdb;
-    $table = $wpdb->prefix . 'dredd_user_tokens';
-
-    // Insert or update user credits
-    return $wpdb->query($wpdb->prepare(
-        "INSERT INTO {$table} (user_id, token_balance, total_purchased, created_at, updated_at) 
-         VALUES (%d, %d, %d, NOW(), NOW()) 
-         ON DUPLICATE KEY UPDATE 
-         token_balance = token_balance + %d, 
-         total_purchased = total_purchased + %d, 
-         updated_at = NOW()",
-        $user_id,
-        $amount,
-        $amount,
-        $amount,
-        $amount
-    ));
-}
-
-function dredd_ai_update_user_credits($user_id, $new_balance)
-{
-    global $wpdb;
-    $table = $wpdb->prefix . 'dredd_user_tokens';
-
-    // Insert or update user credits to specific balance
-    return $wpdb->query($wpdb->prepare(
-        "INSERT INTO {$table} (user_id, token_balance, total_purchased, created_at, updated_at) 
-         VALUES (%d, %d, 0, NOW(), NOW()) 
-         ON DUPLICATE KEY UPDATE 
-         token_balance = %d, 
-         updated_at = NOW()",
-        $user_id,
-        $new_balance,
-        $new_balance
-    ));
-}
 
 function dredd_ai_update_user_expires_at( $user_id, $days_in ) {
     global $wpdb;

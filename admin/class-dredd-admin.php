@@ -26,7 +26,6 @@ class Dredd_Admin
         add_action('wp_ajax_dredd_update_promotion', array($this, 'update_promotion_ajax'));
         add_action('wp_ajax_dredd_update_credit_settings', array($this, 'update_credit_settings'));
         add_action('wp_ajax_dredd_get_user_data', array($this, 'get_user_data_ajax'));
-        add_action('wp_ajax_dredd_update_user_credits', array($this, 'update_user_credits_ajax'));
         add_action('wp_ajax_dredd_test_n8n_webhook', array($this, 'test_n8n_webhook'));
     }
 
@@ -2173,63 +2172,6 @@ class Dredd_Admin
         update_option('dredd_settings_last_updated', current_time('timestamp'));
 
         wp_send_json_success('Settings updated');
-    }
-
-    /**
-     * Update user credits AJAX handler
-     */
-    public function update_user_credits_ajax()
-    {
-        if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['nonce'], 'dredd_admin_nonce')) {
-            wp_send_json_error('Unauthorized');
-        }
-
-        $user_id = intval($_POST['user_id']);
-        $adjustment_type = sanitize_text_field($_POST['adjustment_type']);
-        $amount = intval($_POST['amount']);
-        $reason = sanitize_textarea_field($_POST['reason']);
-
-        $current_credits = dredd_ai_get_user_credits($user_id);
-
-        switch ($adjustment_type) {
-            case 'add':
-                $new_credits = $current_credits + $amount;
-                break;
-            case 'subtract':
-                $new_credits = max(0, $current_credits - $amount);
-                break;
-            case 'set':
-                $new_credits = $amount;
-                break;
-            default:
-                wp_send_json_error('Invalid adjustment type');
-        }
-
-        dredd_ai_update_user_credits($user_id, $new_credits);
-
-        // Log the adjustment
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix . 'dredd_transactions',
-            array(
-                'user_id' => $user_id,
-                'amount' => 0,
-                'tokens' => $adjustment_type === 'add' ? $amount : -$amount,
-                'payment_method' => 'admin_adjustment',
-                'status' => 'completed',
-                'created_at' => current_time('mysql'),
-                'notes' => $reason ?: 'Admin credit adjustment'
-            )
-        );
-
-        // Trigger real-time update notification
-        $this->trigger_user_update($user_id, array(
-            'credits_changed' => true,
-            'new_credits' => $new_credits,
-            'reason' => $reason ?: 'Admin credit adjustment'
-        ));
-
-        wp_send_json_success('Credits updated successfully');
     }
 
     /**

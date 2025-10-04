@@ -32,6 +32,7 @@ class Dredd_N8N
         $user_id = get_current_user_id();
         $mode = sanitize_text_field($_POST['mode'] ?? 'standard');
         $selected_chain = sanitize_text_field($_POST['selected_chain'] ?? 'ethereum');
+        $expires_at = sanitize_text_field($_POST['expires_at'] ?? '');
 
         $extracted_data = $this->extract_token_information($message);
 
@@ -51,7 +52,7 @@ class Dredd_N8N
             'blockchain' => $selected_chain,
             'contract_addresses' => $contract_addresses,
             'token_names' => $token_names,
-            'user_credits' => dredd_ai_get_user_credits($user_id),
+            'expires_at' => $expires_at,
             'timestamp' => current_time('mysql')
         );
 

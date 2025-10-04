@@ -177,9 +177,7 @@ class Dredd_Analytics {
      */
     private function get_user_stats($date_from, $date_to) {
         global $wpdb;
-        $analysis_table = $wpdb->prefix . 'dredd_analysis_history';
-        $tokens_table = $wpdb->prefix . 'dredd_user_tokens';
-        
+        $analysis_table = $wpdb->prefix . 'dredd_analysis_history';        
         // User activity stats
         $user_stats = $wpdb->get_row($wpdb->prepare(
             "SELECT 

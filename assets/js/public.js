@@ -418,6 +418,7 @@
                 mode: this.currentMode,
                 selected_chain: this.selectedChain, // This is already being sent!
                 user_id: dredd_ajax.user_id,
+                expires_at: dredd_ajax.user.expires_at || '',
             };
 
             $.ajax({

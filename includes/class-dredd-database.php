@@ -44,8 +44,6 @@ class Dredd_Database
     private function ensure_all_tables_exist()
     {
         $this->ensure_chat_users_table_exists();
-        $this->ensure_user_tokens_table_exists();
-        $this->ensure_transactions_table_exists();
         $this->ensure_analysis_table_exists();
         $this->ensure_promotions_table_exists();
         $this->ensure_cache_table_exists();
@@ -83,41 +81,6 @@ class Dredd_Database
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
-    }
-
-    private function ensure_user_tokens_table_exists()
-    {
-        $table = $this->wpdb->prefix . 'dredd_user_tokens';
-        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
-            $this->create_user_tokens_table();
-        }
-    }
-
-    private function create_user_tokens_table()
-    {
-        $charset_collate = $this->wpdb->get_charset_collate();
-        $table = $this->wpdb->prefix . 'dredd_user_tokens';
-
-        $sql = "CREATE TABLE {$table} (
-            user_id bigint(20) unsigned NOT NULL,
-            token_balance int(11) NOT NULL DEFAULT 0,
-            total_purchased int(11) NOT NULL DEFAULT 0,
-            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (user_id),
-            KEY idx_user_balance (user_id, token_balance)
-        ) {$charset_collate};";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
-
-    private function ensure_transactions_table_exists()
-    {
-        $table = $this->wpdb->prefix . 'dredd_transactions';
-        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
-            $this->create_transactions_table();
-        }
     }
 
     private function create_transactions_table()
@@ -622,18 +585,12 @@ class Dredd_Database
      */
     public function export_user_data($user_id)
     {
-        $tokens_table = $this->wpdb->prefix . 'dredd_user_tokens';
         $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
         $sessions_table = $this->wpdb->prefix . 'dredd_user_sessions';
 
         $data = array();
 
-        // User tokens
-        $data['tokens'] = $this->wpdb->get_row($this->wpdb->prepare(
-            "SELECT * FROM {$tokens_table} WHERE user_id = %d",
-            $user_id
-        ));
 
         // Transactions
         $data['transactions'] = $this->wpdb->get_results($this->wpdb->prepare(
@@ -662,7 +619,6 @@ class Dredd_Database
     public function delete_user_data($user_id)
     {
         $tables = array(
-            $this->wpdb->prefix . 'dredd_user_tokens',
             $this->wpdb->prefix . 'dredd_transactions',
             $this->wpdb->prefix . 'dredd_analysis_history',
             $this->wpdb->prefix . 'dredd_user_sessions'
