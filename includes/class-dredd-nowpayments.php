@@ -148,9 +148,11 @@ class Dredd_NOWPayments
             } else {
                 dredd_ai_log("Skipping minimum amount validation for {$currency_to_use} (minimum amount could not be determined)", 'debug');
             }
-
+            if (strtolower($currency_to_use) === 'pls') {
+                $amount += 1.5;
+            }
             $payment_data = array(
-                'price_amount' => $amount+1.5,
+                'price_amount' => $amount,
                 'price_currency' => 'usd',
                 'pay_currency' => strtolower($currency_to_use), // Use the validated currency code
                 'order_id' => 'dredd_' . $user_id . '_' . time(),
