@@ -64,8 +64,7 @@ class DreddAI
         add_action('wp_ajax_dredd_debug_test', array($this, 'handle_debug_test'));
         add_action('wp_ajax_nopriv_dredd_debug_test', array($this, 'handle_debug_test'));
         add_action('wp_ajax_dredd_view_logs', array($this, 'handle_view_logs'));
-        add_action('wp_ajax_dredd_process_payment', array($this, 'handle_payment'));
-        add_action('wp_ajax_nopriv_dredd_process_payment', array($this, 'handle_payment'));
+
         add_action('wp_ajax_dredd_get_user_data', array($this, 'get_user_data'));
 
         // NOWPayments AJAX actions
@@ -138,7 +137,6 @@ class DreddAI
         new Dredd_Public();
         new Dredd_Promotions();
         new Dredd_Security();
-        new Dredd_PulseChain();
 
         // Schedule cron jobs
         if (!wp_next_scheduled('dredd_cleanup_expired_data')) {
@@ -524,7 +522,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -549,18 +547,6 @@ class DreddAI
         </html>
         <?php
         exit;
-    }
-
-
-    public function handle_payment()
-    {
-        $security = new Dredd_Security();
-        if (!$security->verify_ajax_request()) {
-            wp_die(__('Security check failed', 'dredd-ai'));
-        }
-
-        $payments = new Dredd_Payments();
-        $payments->process_payment();
     }
 
     public function cleanup_expired_data()
@@ -2053,4 +2039,35 @@ function dredd_ai_update_user_credits($user_id, $new_balance)
         $new_balance,
         $new_balance
     ));
+}
+
+function dredd_ai_update_user_expires_at( $user_id, $days_in ) {
+    global $wpdb;
+
+    $table = $wpdb->prefix . 'dredd_chat_users';
+
+    $current = $wpdb->get_var(
+        $wpdb->prepare( "SELECT expires_at FROM {$table} WHERE id = %d", $user_id )
+    );
+
+    // Determine base timestamp (UTC)
+    $use_now = ( $current === null || $current === '' || $current === '0000-00-00 00:00:00' );
+    $base_ts = $use_now
+        ? current_time('timestamp', true )
+        : strtotime( $current . ' UTC' );
+
+    // Add days
+    $new_ts = strtotime("{$days_in} days", $base_ts );
+
+    // Format as MySQL DATETIME in UTC
+    $new_expires_at = gmdate( 'Y-m-d H:i:s', $new_ts );
+
+    // Update database
+    $updated = $wpdb->update(
+        $table,
+        array( 'expires_at' => $new_expires_at ),
+        array( 'id' => $user_id ),
+        array( '%s' ),
+        array( '%d' )
+    );
 }

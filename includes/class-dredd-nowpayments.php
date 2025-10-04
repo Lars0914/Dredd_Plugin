@@ -337,6 +337,7 @@ class Dredd_NOWPayments
     {
         $user_id = $payment_record->user_id;
         $package_data = json_decode($payment_record->package_data, true);
+        $payment_data = json_decode($payment_record->payment_data, true);
 
         if (!$package_data || !isset($package_data['tokens'])) {
             throw new Exception('Invalid package data in payment record');
@@ -347,8 +348,15 @@ class Dredd_NOWPayments
         // Add tokens to user account
         $current_credits = dredd_ai_get_user_credits($user_id);
         $new_credits = $current_credits + $tokens_to_add;
+        
+        $date = 30;
+        if($package_data['amount'] == 40) $date = 180;
+        if($package_data['amount'] == 90) $date = 365;
 
         dredd_ai_update_user_credits($user_id, $new_credits);
+        dredd_ai_update_user_expires_at($user_id, $date);
+        
+
 
         // Log the transaction
         dredd_ai_log("Credits added to user {$user_id}: {$tokens_to_add} tokens (new total: {$new_credits})", 'info');

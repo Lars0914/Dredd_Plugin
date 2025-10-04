@@ -133,7 +133,6 @@ class Dredd_Database
             tokens int(11) NOT NULL,
             payment_method enum('stripe', 'usdt', 'usdc') NOT NULL,
             chain varchar(50) DEFAULT NULL,
-            tx_hash varchar(255) DEFAULT NULL,
             stripe_payment_intent varchar(255) DEFAULT NULL,
             status enum('pending', 'completed', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
             metadata text DEFAULT NULL,
@@ -494,7 +493,6 @@ class Dredd_Database
                 'tokens' => $data['tokens'],
                 'payment_method' => $data['payment_method'],
                 'chain' => $data['chain'] ?? null,
-                'tx_hash' => $data['tx_hash'] ?? null,
                 'stripe_payment_intent' => $data['stripe_payment_intent'] ?? null,
                 'status' => $data['status'],
                 'metadata' => json_encode($data['metadata'] ?? array())
