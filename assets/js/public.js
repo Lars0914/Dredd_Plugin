@@ -29,7 +29,6 @@
         }
 
         init() {
-            console.log("DreddChat initializing...");
             // Cache frequently accessed DOM elements for performance
             this.$dashboardModal = $("#dredd-dashboard-modal");
             this.$paymentModal = $("#dredd-payment-modal");
@@ -418,7 +417,7 @@
                 mode: this.currentMode,
                 selected_chain: this.selectedChain, // This is already being sent!
                 user_id: dredd_ajax.user_id,
-                expires_at: dredd_ajax.user.expires_at || '',
+                expires_at: dredd_ajax.current_user.expires_at || '',
             };
 
             $.ajax({
@@ -1496,9 +1495,6 @@
         }
 
         showAuthModal(formType = "login") {
-            console.log("showAuthModal called with:", formType);
-            console.log("Modal element found:", this.$authModal.length);
-
             // Prevent background scrolling in chat window
             $(".dredd-chat-container").css("overflow", "hidden");
 
@@ -2246,7 +2242,6 @@
 
     // Initialize when document is ready
     $(document).ready(function () {
-        console.log("Document ready, initializing DreddChat...");
         window.dreddChat = new DreddChat();
 
         // Password toggle functionality - Enhanced version with better debugging
@@ -2276,11 +2271,9 @@
             if (currentType === "password") {
                 $input.attr("type", "text");
                 $eyeIcon.text("🙈"); // See no evil monkey
-                console.log("✅ Password now visible");
             } else {
                 $input.attr("type", "password");
                 $eyeIcon.text("👁️"); // Eye
-                console.log("✅ Password now hidden");
             }
 
             // Visual feedback
@@ -2299,13 +2292,11 @@
         $(document).on("click touchstart", ".eye-icon", function (e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log("🔍 Eye icon clicked directly, triggering parent button");
             $(this).closest(".password-toggle").trigger("click");
         });
 
         // Additional fallback event binding for auth buttons
         setTimeout(() => {
-            console.log("Fallback binding check...");
             if ($(".login-btn, .signup-btn").length > 0) {
 
                 // Unbind and rebind to ensure events work
@@ -2322,7 +2313,6 @@
                 $(".signup-btn")
                     .off("click.auth")
                     .on("click.auth", function (e) {
-                        console.log("Fallback signup button clicked!");
                         e.preventDefault();
                         if (window.dreddChat && window.dreddChat.showAuthModal) {
                             window.dreddChat.showAuthModal("signup");
