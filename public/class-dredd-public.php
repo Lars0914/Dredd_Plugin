@@ -282,9 +282,6 @@ class Dredd_Public
                             </div>
 
                             <div class="auth-modal-content">
-                                <!-- <div class="dredd-quote">
-                                    <p>"I am the BlockChain Enforcer! DREDD is running low on resources, check back soon"</p>
-                                </div> -->
 
                                 <form id="dredd-login-form" class="auth-form-inner">
                                     <div class="form-group">

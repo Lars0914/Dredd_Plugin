@@ -59,11 +59,11 @@ class Dredd_N8N
         $response = $this->send_to_n8n_direct($payload);
 
         if ($response && isset($response['action'])) {
-            if ($this->database->store_analysis($response)) {
-                wp_send_json_success($response);
-            } else {
-                wp_send_json_error(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error'));
+
+            if ($response['contract_address'] !== 'Unknown' && $response['contract_address'] !== '') {
+                $this->database->store_analysis($response);
             }
+            wp_send_json_success($response);
         } else {
             wp_send_json_error(array('message' => 'DREDD is running low on resources, check back soon.', 'action' => 'error'));
         }
