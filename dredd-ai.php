@@ -411,7 +411,7 @@ class DreddAI
 
         wp_send_json_success(array(
             'message' => 'DEBUG: AJAX system is working!',
-            'timestamp' => current_time('mysql'),
+            'timestamp' => gmdate('Y-m-d H:i:s'),
             'post_data' => $_POST
         ));
     }
@@ -685,7 +685,7 @@ class DreddAI
                         'username' => $username,
                         'password' => $password,
                         'email' => $email,
-                        'created_at' => current_time('mysql'),
+                        'created_at' => gmdate('Y-m-d H:i:s'),
                     ),
                     array('%d', '%s', '%s', '%s', '%s')
                 );
@@ -705,7 +705,7 @@ class DreddAI
                     'username' => $username,
                     'password' => $password,
                     'email' => $email,
-                    'created_at' => current_time('mysql'),
+                    'created_at' => gmdate('Y-m-d H:i:s'),
                 ),
                 array('%d', '%s', '%s', '%s', '%s')
             );
@@ -720,7 +720,7 @@ class DreddAI
             $user_id = 0;
         } else {
             update_user_meta($user_id, 'dredd_newsletter_subscription', $newsletter);
-            update_user_meta($user_id, 'dredd_registration_date', current_time('mysql'));
+            update_user_meta($user_id, 'dredd_registration_date', gmdate('Y-m-d H:i:s'));
             update_user_meta($user_id, 'dredd_email_verified', true);
         }
 
@@ -1519,7 +1519,7 @@ class DreddAI
                     'website_url' => $website,
                     'description' => $description,
                     'status' => 'pending',
-                    'submitted_at' => current_time('mysql')
+                    'submitted_at' => gmdate('Y-m-d H:i:s')
                 ),
                 array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
             );
@@ -1798,29 +1798,31 @@ function dredd_ai_update_user_expires_at($user_id, $days_in)
     );
 }
 
-function dredd_ai_store_transaction($user_id, array $payment_data, string $flag = 'finished', $amount)
-{
+
+function dredd_ai_store_transaction($user_id, array $payment_data, $amount_usd, string $flag = 'finished'){
     global $wpdb;
     $table = $wpdb->prefix . 'dredd_transactions';
 
     $transaction_id = (string) ($payment_data['payment_id'] ?? $payment_data['purchase_id'] ?? $payment_data['order_id'] ?? uniqid('np_'));
-    $price_amount = $amount ? (float) $amount : 0.0;
+
+    // Store USD (two decimals)
+    $price_amount = $amount_usd ? (float) $amount_usd : 0.0;
+
     $pay_currency = strtolower((string) ($payment_data['pay_currency'] ?? ''));
-    $created_iso = (string) ($payment_data['created_at'] ?? '');
-    $updated_iso = (string) ($payment_data['updated_at'] ?? $created_iso);
+    $created_iso  = (string) ($payment_data['created_at'] ?? '');
+    $updated_iso  = (string) ($payment_data['updated_at'] ?? $created_iso);
 
     $created_at = $created_iso ? gmdate('Y-m-d H:i:s', strtotime($created_iso)) : current_time('mysql', true);
     $updated_at = $updated_iso ? gmdate('Y-m-d H:i:s', strtotime($updated_iso)) : $created_at;
 
-
     $row = [
         'transaction_id' => $transaction_id,
-        'user_id' => $user_id,
-        'amount' => number_format($price_amount, 2, '.', ''),
-        'chain' => $pay_currency,
-        'flag' => $flag,
-        'created_at' => $created_at,
-        'updated_at' => $updated_at,
+        'user_id'        => $user_id,
+        'amount'         => number_format($price_amount, 2, '.', ''), // USD
+        'chain'          => $pay_currency,  // 'eth'
+        'flag'           => $flag,
+        'created_at'     => $created_at,
+        'updated_at'     => $updated_at,
     ];
 
     $sql = "
@@ -1849,6 +1851,7 @@ function dredd_ai_store_transaction($user_id, array $payment_data, string $flag 
 
     $ok = $wpdb->query($prepared);
 }
+
 function dredd_ai_update_transaction($transaction_id)
 {
     global $wpdb;

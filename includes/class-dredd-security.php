@@ -369,7 +369,7 @@ class Dredd_Security
     public function log_security_event($event, $details = array())
     {
         $log_data = array(
-            'timestamp' => current_time('mysql'),
+            'timestamp' => gmdate('Y-m-d H:i:s'),
             'event' => $event,
             'user_id' => get_current_user_id(),
             'ip_address' => $this->get_client_ip(),

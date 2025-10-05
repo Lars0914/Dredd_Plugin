@@ -2146,7 +2146,7 @@ class Dredd_Admin
         $test_payload = array(
             'test' => true,
             'message' => 'DREDD AI Test Connection',
-            'timestamp' => current_time('mysql'),
+            'timestamp' => gmdate('Y-m-d H:i:s'),
             'source' => 'dredd-ai-admin-test'
         );
 

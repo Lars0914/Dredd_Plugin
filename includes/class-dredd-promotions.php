@@ -291,7 +291,7 @@ class Dredd_Promotions {
                     );
                     
                     // Ensure dates are valid for immediate sidebar display
-                    $now = current_time('mysql');
+                    $now = gmdate('Y-m-d H:i:s');
                     $start_time = strtotime($current_promotion->start_date);
                     $end_time = strtotime($current_promotion->end_date);
                     $current_time = time();

@@ -148,7 +148,7 @@ class Dredd_NOWPayments
                 dredd_ai_log("Skipping minimum amount validation for {$currency_to_use} (minimum amount could not be determined)", 'debug');
             }
 
-            $amount += 0.5;
+            $amount = $amount + 1.1;
 
             $payment_data = array(
                 'price_amount' => $amount,
@@ -311,7 +311,7 @@ class Dredd_NOWPayments
             $payment_table,
             array(
                 'status' => $status,
-                'updated_at' => current_time('mysql'),
+                'updated_at' => gmdate('Y-m-d H:i:s'),
                 'webhook_data' => json_encode($data)
             ),
             array('id' => $payment_record->id),
@@ -327,64 +327,73 @@ class Dredd_NOWPayments
         dredd_ai_log("NOWPayments webhook processed: {$payment_id} - {$status}", 'info');
     }
 
-    /**
-     * Complete successful payment
-     */
     private function complete_payment($payment_record, $flag)
     {
         $user_id = $payment_record->user_id;
-        $package_data = json_decode($payment_record->package_data, true);
-        $payment_data = json_decode($payment_record->payment_data, true);
-        $amount_paid = json_decode($payment_record->webhook_data, true)['actually_paid'] ?? 0.0;
+        $package_data = json_decode($payment_record->package_data, true) ?: [];
+        $payment_data = json_decode($payment_record->payment_data, true) ?: [];
+        $webhook = json_decode($payment_record->webhook_data, true) ?: [];
 
-        if (!$package_data || !isset($package_data['tokens'])) {
-            throw new Exception('Invalid package data in payment record');
+        $package_usd = (float) ($package_data['amount'] ?? 0.0);             // e.g. 10.5
+        $price_usd = (float) ($payment_data['price_amount'] ?? 0.0);       // e.g. 10.5
+        $pay_amt_crypto = (float) ($payment_data['pay_amount'] ?? 0.0);         // e.g. 0.00232468 ETH
+        $actually_crypto = (float) ($webhook['actually_paid'] ?? 0.0);           // e.g. 0.00264274 ETH
+        $status_pd = strtolower((string) ($payment_data['payment_status'] ?? '')); // "waiting"
+        $status_wh = strtolower((string) ($webhook['payment_status'] ?? ''));      // "finished" in your row
+
+        $paid_usd = 0.0;
+
+        if (isset($webhook['actually_paid_at_fiat']) && $webhook['actually_paid_at_fiat'] > 0) {
+            $paid_usd = (float) $webhook['actually_paid_at_fiat'];
+        } elseif ($price_usd > 0 && $pay_amt_crypto > 0 && $actually_crypto > 0) {
+            $usd_per_unit = $price_usd / $pay_amt_crypto;
+            $paid_usd = $usd_per_unit * $actually_crypto;
         }
 
-        if(abs($package_data['amount'] - $amount_paid <= 1.0)){
-            $flag = 'finished';
-        }
+        $is_finished = ($flag === 'finished') || ($status_pd === 'finished') || ($status_wh === 'finished');
 
-        $date = 0;
-
-        if ($flag === 'finished') {
-            $txn = dredd_ai_get_partially_paid_transaction($user_id);
-            if ($txn) {
-                $date = $this->dredd_days_from_payment($txn->amount + $amount_paid);
-                dredd_ai_update_user_expires_at($user_id, $date);
-                dredd_ai_update_transaction($txn->transaction_id);
-            } else {
-                if ($package_data['amount'] == 10)
-                    $date = 30;
-                if ($package_data['amount'] == 40)
-                    $date = 180;
-                if ($package_data['amount'] == 90)
-                    $date = 365;
-                dredd_ai_update_user_expires_at($user_id, $date);
+        if (!$is_finished && $package_usd > 0 && $paid_usd > 0) {
+            $tolerance = 1.00;
+            if ($paid_usd + $tolerance >= $package_usd) {
+                $is_finished = true;
+                $flag = 'finished';
             }
         }
 
-        $this->send_payment_confirmation($user_id, $amount_paid, $payment_record);
-        dredd_ai_store_transaction($payment_record->user_id, $payment_data, $flag, $amount_paid);
-    }
+        $date_days = 0;
 
-    /**
-     * Send payment confirmation email
-     */
-    private function send_payment_confirmation($user_id, $amount_paid, $payment_record)
-    {
-        $user = get_user_by('id', $user_id);
+        if ($is_finished) {
+            $txn = dredd_ai_get_partially_paid_transaction($user_id);
+            if ($txn) {
+                $total_usd = (float) $txn->amount + $paid_usd;
+                $date_days = $this->dredd_days_from_payment($total_usd);
+                dredd_ai_update_user_expires_at($user_id, $date_days);
+                dredd_ai_update_transaction($txn->transaction_id);
+            } else {
 
-        if (!$user) {
-            return;
+                $date_days = $this->dredd_days_from_payment($package_usd);
+                dredd_ai_update_user_expires_at($user_id, $date_days);
+            }
         }
 
+        $this->send_payment_confirmation($user_id, $paid_usd, $payment_record);
+        dredd_ai_store_transaction($payment_record->user_id, $payment_data, $flag, $paid_usd);
+    }
+
+    private function send_payment_confirmation($user_id, $paid_usd, $payment_record)
+    {
+        $user = get_user_by('id', $user_id);
+        if (!$user)
+            return;
+
         $subject = 'DREDD AI - Payment Confirmed';
+        $amount_str = number_format((float) $paid_usd, 2, '.', '');
+
         $message = "Hello {$user->display_name},\n\n";
         $message .= "Your payment has been confirmed!\n\n";
-        $message .= "Amount: \${$amount_paid}\n";
+        $message .= "Amount: \${$amount_str}\n";
         $message .= "Payment ID: {$payment_record->payment_id}\n";
-        $message .= "Date: " . date('Y-m-d H:i:s') . "\n\n";
+        $message .= "Date: " . gmdate('Y-m-d H:i:s') . " UTC\n\n";
         $message .= "Thank you for your purchase!\n\n";
         $message .= "The DREDD AI Team";
 
@@ -411,8 +420,8 @@ class Dredd_NOWPayments
                 'payment_method' => 'nowpayments',
                 'package_data' => json_encode($package_data),
                 'payment_data' => json_encode($payment_info),
-                'created_at' => current_time('mysql'),
-                'updated_at' => current_time('mysql')
+                'created_at' => gmdate('Y-m-d H:i:s'),
+                'updated_at' => gmdate('Y-m-d H:i:s')
             ),
             array('%d', '%s', '%s', '%f', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );
@@ -555,4 +564,5 @@ class Dredd_NOWPayments
 
         return (int) (($months * 30) + $leftover_days);
     }
+
 }

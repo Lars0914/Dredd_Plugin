@@ -44,7 +44,7 @@ class Dredd_N8N
             $token_names = $extracted_data['token_names'][0];
         }
         
-        if($mode != 'standard' && $expires_at <= current_time('mysql')) {
+        if($mode != 'standard' && $expires_at <= gmdate('Y-m-d H:i:s')) {
             wp_send_json_error(array('message' => 'Your psycho mode period was exprired.', 'action' => 'error'));
         }
         $payload = array(
@@ -56,7 +56,7 @@ class Dredd_N8N
             'contract_addresses' => $contract_addresses,
             'token_names' => $token_names,
             'expires_at' => $expires_at,
-            'timestamp' => current_time('mysql')
+            'timestamp' => gmdate('Y-m-d H:i:s')
         );
 
         $response = $this->send_to_n8n_direct($payload);
@@ -209,7 +209,7 @@ class Dredd_N8N
 
         $test_payload = array(
             'test' => true,
-            'timestamp' => current_time('mysql'),
+            'timestamp' => gmdate('Y-m-d H:i:s'),
             'source' => 'dredd-ai-plugin'
         );
 
