@@ -103,6 +103,7 @@ class Dredd_Database
             user_id bigint(20) unsigned NOT NULL,
             amount decimal(10,2) NOT NULL,
             chain varchar(50) DEFAULT NULL,
+            flag varchar(50) NOT NULL DEFAULT 'finished',
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),

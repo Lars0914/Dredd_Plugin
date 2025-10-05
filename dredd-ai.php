@@ -499,7 +499,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -1798,44 +1798,84 @@ function dredd_ai_update_user_expires_at($user_id, $days_in)
     );
 }
 
-function dredd_ai_store_transaction($payment_data)
+function dredd_ai_store_transaction($user_id, array $payment_data, string $flag = 'finished', $amount)
 {
     global $wpdb;
     $table = $wpdb->prefix . 'dredd_transactions';
 
-    $transaction_id = (string) ($payment_data['payment_id'] ?? '');
-    $price_amount = isset($payment_data['price_amount']) ? (float) $payment_data['price_amount'] : 0.0;
+    $transaction_id = (string) ($payment_data['payment_id'] ?? $payment_data['purchase_id'] ?? $payment_data['order_id'] ?? uniqid('np_'));
+    $price_amount = $amount ? (float) $amount : 0.0;
     $pay_currency = strtolower((string) ($payment_data['pay_currency'] ?? ''));
     $created_iso = (string) ($payment_data['created_at'] ?? '');
     $updated_iso = (string) ($payment_data['updated_at'] ?? $created_iso);
 
+    $created_at = $created_iso ? gmdate('Y-m-d H:i:s', strtotime($created_iso)) : current_time('mysql', true);
+    $updated_at = $updated_iso ? gmdate('Y-m-d H:i:s', strtotime($updated_iso)) : $created_at;
+
+
     $row = [
         'transaction_id' => $transaction_id,
-        'user_id' => get_current_user_id(),
+        'user_id' => $user_id,
         'amount' => number_format($price_amount, 2, '.', ''),
         'chain' => $pay_currency,
-        'created_at' => $created_iso,
-        'updated_at' => $updated_iso,
+        'flag' => $flag,
+        'created_at' => $created_at,
+        'updated_at' => $updated_at,
     ];
+
     $sql = "
-    INSERT INTO {$table}
-        (transaction_id, user_id, amount, chain, created_at, updated_at)
-    VALUES
-        (%s, %d, %s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE
-        user_id = VALUES(user_id),
-        amount = VALUES(amount),
-        chain = VALUES(chain),
-        updated_at = VALUES(updated_at)
+        INSERT INTO {$table}
+            (transaction_id, user_id, amount, chain, flag, created_at, updated_at)
+        VALUES
+            (%s, %d, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            user_id   = VALUES(user_id),
+            amount    = VALUES(amount),
+            chain     = VALUES(chain),
+            flag      = VALUES(flag),
+            updated_at= VALUES(updated_at)
     ";
+
     $prepared = $wpdb->prepare(
         $sql,
         $row['transaction_id'],
         $row['user_id'],
         $row['amount'],
         $row['chain'],
+        $row['flag'],
         $row['created_at'],
         $row['updated_at']
     );
+
     $ok = $wpdb->query($prepared);
+}
+function dredd_ai_update_transaction($transaction_id)
+{
+    global $wpdb;
+    $table = $wpdb->prefix . 'dredd_transactions';
+    $sql = $wpdb->prepare(
+        "UPDATE {$table}
+         SET flag = %s,
+             updated_at = NOW()
+         WHERE transaction_id = %s",
+        'finished',
+        $transaction_id
+    );
+    $result = $wpdb->query($sql);
+}
+
+function dredd_ai_get_partially_paid_transaction(int $user_id)
+{
+    global $wpdb;
+    $table = $wpdb->prefix . 'dredd_transactions';
+    if (empty($user_id)) return false;
+
+    $sql = $wpdb->prepare(
+        "SELECT * FROM {$table}
+         WHERE user_id = %d AND flag = %s
+         ORDER BY created_at DESC
+         LIMIT 1",
+        $user_id, 'partially_paid'
+    );
+    return $wpdb->get_row($sql) ?: false;
 }

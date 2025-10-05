@@ -147,15 +147,15 @@ class Dredd_NOWPayments
             } else {
                 dredd_ai_log("Skipping minimum amount validation for {$currency_to_use} (minimum amount could not be determined)", 'debug');
             }
-            if (strtolower($currency_to_use) === 'pls') {
-                $amount += 1.5;
-            }
+
+            $amount += 1.5;
+
             $payment_data = array(
                 'price_amount' => $amount,
                 'price_currency' => 'usd',
                 'pay_currency' => strtolower($currency_to_use), // Use the validated currency code
                 'order_id' => 'dredd_' . $user_id . '_' . time(),
-                'order_description' =>' DREDD AI Credits - $' . $amount,
+                'order_description' => ' DREDD AI Credits - $' . $amount,
                 'ipn_callback_url' => admin_url('admin-ajax.php?action=dredd_nowpayments_webhook'),
                 'success_url' => home_url('/dredd-payment-success/'),
                 'cancel_url' => home_url('/dredd-payment-cancel/')
@@ -320,8 +320,8 @@ class Dredd_NOWPayments
         );
 
         // Process successful payment
-        if ($status === 'finished' || $status === 'confirmed') {
-            $this->complete_payment($payment_record, $data);
+        if ($status === 'finished' || $status === 'partially_paid') {
+            $this->complete_payment($payment_record, $status);
         }
 
         dredd_ai_log("NOWPayments webhook processed: {$payment_id} - {$status}", 'info');
@@ -330,30 +330,48 @@ class Dredd_NOWPayments
     /**
      * Complete successful payment
      */
-    private function complete_payment($payment_record, $webhook_data)
+    private function complete_payment($payment_record, $flag)
     {
         $user_id = $payment_record->user_id;
         $package_data = json_decode($payment_record->package_data, true);
         $payment_data = json_decode($payment_record->payment_data, true);
+        $amount_paid = json_decode($payment_record->webhook_data, true)['actually_paid'] ?? 0.0;
 
         if (!$package_data || !isset($package_data['tokens'])) {
             throw new Exception('Invalid package data in payment record');
         }
-        
-        $date = 30;
-        if($package_data['amount'] == 40) $date = 180;
-        if($package_data['amount'] == 90) $date = 365;
 
-        dredd_ai_update_user_expires_at($user_id, $date);
-        dredd_ai_store_transaction($payment_data);
-        
-        $this->send_payment_confirmation($user_id, $package_data, $payment_record);
+        if(abs($package_data['amount'] - $amount_paid <= 1.0)){
+            $flag = 'finished';
+        }
+
+        $date = 0;
+
+        if ($flag === 'finished') {
+            $txn = dredd_ai_get_partially_paid_transaction($user_id);
+            if ($txn) {
+                $date = $this->dredd_days_from_payment($txn->amount + $amount_paid);
+                dredd_ai_update_user_expires_at($user_id, $date);
+                dredd_ai_update_transaction($txn->transaction_id);
+            } else {
+                if ($package_data['amount'] == 10)
+                    $date = 30;
+                if ($package_data['amount'] == 40)
+                    $date = 180;
+                if ($package_data['amount'] == 90)
+                    $date = 365;
+                dredd_ai_update_user_expires_at($user_id, $date);
+            }
+        }
+
+        $this->send_payment_confirmation($user_id, $amount_paid, $payment_record);
+        dredd_ai_store_transaction($payment_record->user_id, $payment_data, $flag, $amount_paid);
     }
 
     /**
      * Send payment confirmation email
      */
-    private function send_payment_confirmation($user_id, $package_data, $payment_record)
+    private function send_payment_confirmation($user_id, $amount_paid, $payment_record)
     {
         $user = get_user_by('id', $user_id);
 
@@ -364,11 +382,9 @@ class Dredd_NOWPayments
         $subject = 'DREDD AI - Payment Confirmed';
         $message = "Hello {$user->display_name},\n\n";
         $message .= "Your payment has been confirmed!\n\n";
-        $message .= "Package: {$package_data['tokens']} tokens\n";
-        $message .= "Amount: \${$package_data['price']}\n";
+        $message .= "Amount: \${$amount_paid}\n";
         $message .= "Payment ID: {$payment_record->payment_id}\n";
         $message .= "Date: " . date('Y-m-d H:i:s') . "\n\n";
-        $message .= "Your tokens have been added to your account and you can now use DREDD AI.\n\n";
         $message .= "Thank you for your purchase!\n\n";
         $message .= "The DREDD AI Team";
 
@@ -497,4 +513,46 @@ class Dredd_NOWPayments
         );
     }
 
+    private function dredd_days_from_payment(float $usd_amount, bool $allow_multi_year = true): int
+    {
+        $cents = (int) round($usd_amount * 100);
+
+        if ($cents < 1000) {
+            return (int) round(($cents / 100) * 3);
+        }
+
+        $months = 0;
+        $remaining = $cents;
+
+        if ($allow_multi_year) {
+            $years = intdiv($remaining, 9000);
+            if ($years > 0) {
+                $months += $years * 12;
+                $remaining -= $years * 9000;
+            }
+        } else {
+            if ($remaining >= 9000) {
+                $remaining -= 9000;
+                $days = (12 * 30) + round(($remaining / 100) * 3);
+                return (int) $days;
+            }
+        }
+
+        if ($remaining >= 4000) {
+            $months += 6;
+            $remaining -= 4000;
+
+            $extra_months = intdiv($remaining, 1000);
+            $months += $extra_months;
+            $remaining -= $extra_months * 1000;
+        } else {
+            $months += intdiv($remaining, 1000);
+            $remaining -= intdiv($remaining, 1000) * 1000;
+        }
+
+        $leftover_usd = $remaining / 100;
+        $leftover_days = round($leftover_usd * 3);
+
+        return (int) (($months * 30) + $leftover_days);
+    }
 }
