@@ -87,10 +87,6 @@ class Dredd_Admin
                     <h3>Total Revenue</h3>
                     <div class="stat-number success">$<?php echo number_format($analytics['revenue']->total_revenue ?? 0, 2); ?>
                     </div>
-                    <div class="stat-detail">
-                        Stripe: $<?php echo number_format($analytics['revenue']->stripe_revenue ?? 0, 2); ?> |
-                        Crypto: $<?php echo number_format($analytics['revenue']->crypto_revenue ?? 0, 2); ?>
-                    </div>
                 </div>
 
                 <div class="stat-card">
@@ -2060,14 +2056,12 @@ class Dredd_Admin
                 u.username,
                 u.email,
                 u.created_at,
+                u.expires_at,
                 COALESCE(stats.total_analyses, 0) as total_analyses,
                 COALESCE(stats.standard_analyses, 0) as standard_analyses,
                 COALESCE(stats.psycho_analyses, 0) as psycho_analyses,
                 COALESCE(stats.scams_detected, 0) as scams_detected,
                 COALESCE(payments.total_spent, 0) as total_spent,
-                COALESCE(payments.stripe_payments, 0) as stripe_payments,
-                COALESCE(payments.crypto_payments, 0) as crypto_payments
-
             FROM wpzl_dredd_chat_users u
 
             LEFT JOIN (
@@ -2085,10 +2079,7 @@ class Dredd_Admin
                 SELECT 
                     user_id,
                     SUM(amount) as total_spent,
-                    COUNT(CASE WHEN payment_method = 'stripe' THEN 1 END) as stripe_payments,
-                    COUNT(CASE WHEN payment_method LIKE '%crypto%' THEN 1 END) as crypto_payments
                 FROM wpzl_dredd_transactions
-                WHERE status = 'completed'
                 GROUP BY user_id
             ) payments ON u.id = payments.user_id
 

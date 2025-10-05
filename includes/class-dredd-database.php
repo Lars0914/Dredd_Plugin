@@ -311,7 +311,7 @@ class Dredd_Database
             "SELECT * FROM {$user_table} WHERE id = %d",
             $user_id
         ));
-        
+
         // Get recent transactions
         $recent_transactions = $this->wpdb->get_results($this->wpdb->prepare(
             "SELECT * FROM {$transactions_table} WHERE user_id = %d ORDER BY created_at DESC LIMIT 10",
@@ -509,12 +509,10 @@ class Dredd_Database
         // Revenue statistics
         $revenue_stats = $this->wpdb->get_row($this->wpdb->prepare(
             "SELECT 
-                COUNT(*) as total_transactions,
-                SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,
-                SUM(CASE WHEN status = 'completed' AND payment_method = 'stripe' THEN amount ELSE 0 END) as stripe_revenue,
-                SUM(CASE WHEN status = 'completed' AND payment_method IN ('usdt', 'usdc') THEN amount ELSE 0 END) as crypto_revenue,
-                SUM(CASE WHEN status = 'completed' THEN tokens ELSE 0 END) as total_tokens_sold
-            FROM {$transactions_table} {$date_condition}",
+        COUNT(*) AS total_transactions,
+        SUM(amount) AS total_revenue
+     FROM {$transactions_table}
+     {$date_condition}",
             $date_params
         ));
 

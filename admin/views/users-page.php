@@ -174,6 +174,9 @@ $total_chat_users = count($users);
                             <th class="sortable" data-sort="revenue">
                                 <span class="th-content">💰 Revenue</span>
                             </th>
+                            <th class="sortable" data-sort="revenue">
+                                <span class="th-content">📅 Expire</span>
+                            </th>
                             <th class="sortable" data-sort="registered">
                                 <span class="th-content">📅 Joined</span>
                             </th>
@@ -234,15 +237,11 @@ $total_chat_users = count($users);
                                         <div class="revenue-display">
                                             <div class="revenue-amount">
                                                 $<?php echo number_format($user->total_spent ?? 0, 2); ?></div>
-                                            <div class="payment-methods-epic">
-                                                <?php if (($user->stripe_payments ?? 0) > 0): ?>
-                                                    <span class="payment-badge stripe">💳
-                                                        <?php echo $user->stripe_payments; ?></span>
-                                                <?php endif; ?>
-                                                <?php if (($user->crypto_payments ?? 0) > 0): ?>
-                                                    <span class="payment-badge crypto">₿
-                                                        <?php echo $user->crypto_payments; ?></span>
-                                                <?php endif; ?>
+                                        </div>
+                                    </td>
+                                     <td class="date-cell">
+                                        <div class="date-display">
+                                            <div class="date-main"><?php echo date('M j, Y', strtotime($user->expires_at)); ?>
                                             </div>
                                         </div>
                                     </td>

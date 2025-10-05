@@ -196,17 +196,17 @@ class Dredd_Public
                                     </div>
                                 </div>
 
-                                <!-- <div class="custom-amount-section">
+                                <div class="custom-amount-section">
                                     <h3>Custom Amount</h3>
                                     <div class="custom-amount-container">
                                         <div class="amount-display">$<input type="number" id="custom-amount-value"></div>
                                         <div class="amount-slider-container">
                                             <span class="slider-min">$3.00</span>
-                                            <input type="range" id="amount-slider" min="3" max="100" value="3" step="0.50">
+                                            <input type="range" id="amount-slider" min="1" max="100" value="3" step="0.50">
                                             <span class="slider-max">$100.00</span>
                                         </div>
                                     </div>
-                                </div> -->
+                                </div>
 
                                 <div class="payment-step-actions">
                                     <button class="payment-back-btn">Back</button>
