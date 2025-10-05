@@ -43,7 +43,10 @@ class Dredd_N8N
             $contract_addresses = $extracted_data['contract_addresses'][0];
             $token_names = $extracted_data['token_names'][0];
         }
-
+        
+        if($mode != 'standard' && $expires_at <= current_time('mysql')) {
+            wp_send_json_error(array('message' => 'Your psycho mode period was exprired.', 'action' => 'error'));
+        }
         $payload = array(
             'user_message' => $message,          // keep full text
             'session_id' => $session_id,

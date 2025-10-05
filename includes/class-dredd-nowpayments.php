@@ -342,14 +342,13 @@ class Dredd_NOWPayments
         if (!$package_data || !isset($package_data['tokens'])) {
             throw new Exception('Invalid package data in payment record');
         }
-
-        $tokens_to_add = intval($package_data['tokens']);
         
         $date = 30;
         if($package_data['amount'] == 40) $date = 180;
         if($package_data['amount'] == 90) $date = 365;
 
         dredd_ai_update_user_expires_at($user_id, $date);
+        dredd_ai_store_transaction($payment_data);
         
         $this->send_payment_confirmation($user_id, $package_data, $payment_record);
     }
@@ -501,130 +500,4 @@ class Dredd_NOWPayments
         );
     }
 
-    /**
-     * Check if NOWPayments is configured
-     */
-    public function is_configured()
-    {
-        return !empty($this->api_key);
-    }
-
-    /**
-     * Get payment statistics
-     */
-    public function get_payment_stats()
-    {
-        global $wpdb;
-        $payment_table = $wpdb->prefix . 'dredd_payments';
-
-        $stats = $wpdb->get_row("
-            SELECT 
-                COUNT(*) as total_payments,
-                COUNT(CASE WHEN status IN ('finished', 'confirmed') THEN 1 END) as successful_payments,
-                SUM(CASE WHEN status IN ('finished', 'confirmed') THEN amount ELSE 0 END) as total_revenue,
-                COUNT(CASE WHEN payment_method = 'nowpayments' THEN 1 END) as crypto_payments
-            FROM {$payment_table}
-            WHERE payment_method = 'nowpayments'
-        ");
-
-        return array(
-            'total_payments' => intval($stats->total_payments ?? 0),
-            'successful_payments' => intval($stats->successful_payments ?? 0),
-            'total_revenue' => floatval($stats->total_revenue ?? 0),
-            'crypto_payments' => intval($stats->crypto_payments ?? 0),
-            'success_rate' => $stats->total_payments > 0 ?
-                round(($stats->successful_payments / $stats->total_payments) * 100, 2) : 0
-        );
-    }
-
-    private function is_sandbox_mode()
-    {
-        // 🚨 ALWAYS RETURN FALSE - LIVE MODE ONLY
-        return false;
-    }
-
-    /**
-     * Get payment addresses - LIVE MODE ONLY
-     */
-    private function get_payment_addresses()
-    {
-        // 🟢 LIVE MODE ONLY - NO TEST SYSTEM
-        $live_addresses = dredd_ai_get_option('live_crypto_addresses', array());
-
-        // Filter out empty addresses
-        $filtered_addresses = array();
-        foreach ($live_addresses as $currency => $address) {
-            if (!empty(trim($address))) {
-                $filtered_addresses[strtolower($currency)] = trim($address);
-            }
-        }
-
-        return $filtered_addresses;
-    }
-
-    /**
-     * Map NOWPayments currency codes to our internal address keys
-     */
-    private function map_currency_to_address_key($currency)
-    {
-        $currency_mapping = array(
-            // Bitcoin variations
-            'bitcoin' => 'btc',
-            'btc' => 'btc',
-
-            // Ethereum variations  
-            'ethereum' => 'eth',
-            'eth' => 'eth',
-
-            // Litecoin variations
-            'litecoin' => 'ltc',
-            'ltc' => 'ltc',
-
-            // Dogecoin variations
-            'dogecoin' => 'doge',
-            'doge' => 'doge',
-
-            // USDT variations (ALL map to 'usdt' for address lookup as per memory)
-            'tether' => 'usdt',
-            'tether-trc20' => 'usdt',
-            'tether-erc20' => 'usdt',
-            'tether-bep20' => 'usdt',
-            'tether-omni' => 'usdt',
-            'tether-solana' => 'usdt',
-            'usdt' => 'usdt',
-            'usdttrc20' => 'usdt',
-            'usdterc20' => 'usdt',
-            'usdtbep20' => 'usdt',
-            'usdtbsc' => 'usdt', // BSC USDT
-            'usdtarc20' => 'usdt', // Arbitrum USDT
-
-            // USDC variations (ALL map to 'usdc' for address lookup)
-            'usdcoin' => 'usdc',
-            'usdc' => 'usdc',
-            'usdcerc20' => 'usdc',
-            'usdcbep20' => 'usdc',
-            'usdcbsc' => 'usdc', // BSC USDC
-            'usdcsol' => 'usdc',
-
-            // Other popular cryptos
-            'binancecoin' => 'bnb',
-            'bnb' => 'bnb',
-            'cardano' => 'ada',
-            'ada' => 'ada',
-            'polkadot' => 'dot',
-            'dot' => 'dot',
-            'chainlink' => 'link',
-            'link' => 'link',
-            'polygon' => 'matic',
-            'matic' => 'matic',
-            'monero' => 'xmr',
-            'xmr' => 'xmr'
-        );
-
-        $normalized_currency = strtolower($currency);
-        $mapped_key = $currency_mapping[$normalized_currency] ?? $normalized_currency;
-
-        dredd_ai_log("Currency mapping: {$currency} -> {$mapped_key}", 'debug');
-        return $mapped_key;
-    }
 }

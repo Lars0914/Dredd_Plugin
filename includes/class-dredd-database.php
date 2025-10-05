@@ -44,6 +44,7 @@ class Dredd_Database
     private function ensure_all_tables_exist()
     {
         $this->ensure_chat_users_table_exists();
+        $this->ensure_transactions_table_exists();
         $this->ensure_analysis_table_exists();
         $this->ensure_promotions_table_exists();
         $this->ensure_cache_table_exists();
@@ -83,6 +84,14 @@ class Dredd_Database
         dbDelta($sql);
     }
 
+    private function ensure_transactions_table_exists()
+    {
+        $table = $this->wpdb->prefix . 'dredd_transactions';
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $this->create_transactions_table();
+        }
+    }
+
     private function create_transactions_table()
     {
         $charset_collate = $this->wpdb->get_charset_collate();
@@ -93,19 +102,11 @@ class Dredd_Database
             transaction_id varchar(255) NOT NULL,
             user_id bigint(20) unsigned NOT NULL,
             amount decimal(10,2) NOT NULL,
-            tokens int(11) NOT NULL,
-            payment_method enum('stripe', 'usdt', 'usdc') NOT NULL,
             chain varchar(50) DEFAULT NULL,
-            stripe_payment_intent varchar(255) DEFAULT NULL,
-            status enum('pending', 'completed', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
-            metadata text DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             UNIQUE KEY unique_transaction_id (transaction_id),
-            KEY idx_user_transactions (user_id, created_at),
-            KEY idx_status (status),
-            KEY idx_payment_method (payment_method)
         ) {$charset_collate};";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -440,53 +441,7 @@ class Dredd_Database
         return $result;
     }
 
-    /**
-     * Store transaction
-     */
-    public function store_transaction($data)
-    {
-        $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
 
-        return $this->wpdb->insert(
-            $transactions_table,
-            array(
-                'transaction_id' => $data['transaction_id'],
-                'user_id' => $data['user_id'],
-                'amount' => $data['amount'],
-                'tokens' => $data['tokens'],
-                'payment_method' => $data['payment_method'],
-                'chain' => $data['chain'] ?? null,
-                'stripe_payment_intent' => $data['stripe_payment_intent'] ?? null,
-                'status' => $data['status'],
-                'metadata' => json_encode($data['metadata'] ?? array())
-            ),
-            array('%s', '%d', '%f', '%d', '%s', '%s', '%s', '%s', '%s', '%s')
-        );
-    }
-
-    /**
-     * Update transaction status
-     */
-    public function update_transaction_status($transaction_id, $status, $metadata = array())
-    {
-        $transactions_table = $this->wpdb->prefix . 'dredd_transactions';
-
-        $update_data = array('status' => $status);
-        $update_format = array('%s');
-
-        if (!empty($metadata)) {
-            $update_data['metadata'] = json_encode($metadata);
-            $update_format[] = '%s';
-        }
-
-        return $this->wpdb->update(
-            $transactions_table,
-            $update_data,
-            array('transaction_id' => $transaction_id),
-            $update_format,
-            array('%s')
-        );
-    }
 
     /**
      * Cleanup expired data

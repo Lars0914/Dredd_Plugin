@@ -696,7 +696,7 @@
                         if (
                             response.success &&
                             response.data.expires_at &&
-                            response.success &&
+                            new Date(response.data.expires_at) < new Date() && 
                             response.data.expires_at != "0000-00-00 00:00:00"
                         ) {
                             resolve(response.data.expires_at || 0);

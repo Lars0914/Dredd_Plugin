@@ -935,61 +935,6 @@ class Dredd_Admin
             <form method="post" action="">
                 <?php wp_nonce_field('dredd_ai_payments', 'dredd_ai_nonce'); ?>
 
-                <!-- Stripe Payment Control Center -->
-                <div class="stripe-control-center">
-                    <h3 class="section-title">
-                        <span class="section-icon">💳</span>
-                        Stripe Payment Control Center
-                    </h3>
-
-                    <div class="control-center-grid">
-                        <div class="control-panel stripe-panel">
-                            <div class="panel-header">
-                                <h4>🏛️ Stripe Configuration</h4>
-                                <div
-                                    class="panel-status <?php echo (!empty($settings['stripe_secret_key'])) ? 'online' : 'offline'; ?>">
-                                    <?php echo (!empty($settings['stripe_secret_key'])) ? 'CONNECTED' : 'NOT CONFIGURED'; ?>
-                                </div>
-                            </div>
-
-                            <div class="control-grid">
-                                <div class="control-item full-width">
-                                    <label class="control-label">Stripe Secret Key</label>
-                                    <div class="control-input-group">
-                                        <input type="password" name="stripe_secret_key"
-                                            value="<?php echo esc_attr($settings['stripe_secret_key']); ?>"
-                                            class="control-input epic-input" placeholder="sk_live_... or sk_test_..." />
-                                        <span class="input-unit">secret</span>
-                                    </div>
-                                    <p class="control-description">Your Stripe secret key for processing payments</p>
-                                </div>
-
-                                <div class="control-item full-width">
-                                    <label class="control-label">Stripe Publishable Key</label>
-                                    <div class="control-input-group">
-                                        <input type="text" name="stripe_publishable_key"
-                                            value="<?php echo esc_attr($settings['stripe_publishable_key']); ?>"
-                                            class="control-input epic-input" placeholder="pk_live_... or pk_test_..." />
-                                        <span class="input-unit">public</span>
-                                    </div>
-                                    <p class="control-description">Your Stripe publishable key for client-side integration</p>
-                                </div>
-
-                                <div class="control-item full-width">
-                                    <label class="control-label">Webhook Endpoint Secret</label>
-                                    <div class="control-input-group">
-                                        <input type="password" name="stripe_webhook_secret"
-                                            value="<?php echo esc_attr($settings['stripe_webhook_secret']); ?>"
-                                            class="control-input epic-input" placeholder="whsec_..." />
-                                        <span class="input-unit">webhook</span>
-                                    </div>
-                                    <p class="control-description">Stripe webhook endpoint secret for payment verification</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Cryptocurrency Payment Control Center -->
                 <div class="crypto-control-center">
                     <h3 class="section-title">

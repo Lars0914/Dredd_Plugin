@@ -74,7 +74,6 @@ class DreddAI
         add_action('wp_ajax_nopriv_dredd_nowpayments_webhook', array($this, 'handle_nowpayments_webhook'));
         add_action('wp_ajax_dredd_test_nowpayments_connection', array($this, 'handle_test_nowpayments_connection'));
         add_action('wp_ajax_dredd_test_currency_mapping', array($this, 'handle_test_currency_mapping'));
-        add_action('wp_ajax_dredd_debug_payment_flow', array($this, 'handle_debug_payment_flow'));
 
         // Authentication AJAX actions
         add_action('wp_ajax_dredd_login', array($this, 'handle_login'));
@@ -224,16 +223,6 @@ class DreddAI
         update_option('dredd_ai_show_promotions_sidebar', true);
         update_option('dredd_ai_debug_logging', true); // Enable debug logging by default
         update_option('dredd_ai_welcome_credits', 10); // Welcome credits for new users
-
-
-        // Default token packages
-        $default_packages = array(
-            array('tokens' => 50, 'price' => 5.00, 'name' => 'Starter Pack'),
-            array('tokens' => 200, 'price' => 15.00, 'name' => 'Popular Pack'),
-            array('tokens' => 500, 'price' => 30.00, 'name' => 'Power Pack'),
-            array('tokens' => 1500, 'price' => 75.00, 'name' => 'Whale Pack')
-        );
-        update_option('dredd_ai_token_packages', $default_packages);
 
         // Default crypto wallets (empty - admin must configure)
         $default_wallets = array(
@@ -510,7 +499,7 @@ class DreddAI
             <?php if (empty($logs)): ?>
                 <p>No debug logs found. Enable WordPress debugging in wp-config.php:</p>
                 <pre>define('WP_DEBUG', true);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        define('WP_DEBUG_LOG', true);</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                define('WP_DEBUG_LOG', true);</pre>
             <?php else: ?>
                 <?php foreach ($logs as $log_info): ?>
                     <h2>📄 <?php echo esc_html($log_info['file']); ?></h2>
@@ -580,96 +569,6 @@ class DreddAI
         $result = $nowpayments->test_api_connection();
 
         wp_send_json($result);
-    }
-
-    /**
-     * Debug complete payment flow
-     */
-    public function handle_debug_payment_flow()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Unauthorized');
-        }
-
-        $test_results = array();
-
-        // Test 1: Database tables exist
-        global $wpdb;
-        $payments_table = $wpdb->prefix . 'dredd_payments';
-        $transactions_table = $wpdb->prefix . 'dredd_transactions';
-
-        $payments_exists = $wpdb->get_var("SHOW TABLES LIKE '{$payments_table}'") === $payments_table;
-        $transactions_exists = $wpdb->get_var("SHOW TABLES LIKE '{$transactions_table}'") === $transactions_table;
-
-        $test_results['database'] = array(
-            'dredd_payments_table' => $payments_exists ? 'EXISTS' : 'MISSING',
-            'dredd_transactions_table' => $transactions_exists ? 'EXISTS' : 'MISSING'
-        );
-
-        // Test 2: Currency mapping validation
-        $frontend_currencies = array(
-            'bitcoin',
-            'ethereum',
-            'litecoin',
-            'dogecoin',
-            'tether-trc20',
-            'tether-erc20',
-            'tether-bep20',
-            'usdcoin',
-            'pulsechain'
-        );
-
-        $mapping_results = array();
-        foreach ($frontend_currencies as $frontend_currency) {
-            $normalized = Dredd_Validation::normalize_payment_method($frontend_currency);
-            $validation = Dredd_Validation::validate_payment_method($frontend_currency);
-
-            $mapping_results[$frontend_currency] = array(
-                'normalized' => $normalized,
-                'valid' => $validation['valid'],
-                'has_hyphens' => strpos($normalized, '-') !== false ? 'YES (ERROR)' : 'NO (GOOD)',
-                'error' => $validation['valid'] ? null : $validation['error']
-            );
-        }
-
-        $test_results['currency_mapping'] = $mapping_results;
-
-        // Test 3: NOWPayments configuration
-        $nowpayments = new Dredd_NOWPayments();
-        $api_test = $nowpayments->test_api_connection();
-        $test_results['nowpayments_api'] = $api_test;
-
-        // Test 4: Payment addresses configuration
-        $live_addresses = dredd_ai_get_option('live_crypto_addresses', array());
-        $test_results['payment_addresses'] = array(
-            'configured_addresses' => count($live_addresses),
-            'addresses' => $live_addresses
-        );
-
-        // Test 5: Mock validation test
-        $mock_payment_data = array(
-            'amount' => 10.00,
-            'method' => 'ethereum' // Frontend sends this
-        );
-
-        $validation_test = Dredd_Validation::validate_payment_request($mock_payment_data);
-        $test_results['validation_test'] = array(
-            'input' => $mock_payment_data,
-            'result' => $validation_test
-        );
-
-        wp_send_json_success(array(
-            'test_results' => $test_results,
-            'summary' => array(
-                'database_ready' => $payments_exists && $transactions_exists,
-                'currency_mapping_good' => !array_filter($mapping_results, function ($r) {
-                    return strpos($r['normalized'], '-') !== false;
-                }),
-                'api_connected' => $api_test['success'] ?? false,
-                'addresses_configured' => count($live_addresses) > 0
-            ),
-            'message' => 'Complete payment flow debug test completed'
-        ));
     }
 
     /**
@@ -1867,34 +1766,76 @@ function dredd_ai_is_paid_mode_enabled()
     return (bool) dredd_ai_get_option('paid_mode_enabled', false);
 }
 
-
-function dredd_ai_update_user_expires_at( $user_id, $days_in ) {
+function dredd_ai_update_user_expires_at($user_id, $days_in)
+{
     global $wpdb;
 
     $table = $wpdb->prefix . 'dredd_chat_users';
 
     $current = $wpdb->get_var(
-        $wpdb->prepare( "SELECT expires_at FROM {$table} WHERE id = %d", $user_id )
+        $wpdb->prepare("SELECT expires_at FROM {$table} WHERE id = %d", $user_id)
     );
 
     // Determine base timestamp (UTC)
-    $use_now = ( $current === null || $current === '' || $current === '0000-00-00 00:00:00' );
+    $use_now = ($current === null || $current === '' || $current === '0000-00-00 00:00:00');
     $base_ts = $use_now
-        ? current_time('timestamp', true )
-        : strtotime( $current . ' UTC' );
+        ? current_time('timestamp', true)
+        : strtotime($current . ' UTC');
 
     // Add days
-    $new_ts = strtotime("{$days_in} days", $base_ts );
+    $new_ts = strtotime("{$days_in} days", $base_ts);
 
     // Format as MySQL DATETIME in UTC
-    $new_expires_at = gmdate( 'Y-m-d H:i:s', $new_ts );
+    $new_expires_at = gmdate('Y-m-d H:i:s', $new_ts);
 
     // Update database
     $updated = $wpdb->update(
         $table,
-        array( 'expires_at' => $new_expires_at ),
-        array( 'id' => $user_id ),
-        array( '%s' ),
-        array( '%d' )
+        array('expires_at' => $new_expires_at),
+        array('id' => $user_id),
+        array('%s'),
+        array('%d')
     );
+}
+
+function dredd_ai_store_transaction($payment_data)
+{
+    global $wpdb;
+    $table = $wpdb->prefix . 'dredd_transactions';
+
+    $transaction_id = (string) ($payment_data['payment_id'] ?? '');
+    $price_amount = isset($payment_data['price_amount']) ? (float) $payment_data['price_amount'] : 0.0;
+    $pay_currency = strtolower((string) ($payment_data['pay_currency'] ?? ''));
+    $created_iso = (string) ($payment_data['created_at'] ?? '');
+    $updated_iso = (string) ($payment_data['updated_at'] ?? $created_iso);
+
+    $row = [
+        'transaction_id' => $transaction_id,
+        'user_id' => get_current_user_id(),
+        'amount' => number_format($price_amount, 2, '.', ''),
+        'chain' => $pay_currency,
+        'created_at' => $created_iso,
+        'updated_at' => $updated_iso,
+    ];
+    $sql = "
+    INSERT INTO {$table}
+        (transaction_id, user_id, amount, chain, created_at, updated_at)
+    VALUES
+        (%s, %d, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        user_id = VALUES(user_id),
+        amount = VALUES(amount),
+        chain = VALUES(chain),
+        updated_at = VALUES(updated_at)
+    ";
+    $prepared = $wpdb->prepare(
+        $sql,
+        $row['transaction_id'],
+        $row['user_id'],
+        $row['amount'],
+        $row['chain'],
+        $row['created_at'],
+        $row['updated_at']
+    );
+    $ok = $wpdb->query($prepared);
 }
