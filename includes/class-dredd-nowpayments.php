@@ -106,7 +106,6 @@ class Dredd_NOWPayments
         }
 
         $amount = $validation['data']['amount'];
-        $credits = $validation['data']['credits'];
         $currency = $validation['data']['method']; // This is now the normalized currency code
         $raw_currency = sanitize_text_field($_POST['currency'] ?? 'bitcoin');
         $user_id = get_current_user_id();
@@ -156,7 +155,7 @@ class Dredd_NOWPayments
                 'price_currency' => 'usd',
                 'pay_currency' => strtolower($currency_to_use), // Use the validated currency code
                 'order_id' => 'dredd_' . $user_id . '_' . time(),
-                'order_description' => $credits . ' DREDD AI Credits - $' . $amount,
+                'order_description' =>' DREDD AI Credits - $' . $amount,
                 'ipn_callback_url' => admin_url('admin-ajax.php?action=dredd_nowpayments_webhook'),
                 'success_url' => home_url('/dredd-payment-success/'),
                 'cancel_url' => home_url('/dredd-payment-cancel/')
@@ -170,9 +169,7 @@ class Dredd_NOWPayments
                 $payment_address = $payment_info['pay_address']; // Default to API address
                 $package_data = array(
                     'amount' => $amount,
-                    'credits' => $credits,
                     'currency' => $currency_to_use, // Use the validated currency
-                    'tokens' => $credits, // Add tokens for compatibility
                     'price' => $amount   // Add price for email confirmation
                 );
                 $this->store_payment_record($user_id, $payment_info, $package_data);

@@ -42,14 +42,6 @@ class Dredd_Validation
     }
 
     /**
-     * Calculate credits from amount
-     */
-    public static function calculate_credits($amount)
-    {
-        return intval($amount * 10); // $1 = 10 credits
-    }
-
-    /**
      * Validate wallet address
      */
     public static function validate_wallet_address($address)
@@ -238,7 +230,6 @@ class Dredd_Validation
             'valid' => true,
             'data' => array(
                 'amount' => floatval($data['amount']),
-                'credits' => self::calculate_credits($data['amount']),
                 'method' => $normalized_method, // Return the normalized method, not the raw input
                 'wallet_address' => isset($data['wallet_address']) ? sanitize_text_field($data['wallet_address']) : null
             )
