@@ -201,7 +201,7 @@ class Dredd_Public
                                     <div class="custom-amount-container">
                                         <div class="amount-display">$<span  id="custom-amount-value"></span></div>
                                         <div class="amount-slider-container">
-                                            <span class="slider-min">$3.00</span>
+                                            <span class="slider-min">$1.00</span>
                                             <input type="range" id="amount-slider" min="1" max="100" value="3" step="0.50">
                                             <span class="slider-max">$100.00</span>
                                         </div>

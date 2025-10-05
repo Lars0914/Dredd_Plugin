@@ -148,7 +148,7 @@ class Dredd_NOWPayments
                 dredd_ai_log("Skipping minimum amount validation for {$currency_to_use} (minimum amount could not be determined)", 'debug');
             }
 
-            $amount += 1.5;
+            $amount += 0.4;
 
             $payment_data = array(
                 'price_amount' => $amount,

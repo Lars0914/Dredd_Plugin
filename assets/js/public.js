@@ -355,6 +355,8 @@
         }
 
         closePaymentModal() {
+            clearInterval(this.paymentTimer);
+            clearInterval(this.statusChecker);
             this.$paymentModal.hide(); // Use cached element for instant hide
         }
 
@@ -696,7 +698,7 @@
                         if (
                             response.success &&
                             response.data.expires_at &&
-                            new Date(response.data.expires_at) < new Date() && 
+                            new Date(response.data.expires_at) < new Date() &&
                             response.data.expires_at != "0000-00-00 00:00:00"
                         ) {
                             resolve(response.data.expires_at || 0);
@@ -1237,7 +1239,7 @@
             $(".payment-amount").text("$" + this.selectedAmount.toFixed(2));
 
             this.setupCryptoForm();
-            
+
         }
 
 
