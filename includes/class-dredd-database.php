@@ -97,17 +97,17 @@ class Dredd_Database
         $charset_collate = $this->wpdb->get_charset_collate();
         $table = $this->wpdb->prefix . 'dredd_transactions';
 
-        $sql = "CREATE TABLE {$table} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            transaction_id varchar(255) NOT NULL,
-            user_id bigint(20) unsigned NOT NULL,
-            amount decimal(10,2) NOT NULL,
-            chain varchar(50) DEFAULT NULL,
-            flag varchar(50) NOT NULL DEFAULT 'finished',
-            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY unique_transaction_id (transaction_id),
+        $sql = "CREATE TABLE `{$table}` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `transaction_id` varchar(255) NOT NULL,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `amount` decimal(10,8) NOT NULL,
+            `chain` varchar(50) DEFAULT NULL,
+            `flag` varchar(50) NOT NULL DEFAULT 'finished',
+            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `unique_transaction_id` (`transaction_id`)
         ) {$charset_collate};";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -182,8 +182,8 @@ class Dredd_Database
             status enum('pending', 'active', 'expired', 'cancelled') NOT NULL DEFAULT 'pending',
             clicks int(11) NOT NULL DEFAULT 0,
             impressions int(11) NOT NULL DEFAULT 0,
-            cost_per_day decimal(10,2) NOT NULL DEFAULT 0.00,
-            total_cost decimal(10,2) NOT NULL DEFAULT 0.00,
+            cost_per_day decimal(10,8) NOT NULL DEFAULT 0.00,
+            total_cost decimal(10,8) NOT NULL DEFAULT 0.00,
             payment_status enum('pending', 'paid', 'refunded') NOT NULL DEFAULT 'pending',
             payment_transaction_id varchar(255) DEFAULT NULL,
             created_by bigint(20) unsigned DEFAULT NULL,
@@ -278,7 +278,7 @@ class Dredd_Database
             user_id bigint(20) unsigned NOT NULL,
             payment_id varchar(255) NOT NULL,
             order_id varchar(255) NOT NULL,
-            amount decimal(10,2) NOT NULL,
+            amount decimal(10,8) NOT NULL,
             currency varchar(20) NOT NULL,
             status enum('waiting', 'confirming', 'confirmed', 'sending', 'partially_paid', 'finished', 'failed', 'refunded', 'expired') NOT NULL DEFAULT 'waiting',
             payment_method varchar(50) NOT NULL DEFAULT 'nowpayments',

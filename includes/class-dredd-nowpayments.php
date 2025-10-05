@@ -399,14 +399,14 @@ class Dredd_NOWPayments
         global $wpdb;
         $payment_table = $wpdb->prefix . 'dredd_payments';
 
-        $wpdb->insert(
+        $result = $wpdb->insert(
             $payment_table,
             array(
                 'user_id' => $user_id,
                 'payment_id' => $payment_info['payment_id'],
                 'order_id' => $payment_info['order_id'],
-                'amount' => $payment_info['payment_amount'],
-                'currency' => strtoupper($payment_info['currency']),
+                'amount' => $payment_info['pay_amount'],
+                'currency' => strtoupper($payment_info['pay_currency']),
                 'status' => 'waiting',
                 'payment_method' => 'nowpayments',
                 'package_data' => json_encode($package_data),
