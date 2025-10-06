@@ -1503,11 +1503,12 @@
                     nonce: dredd_ajax.nonce,
                 },
                 success: (response) => {
-                    if (response.success && response.data.status === "finished") {
+                    if ((response.success && response.data.status === "finished") || (response.success && response.data.status === "partially_paid")) {
                         clearInterval(this.paymentTimer);
                         clearInterval(this.statusChecker);
                         this.handlePaymentSuccess("crypto");
                     }
+                    
                 },
             });
         }
