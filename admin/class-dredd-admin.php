@@ -410,7 +410,7 @@ class Dredd_Admin
         $total_users = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_chat_users");
         $total_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history ");
         $total_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'");
-        $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'") ?? 0;
+        $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions") ?? 0;
         $psycho_analyses = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history  WHERE analysis_mode = 'psycho'");
         $scam_detections = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_analysis_history  WHERE verdict LIKE '%scam%' OR verdict LIKE '%fraud%'");
 
@@ -771,19 +771,14 @@ class Dredd_Admin
         $settings = $this->get_payment_settings();
         $transactions = $this->get_recent_transactions();
 
-        // Get comprehensive payment analytics
         global $wpdb;
         $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions") ?? 0;
         $monthly_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)") ?? 0;
-        $eth_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'eth'");
-        $usdc_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'usdc'");
-        $pls_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'pls'");
+        $eth_transactions = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'eth'");
+        $usdc_transactions = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'usdc'");
+        $pls_transactions = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'pls'");
         $partially_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE flag = 'partially_paid'");
-
-
-        // Payment method distribution
-        $stripe_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE payment_method = 'stripe' AND status = 'completed'") ?? 0;
-        $crypto_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE payment_method LIKE '%crypto%' AND status = 'completed'") ?? 0;
+        $finish_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE flag = 'finished'");
 
         ?>
         <div class="wrap dredd-admin-wrap">
@@ -890,7 +885,7 @@ class Dredd_Admin
                         <div class="transaction-grid">
                             <div class="transaction-item completed">
                                 <div class="transaction-number">
-                                    <?php echo number_format($total_revenue); ?>
+                                    <?php echo number_format($finish_transactions); ?>
                                 </div>
                                 <div class="transaction-label">Completed</div>
                                 <div class="transaction-icon">✅</div>
@@ -914,8 +909,6 @@ class Dredd_Admin
                         <span class="section-icon">₿</span>
                         Cryptocurrency Payment Control Center
                     </h3>
-
-
 
                     <div class="control-center-grid">
                         <div class="control-panel nowpayments-panel">
@@ -1067,7 +1060,7 @@ class Dredd_Admin
                                                         class="amount-value">$<?php echo number_format($transaction->amount, 2); ?></span>
                                                 </td>
                                                 <td class="sortable">
-                                                    <span class="tokens-value"><?php echo number_format($transaction->chain); ?></span>
+                                                    <span class="tokens-value"><?php echo strtoupper ($transaction->chain); ?></span>
                                                 </td>
                                                 <td class="sortable">
                                                     <span class="method-badge <?php echo strtolower($transaction->flag); ?>">
@@ -1075,13 +1068,8 @@ class Dredd_Admin
                                                     </span>
                                                 </td>
                                                 <td class="sortable">
-                                                    <span class="status-badge-epic <?php echo $transaction->status; ?>">
-                                                        <?php echo ucfirst($transaction->status); ?>
-                                                    </span>
-                                                </td>
-                                                <td class="sortable">
                                                     <span
-                                                        class="date-value"><?php echo esc_html(human_time_diff(strtotime($transaction->updated_at), gmdate('Y-m-d H:i:s')) . ' ago'); ?></span>
+                                                        class="date-value"><?php echo date('M j, Y', strtotime($transaction->updated_at)); ?></span>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -1102,6 +1090,7 @@ class Dredd_Admin
             }
 
             .advanced-users-table {
+                text-align: center;
                 width: 100%;
                 border-collapse: separate;
                 border-spacing: 0;

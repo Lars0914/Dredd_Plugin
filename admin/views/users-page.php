@@ -10,8 +10,6 @@ if (!defined('ABSPATH')) {
 
 // Get data passed from admin class
 $users = isset($data['users']) ? $data['users'] : array();
-
-var_dump($users);
 // Calculate statistics for WordPress users (displayed in this table)
 $total_users = count($users);
 $total_analyses = array_sum(array_column($users, 'total_analyses'));
@@ -240,9 +238,10 @@ $total_chat_users = count($users);
                                                 $<?php echo number_format($user->total_spent ?? 0, 2); ?></div>
                                         </div>
                                     </td>
-                                     <td class="date-cell">
+                                    <td class="date-cell">
                                         <div class="date-display">
-                                            <div class="date-main"><?php echo date('M j, Y', strtotime($user->expires_at)); ?>
+                                            <div class="date-main">
+                                                <?php echo $user->expires_at != null ? date('M j, Y', strtotime($user->expires_at)) : "None"; ?>
                                             </div>
                                         </div>
                                     </td>
