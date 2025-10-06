@@ -701,6 +701,29 @@ select.chain-dropdown option {
     inset 0 0 5px rgba(0, 255, 255, 0.1);
 }
 
+.message-bubble h3 {
+  margin: 0.8rem 0 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.message-bubble p {
+  margin: 0.6rem 0;
+}
+
+.message-bubble a {
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.message-bubble code.addr {
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, .06);
+}
+
 .dredd-message {
   border-color: var(--border-secondary);
   background: linear-gradient(135deg,

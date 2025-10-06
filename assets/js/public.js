@@ -501,6 +501,16 @@
             const errorMessage = error || dredd_ajax.strings.error;
             this.addMessage(errorMessage, "dredd", "error");
         }
+        formatMessage(text) {
+            // Replace **Section Titles:** with HTML headers
+            text = text.replace(/\*\*(.*?)\:\*/g, '<h3>$1</h3>');
+            // Bold words wrapped in **word**
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Add line breaks after periods before next capital letter
+            text = text.replace(/\. ([A-Z])/g, '.<br><br>$1');
+            // Wrap it all in paragraphs
+            return `<p>${text}</p>`;
+        }
 
         addMessage(content, sender, type = "normal") {
             const timestamp = new Date().toLocaleTimeString("en-US", {
@@ -512,34 +522,79 @@
             const messageClass = sender === "user" ? "user-message" : "chat-message";
             const bubbleClass = sender === "user" ? "user-message" : "dredd-message";
 
-            let messageHtml = `
+            const escapeHtml = (str) =>
+                String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+
+            const autoLink = (str) =>
+                str
+                    .replace(
+                        /\b(https?:\/\/[^\s<>"']+)\b/g,
+                        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+                    )
+                    .replace(
+                        /\b0x[a-fA-F0-9]{40}\b/g,
+                        '<code class="addr">$&</code>'
+                    );
+
+            const formatMessage = (text) => {
+                let out = escapeHtml(text.trim());
+
+                out = out.replace(/\s*\*\*\s*/g, "**");
+
+                out = out.replace(/\*\*([A-Z][A-Za-z0-9 .\-_/()]+?):\*\*/g, (_m, g1) => {
+                    return `\n\n<h3>${g1}</h3>\n\n`;
+                });
+
+                out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+                out = out.replace(/(^|[\s(])_(.+?)_([\s).,!?:;]|$)/g, "$1<em>$2</em>$3");
+
+                out = out.replace(/\. (\p{Lu})/gu, ".\n\n$1");
+
+                out = autoLink(out);
+
+                const blocks = out
+                    .split(/\n{2,}/)
+                    .map((b) => b.trim())
+                    .filter(Boolean)
+                    .map((b) => (b.startsWith("<h3>") ? b : `<p>${b}</p>`))
+                    .join("\n");
+
+                return blocks;
+            };
+
+            const rendered =
+                sender === "user" ? `<p>${escapeHtml(content)}</p>` : formatMessage(content);
+
+            const messageHtml = `
                 <div class="chat-message ${messageClass}">
-                    ${sender !== "user"
-                    ? `
-                        <div class="message-avatar">
-                            <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="DREDD Avatar" />
-                        </div>
-                    `
-                    : ""
-                }
-                    <div class="message-content">
-                        <div class="message-bubble ${bubbleClass} ${type}">
-                            <p>${content}</p>
-                        </div>
+                ${sender !== "user"
+                                ? `
+                    <div class="message-avatar">
+                    <img src="https://dredd.ai/wp-content/uploads/2025/09/86215e12-1e3f-4cb0-b851-cfb84d7459a8.png" alt="DREDD Avatar" />
+                    </div>`
+                                : ""
+                            }
+                <div class="message-content">
+                    <div class="message-bubble ${bubbleClass} ${type}">
+                    ${rendered}
                     </div>
-                    ${sender === "user"
-                    ? `
-                        <div class="message-avatar">👤</div>
-                    `
-                    : ""
-                }
+                </div>
+                ${sender === "user"
+                                ? `<div class="message-avatar">👤</div>`
+                                : ""
+                            }
                 </div>
             `;
 
             $("#dredd-chat-messages").append(messageHtml);
             this.scrollToBottom();
 
-            // Store in history
             this.messageHistory.push({
                 content: content,
                 sender: sender,

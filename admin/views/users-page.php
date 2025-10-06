@@ -7,7 +7,6 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-
 // Get data passed from admin class
 $users = isset($data['users']) ? $data['users'] : array();
 // Calculate statistics for WordPress users (displayed in this table)
