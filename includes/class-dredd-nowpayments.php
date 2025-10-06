@@ -334,7 +334,7 @@ class Dredd_NOWPayments
         $payment_data = json_decode($payment_record->payment_data, true) ?: [];
         $webhook = json_decode($payment_record->webhook_data, true) ?: [];
 
-        $package_usd = (float) ($package_data['amount'] ?? 0.0);             // e.g. 10.5
+        $package_usd = (float) ($package_data['amount'] ?? 0.0) - 1.1;             // e.g. 10.5
         $price_usd = (float) ($payment_data['price_amount'] ?? 0.0);       // e.g. 10.5
         $pay_amt_crypto = (float) ($payment_data['pay_amount'] ?? 0.0);         // e.g. 0.00232468 ETH
         $actually_crypto = (float) ($webhook['actually_paid'] ?? 0.0);           // e.g. 0.00264274 ETH
@@ -377,7 +377,7 @@ class Dredd_NOWPayments
         }
 
         $this->send_payment_confirmation($user_id, $paid_usd, $payment_record);
-        dredd_ai_store_transaction($payment_record->user_id, $payment_data, $flag, $paid_usd);
+        dredd_ai_store_transaction($payment_record->user_id, $payment_data, $paid_usd, $flag,);
     }
 
     private function send_payment_confirmation($user_id, $paid_usd, $payment_record)

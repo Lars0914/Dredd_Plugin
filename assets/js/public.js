@@ -1462,7 +1462,7 @@
             clearInterval(this.paymentTimer);
             clearInterval(this.statusChecker);
             this.showMessage(
-                `✅ Payment successful via ${method}! Credits added to your account.`,
+                `✅ Payment successful via ${method}!`,
                 "success"
             );
         }

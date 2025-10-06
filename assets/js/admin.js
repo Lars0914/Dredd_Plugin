@@ -13,7 +13,6 @@
     init() {
       this.bindEvents();
       this.initCharts();
-      this.loadDashboardData();
     }
 
     bindEvents() {
@@ -579,23 +578,6 @@ To edit promotion details, you would need to:
       });
     }
 
-    loadDashboardData() {
-      // Load real-time dashboard statistics
-      $.ajax({
-        url: dredd_admin_ajax.ajax_url,
-        type: "POST",
-        data: {
-          action: "dredd_get_dashboard_stats",
-          nonce: dredd_admin_ajax.nonce,
-        },
-        success: (response) => {
-          if (response.success) {
-            this.updateDashboardStats(response.data);
-          }
-        },
-      });
-    }
-
     updateDashboardStats(stats) {
       // Update stat cards with real-time data
       if (stats.analyses_24h !== undefined) {
@@ -749,16 +731,6 @@ To edit promotion details, you would need to:
   // Initialize admin interface when document is ready
   $(document).ready(function () {
     window.dreddAdmin = new DreddAdmin();
-
-    // Auto-refresh dashboard stats every 5 minutes
-    setInterval(() => {
-      if (
-        window.dreddAdmin &&
-        typeof window.dreddAdmin.loadDashboardData === "function"
-      ) {
-        window.dreddAdmin.loadDashboardData();
-      }
-    }, 300000); // 5 minutes
   });
 })(jQuery);
 

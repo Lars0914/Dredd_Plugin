@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 // Get data passed from admin class
 $users = isset($data['users']) ? $data['users'] : array();
 
+var_dump($users);
 // Calculate statistics for WordPress users (displayed in this table)
 $total_users = count($users);
 $total_analyses = array_sum(array_column($users, 'total_analyses'));

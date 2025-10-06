@@ -773,14 +773,13 @@ class Dredd_Admin
 
         // Get comprehensive payment analytics
         global $wpdb;
-        $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed'") ?? 0;
-        $monthly_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)") ?? 0;
-        $stripe_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE payment_method = 'stripe' AND status = 'completed'");
-        $crypto_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE payment_method LIKE '%crypto%' AND status = 'completed'");
-        $failed_payments = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'failed'");
-        $pending_payments = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE status = 'pending'");
-        $avg_transaction = $total_revenue > 0 ? ($total_revenue / ($stripe_transactions + $crypto_transactions)) : 0;
-        $success_rate = (($stripe_transactions + $crypto_transactions) / max(1, ($stripe_transactions + $crypto_transactions + $failed_payments))) * 100;
+        $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions") ?? 0;
+        $monthly_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)") ?? 0;
+        $eth_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'eth'");
+        $usdc_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'usdc'");
+        $pls_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE chain = 'pls'");
+        $partially_transactions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}dredd_transactions WHERE flag = 'partially_paid'");
+
 
         // Payment method distribution
         $stripe_revenue = $wpdb->get_var("SELECT SUM(amount) FROM {$wpdb->prefix}dredd_transactions WHERE payment_method = 'stripe' AND status = 'completed'") ?? 0;
@@ -810,20 +809,6 @@ class Dredd_Admin
                                 <div class="stat-content">
                                     <span class="stat-number">$<?php echo number_format($total_revenue, 2); ?></span>
                                     <span class="stat-label">Total Revenue</span>
-                                </div>
-                            </div>
-                            <div class="advanced-stat success">
-                                <div class="stat-icon">✅</div>
-                                <div class="stat-content">
-                                    <span class="stat-number"><?php echo number_format($success_rate, 1); ?>%</span>
-                                    <span class="stat-label">Success Rate</span>
-                                </div>
-                            </div>
-                            <div class="advanced-stat pending">
-                                <div class="stat-icon"><?php echo $pending_payments > 0 ? '⏳' : '✅'; ?></div>
-                                <div class="stat-content">
-                                    <span class="stat-number"><?php echo $pending_payments; ?></span>
-                                    <span class="stat-label">Pending</span>
                                 </div>
                             </div>
                         </div>
@@ -863,31 +848,34 @@ class Dredd_Admin
                         <div class="revenue-stats">
                             <div class="revenue-item stripe">
                                 <div class="revenue-method">
-                                    <span class="method-icon">💳</span>
-                                    <span class="method-name">Stripe</span>
+                                    <span class="method-name">PLS</span>
                                 </div>
-                                <div class="revenue-amount">$<?php echo number_format($stripe_revenue, 2); ?></div>
+                                <div class="revenue-amount">$<?php echo number_format($pls_transactions, 2); ?></div>
                                 <div class="revenue-percentage">
-                                    <?php echo $total_revenue > 0 ? number_format(($stripe_revenue / $total_revenue) * 100, 1) : 0; ?>%
+                                    <?php echo $total_revenue > 0 ? number_format(($pls_transactions / $total_revenue) * 100, 1) : 0; ?>%
                                 </div>
                             </div>
                             <div class="revenue-item crypto">
                                 <div class="revenue-method">
-                                    <span class="method-icon">₿</span>
-                                    <span class="method-name">Crypto</span>
+                                    <span class="method-name">ETH</span>
                                 </div>
-                                <div class="revenue-amount">$<?php echo number_format($crypto_revenue, 2); ?></div>
+                                <div class="revenue-amount">$<?php echo number_format($eth_transactions, 2); ?></div>
                                 <div class="revenue-percentage">
-                                    <?php echo $total_revenue > 0 ? number_format(($crypto_revenue / $total_revenue) * 100, 1) : 0; ?>%
+                                    <?php echo $total_revenue > 0 ? number_format(($eth_transactions / $total_revenue) * 100, 1) : 0; ?>%
+                                </div>
+                            </div>
+                            <div class="revenue-item crypto">
+                                <div class="revenue-method">
+                                    <span class="method-name">USDC</span>
+                                </div>
+                                <div class="revenue-amount">$<?php echo number_format($usdc_transactions, 2); ?></div>
+                                <div class="revenue-percentage">
+                                    <?php echo $total_revenue > 0 ? number_format(($usdc_transactions / $total_revenue) * 100, 1) : 0; ?>%
                                 </div>
                             </div>
                             <div class="revenue-summary">
                                 <div class="summary-item">
-                                    <span class="summary-label">Avg Transaction:</span>
-                                    <span class="summary-value">$<?php echo number_format($avg_transaction, 2); ?></span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Monthly Revenue:</span>
+                                    <span class="summary-label">Montly Revenue</span>
                                     <span class="summary-value">$<?php echo number_format($monthly_revenue, 2); ?></span>
                                 </div>
                             </div>
@@ -902,26 +890,15 @@ class Dredd_Admin
                         <div class="transaction-grid">
                             <div class="transaction-item completed">
                                 <div class="transaction-number">
-                                    <?php echo number_format($stripe_transactions + $crypto_transactions); ?>
+                                    <?php echo number_format($total_revenue); ?>
                                 </div>
                                 <div class="transaction-label">Completed</div>
                                 <div class="transaction-icon">✅</div>
                             </div>
                             <div class="transaction-item pending">
-                                <div class="transaction-number"><?php echo number_format($pending_payments); ?></div>
-                                <div class="transaction-label">Pending</div>
+                                <div class="transaction-number"><?php echo number_format($partially_transactions); ?></div>
+                                <div class="transaction-label">Partially</div>
                                 <div class="transaction-icon">⏳</div>
-                            </div>
-                            <div class="transaction-item failed">
-                                <div class="transaction-number"><?php echo number_format($failed_payments); ?></div>
-                                <div class="transaction-label">Failed</div>
-                                <div class="transaction-icon">❌</div>
-                            </div>
-                            <div class="success-rate-display">
-                                <div class="rate-circle" style="--success-rate: <?php echo $success_rate; ?>%">
-                                    <span class="rate-percentage"><?php echo number_format($success_rate, 1); ?>%</span>
-                                </div>
-                                <div class="rate-label">Success Rate</div>
                             </div>
                         </div>
                     </div>
@@ -938,71 +915,7 @@ class Dredd_Admin
                         Cryptocurrency Payment Control Center
                     </h3>
 
-                    <!-- Live Mode Status Alert -->
-                    <div class="live-mode-alert">
-                        <div class="alert-header">
-                            <span class="alert-icon">🟢</span>
-                            <h4>LIVE MODE STATUS</h4>
-                        </div>
-                        <div class="alert-content">
-                            <div class="status-grid">
-                                <div class="status-item">
-                                    <span class="status-label">Payment Mode:</span>
-                                    <span class="status-value live">🟢 LIVE MODE ONLY</span>
-                                </div>
-                                <div class="status-item">
-                                    <span class="status-label">Test/Demo System:</span>
-                                    <span class="status-value disabled">❌ COMPLETELY DISABLED</span>
-                                </div>
-                                <div class="status-item">
-                                    <span class="status-label">Address Validation:</span>
-                                    <span class="status-value enabled">✅ STRICT VALIDATION ENABLED</span>
-                                </div>
-                            </div>
 
-                            <div class="addresses-status">
-                                <h5>🔍 LIVE ADDRESSES STATUS:</h5>
-                                <?php
-                                $live_addresses_count = 0;
-                                $live_addr_list = ['live_btc_address', 'live_eth_address', 'live_usdt_address', 'live_usdc_address', 'live_ltc_address', 'live_doge_address'];
-                                foreach ($live_addr_list as $addr) {
-                                    if (!empty($settings[$addr]))
-                                        $live_addresses_count++;
-                                }
-                                ?>
-                                <?php if ($live_addresses_count == 0): ?>
-                                    <div class="status-alert critical">
-                                        <h6>🚨 CRITICAL ERROR!</h6>
-                                        <p>NO live addresses configured!</p>
-                                        <p>All payments will FAIL until you add addresses below!</p>
-                                    </div>
-                                <?php elseif ($live_addresses_count < 6): ?>
-                                    <div class="status-alert warning">
-                                        <p>⚠️ Warning: Only <?php echo $live_addresses_count; ?>/6 live addresses configured!</p>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="status-alert success">
-                                        <p>✅ All live addresses configured!</p>
-                                    </div>
-                                <?php endif; ?>
-
-                                <div class="addresses-list">
-                                    <div class="address-item"><span class="crypto-symbol">BTC:</span>
-                                        <?php echo esc_html($settings['live_btc_address'] ?: '❌ NOT SET'); ?></div>
-                                    <div class="address-item"><span class="crypto-symbol">ETH:</span>
-                                        <?php echo esc_html($settings['live_eth_address'] ?: '❌ NOT SET'); ?></div>
-                                    <div class="address-item"><span class="crypto-symbol">USDT:</span>
-                                        <?php echo esc_html($settings['live_usdt_address'] ?: '❌ NOT SET'); ?></div>
-                                    <div class="address-item"><span class="crypto-symbol">USDC:</span>
-                                        <?php echo esc_html($settings['live_usdc_address'] ?: '❌ NOT SET'); ?></div>
-                                    <div class="address-item"><span class="crypto-symbol">LTC:</span>
-                                        <?php echo esc_html($settings['live_ltc_address'] ?: '❌ NOT SET'); ?></div>
-                                    <div class="address-item"><span class="crypto-symbol">DOGE:</span>
-                                        <?php echo esc_html($settings['live_doge_address'] ?: '❌ NOT SET'); ?></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="control-center-grid">
                         <div class="control-panel nowpayments-panel">
@@ -1052,189 +965,6 @@ class Dredd_Admin
                                         </div>
                                         <input type="hidden" name="nowpayments_sandbox" value="0" />
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Crypto Wallet Addresses Control Center -->
-                <div class="wallet-addresses-center">
-                    <h3 class="section-title">
-                        <span class="section-icon">💰</span>
-                        Live Crypto Wallet Addresses Control Center
-                    </h3>
-
-                    <div class="control-center-grid">
-                        <div class="control-panel addresses-panel live-addresses">
-                            <div class="panel-header">
-                                <h4>🟢 LIVE PAYMENT ADDRESSES</h4>
-                                <div class="panel-status live">REAL TRANSACTIONS</div>
-                            </div>
-
-                            <div class="addresses-warning">
-                                <p>✅ Real addresses where you'll receive live payments</p>
-                            </div>
-
-                            <div class="crypto-addresses-grid">
-                                <div class="crypto-address-item">
-                                    <label class="crypto-label">
-                                        <span class="crypto-icon">₿</span>
-                                        <span class="crypto-name">Bitcoin (BTC)</span>
-                                    </label>
-                                    <div class="address-input-group">
-                                        <input type="text" name="live_btc_address"
-                                            value="<?php echo esc_attr($settings['live_btc_address'] ?? ''); ?>"
-                                            class="address-input" placeholder="1YourBTCAddress..." />
-                                        <?php if (empty($settings['live_btc_address']) && ($settings['nowpayments_sandbox'] ?? '1') === '0'): ?>
-                                            <div class="address-warning">⚠️ BTC payments will fail - address required for live mode!
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-
-                                <div class="crypto-address-item">
-                                    <label class="crypto-label">
-                                        <span class="crypto-icon">⟠</span>
-                                        <span class="crypto-name">Ethereum (ETH)</span>
-                                    </label>
-                                    <div class="address-input-group">
-                                        <input type="text" name="live_eth_address"
-                                            value="<?php echo esc_attr($settings['live_eth_address'] ?? ''); ?>"
-                                            class="address-input" placeholder="0xYourETHAddress..." />
-                                        <?php if (empty($settings['live_eth_address']) && ($settings['nowpayments_sandbox'] ?? '1') === '0'): ?>
-                                            <div class="address-warning">⚠️ ETH payments will fail - address required for live mode!
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-
-                                <div class="crypto-address-item">
-                                    <label class="crypto-label">
-                                        <span class="crypto-icon">₮</span>
-                                        <span class="crypto-name">USDT (Tether)</span>
-                                    </label>
-                                    <div class="address-input-group">
-                                        <input type="text" name="live_usdt_address"
-                                            value="<?php echo esc_attr($settings['live_usdt_address'] ?? ''); ?>"
-                                            class="address-input" placeholder="YourUSDTAddress..." />
-                                        <?php if (empty($settings['live_usdt_address']) && ($settings['nowpayments_sandbox'] ?? '1') === '0'): ?>
-                                            <div class="address-warning">⚠️ USDT/TETHER payments will fail - address required for
-                                                live mode!</div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-
-                                <div class="crypto-address-item">
-                                    <label class="crypto-label">
-                                        <span class="crypto-icon">Ⓒ</span>
-                                        <span class="crypto-name">USDC (USD Coin)</span>
-                                    </label>
-                                    <div class="address-input-group">
-                                        <input type="text" name="live_usdc_address"
-                                            value="<?php echo esc_attr($settings['live_usdc_address'] ?? ''); ?>"
-                                            class="address-input" placeholder="YourUSDCAddress..." />
-                                        <?php if (empty($settings['live_usdc_address']) && ($settings['nowpayments_sandbox'] ?? '1') === '0'): ?>
-                                            <div class="address-warning">⚠️ USDC payments will fail - address required for live
-                                                mode!</div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-
-                                <div class="crypto-address-item">
-                                    <label class="crypto-label">
-                                        <span class="crypto-icon">Ł</span>
-                                        <span class="crypto-name">Litecoin (LTC)</span>
-                                    </label>
-                                    <div class="address-input-group">
-                                        <input type="text" name="live_ltc_address"
-                                            value="<?php echo esc_attr($settings['live_ltc_address'] ?? ''); ?>"
-                                            class="address-input" placeholder="LYourLTCAddress..." />
-                                    </div>
-                                </div>
-
-                                <div class="crypto-address-item">
-                                    <label class="crypto-label">
-                                        <span class="crypto-icon">Ð</span>
-                                        <span class="crypto-name">Dogecoin (DOGE)</span>
-                                    </label>
-                                    <div class="address-input-group">
-                                        <input type="text" name="live_doge_address"
-                                            value="<?php echo esc_attr($settings['live_doge_address'] ?? ''); ?>"
-                                            class="address-input" placeholder="DYourDOGEAddress..." />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Legacy Wallet Addresses Control Center -->
-                <div class="legacy-wallet-center">
-                    <h3 class="section-title">
-                        <span class="section-icon">🔧</span>
-                        Legacy Wallet Addresses Control Center
-                    </h3>
-
-                    <div class="legacy-info-panel">
-                        <div class="info-header">
-                            <h4>📋 What These Addresses Are For:</h4>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-item">
-                                <span class="info-bullet">•</span>
-                                <strong>USDT/USDC:</strong> Used by direct crypto payment method (not NOWPayments)
-                            </div>
-                            <div class="info-item">
-                                <span class="info-bullet">•</span>
-                                <strong>PulseChain:</strong> Used for direct PLS payments (separate from NOWPayments)
-                            </div>
-                            <div class="info-warning">
-                                <span class="warning-icon">⚠️</span>
-                                <strong>These are DIFFERENT from NOWPayments addresses above!</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="control-center-grid">
-                        <div class="control-panel legacy-panel">
-                            <div class="panel-header">
-                                <h4>🏛️ Direct Payment Addresses</h4>
-                                <div class="panel-status online">LEGACY SYSTEM</div>
-                            </div>
-
-                            <div class="control-grid">
-                                <div class="control-item">
-                                    <label class="control-label">💰 USDT Wallet (Direct Crypto Method)</label>
-                                    <div class="control-input-group">
-                                        <input type="text" name="usdt_wallet"
-                                            value="<?php echo esc_attr($settings['usdt_wallet']); ?>"
-                                            class="control-input epic-input" placeholder="Your USDT wallet address" />
-                                        <span class="input-unit">USDT</span>
-                                    </div>
-                                    <p class="control-description">For direct USDT payments (not via NOWPayments API)</p>
-                                </div>
-
-                                <div class="control-item">
-                                    <label class="control-label">💰 USDC Wallet (Direct Crypto Method)</label>
-                                    <div class="control-input-group">
-                                        <input type="text" name="usdc_wallet"
-                                            value="<?php echo esc_attr($settings['usdc_wallet']); ?>"
-                                            class="control-input epic-input" placeholder="Your USDC wallet address" />
-                                        <span class="input-unit">USDC</span>
-                                    </div>
-                                    <p class="control-description">For direct USDC payments (not via NOWPayments API)</p>
-                                </div>
-
-                                <div class="control-item">
-                                    <label class="control-label">🔥 PulseChain Wallet (Direct PLS Payments)</label>
-                                    <div class="control-input-group">
-                                        <input type="text" name="pulsechain_wallet"
-                                            value="<?php echo esc_attr($settings['pulsechain_wallet']); ?>"
-                                            class="control-input epic-input" placeholder="0x..." />
-                                        <span class="input-unit">PLS</span>
-                                    </div>
-                                    <p class="control-description">Your PulseChain wallet for receiving direct PLS payments</p>
                                 </div>
                             </div>
                         </div>
@@ -1305,8 +1035,7 @@ class Dredd_Admin
                                         <th class="sortable">Transaction ID</th>
                                         <th class="sortable">User</th>
                                         <th class="sortable">Amount</th>
-                                        <th class="sortable">Credits</th>
-                                        <th class="sortable">Method</th>
+                                        <th class="sortable">Chain</th>
                                         <th class="sortable">Status</th>
                                         <th class="sortable">Date</th>
                                     </tr>
@@ -1338,11 +1067,11 @@ class Dredd_Admin
                                                         class="amount-value">$<?php echo number_format($transaction->amount, 2); ?></span>
                                                 </td>
                                                 <td class="sortable">
-                                                    <span class="tokens-value"><?php echo number_format($transaction->tokens); ?></span>
+                                                    <span class="tokens-value"><?php echo number_format($transaction->chain); ?></span>
                                                 </td>
                                                 <td class="sortable">
-                                                    <span class="method-badge <?php echo strtolower($transaction->payment_method); ?>">
-                                                        <?php echo esc_html(strtoupper($transaction->payment_method)); ?>
+                                                    <span class="method-badge <?php echo strtolower($transaction->flag); ?>">
+                                                        <?php echo esc_html(strtoupper($transaction->flag)); ?>
                                                     </span>
                                                 </td>
                                                 <td class="sortable">
@@ -1352,7 +1081,7 @@ class Dredd_Admin
                                                 </td>
                                                 <td class="sortable">
                                                     <span
-                                                        class="date-value"><?php echo esc_html(human_time_diff(strtotime($transaction->created_at), current_time('timestamp')) . ' ago'); ?></span>
+                                                        class="date-value"><?php echo esc_html(human_time_diff(strtotime($transaction->updated_at), gmdate('Y-m-d H:i:s')) . ' ago'); ?></span>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -2050,44 +1779,45 @@ class Dredd_Admin
     {
         global $wpdb;
 
-        $chat_users = $wpdb->get_results("
+        $chat_tbl = $wpdb->prefix . 'dredd_chat_users';
+        $analysis_tbl = $wpdb->prefix . 'dredd_analysis_history';
+        $tx_tbl = $wpdb->prefix . 'dredd_transactions';
+
+        $sql = "
             SELECT 
                 u.id,
                 u.username,
                 u.email,
                 u.created_at,
                 u.expires_at,
-                COALESCE(stats.total_analyses, 0) as total_analyses,
-                COALESCE(stats.standard_analyses, 0) as standard_analyses,
-                COALESCE(stats.psycho_analyses, 0) as psycho_analyses,
-                COALESCE(stats.scams_detected, 0) as scams_detected,
-                COALESCE(payments.total_spent, 0) as total_spent,
-            FROM wpzl_dredd_chat_users u
-
+                COALESCE(stats.total_analyses, 0)       AS total_analyses,
+                COALESCE(stats.standard_analyses, 0)    AS standard_analyses,
+                COALESCE(stats.psycho_analyses, 0)      AS psycho_analyses,
+                COALESCE(stats.scams_detected, 0)       AS scams_detected,
+                COALESCE(payments.total_spent, 0.0)     AS total_spent
+            FROM {$chat_tbl} u
             LEFT JOIN (
                 SELECT 
                     user_id,
-                    COUNT(*) as total_analyses,
-                    SUM(CASE WHEN mode = 'standard' THEN 1 ELSE 0 END) as standard_analyses,
-                    SUM(CASE WHEN mode = 'psycho' THEN 1 ELSE 0 END) as psycho_analyses,
-                    SUM(CASE WHEN verdict = 'scam' THEN 1 ELSE 0 END) as scams_detected
-                FROM wpzl_dredd_analysis_history
+                    COUNT(*)                                                AS total_analyses,
+                    SUM(CASE WHEN mode = 'standard' THEN 1 ELSE 0 END)     AS standard_analyses,
+                    SUM(CASE WHEN mode = 'psycho'   THEN 1 ELSE 0 END)     AS psycho_analyses,
+                    SUM(CASE WHEN verdict = 'scam'  THEN 1 ELSE 0 END)     AS scams_detected
+                FROM {$analysis_tbl}
                 GROUP BY user_id
             ) stats ON u.id = stats.user_id
-
             LEFT JOIN (
                 SELECT 
                     user_id,
-                    SUM(amount) as total_spent,
-                FROM wpzl_dredd_transactions
+                    SUM(amount) AS total_spent
+                FROM {$tx_tbl}
                 GROUP BY user_id
             ) payments ON u.id = payments.user_id
-
             ORDER BY u.created_at DESC
-        ");
+            ";
 
-        return $chat_users ?: array();
-
+        $chat_users = $wpdb->get_results($sql);
+        return $chat_users ?: [];
     }
 
     /**
