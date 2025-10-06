@@ -62,7 +62,6 @@ class Dredd_N8N
         $response = $this->send_to_n8n_direct($payload);
 
         if ($response && isset($response['action'])) {
-
             if ($response['contract_address'] !== 'Unknown' && $response['contract_address'] !== '') {
                 $this->database->store_analysis($response);
             }

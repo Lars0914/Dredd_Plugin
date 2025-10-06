@@ -133,19 +133,18 @@ class Dredd_Database
             user_id bigint(20) unsigned NOT NULL,
             session_id varchar(255) NOT NULL,
             token_name varchar(100) NOT NULL,
-            token_symbol varchar(20) DEFAULT NULL,
+            token_symbol varchar(64) DEFAULT NULL,           
             contract_address varchar(42) NOT NULL,
             chain varchar(50) NOT NULL,
-            mode enum('standard', 'psycho') NOT NULL DEFAULT 'standard',
+            mode enum('standard','psycho') NOT NULL DEFAULT 'standard',
             token_cost DECIMAL(18,8) NOT NULL DEFAULT 0,
-            verdict enum('scam', 'caution', 'legit', 'unknown') DEFAULT 'unknown',
+            verdict enum('scam','caution','legit','unknown') DEFAULT 'unknown',
             confidence_score DECIMAL(5,2) DEFAULT NULL,
             risk_score DECIMAL(5,2) DEFAULT NULL,
             analysis_data longtext DEFAULT NULL,
             processing_time int(11) DEFAULT 300,
             wp_post_id bigint(20) unsigned DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            expires_at datetime DEFAULT NULL,
             PRIMARY KEY (id)
         ) {$charset_collate};";
 
@@ -400,46 +399,24 @@ class Dredd_Database
     {
 
         $analysis_table = $this->wpdb->prefix . 'dredd_analysis_history';
-        $result = $this->wpdb->insert(
-            $analysis_table,
-            array(
-                'analysis_id' => $data['session_id'],                              // bigint (you must ensure this value is passed in PHP side)
-                'user_id' => $data['user_id'],                                  // bigint
-                'session_id' => $data['session_id'],                               // varchar
-                'token_name' => $data['token_name'],                               // varchar
-                'token_symbol' => $data['token_symbol'] ?? null,                     // varchar
-                'contract_address' => $data['contract_address'],                         // varchar
-                'chain' => $data['chain'],                                    // varchar
-                'mode' => $data['mode'] ?? null,                                     // enum
-                'token_cost' => $data['token_cost'],                               // DECIMAL(18,8)
-                'verdict' => $data['verdict'] ?? 'unknown',
-                'confidence_score' => $data['confidence_score'],                         // DECIMAL(5,2)
-                'risk_score' => $data['risk_score'],                               // DECIMAL(5,2)
-                'analysis_data' => $data['message'] ?? null,                          // longtext
-                'processing_time' => $data['processing_time'] ?? 300,                   // int
-                'wp_post_id' => $data['wp_post_id'] ?? null,                       // bigint
-                'expires_at' => '0000-00-00 00:00:00', // datetime
-            ),
-            array(
-                '%s', // analysis_id
-                '%d', // user_id
-                '%s', // session_id
-                '%s', // token_name
-                '%s', // token_symbol
-                '%s', // contract_address
-                '%s', // chain
-                '%s', // mode
-                '%f', // token_cost
-                '%s', // verdict
-                '%f', // confidence_score
-                '%f', // risk_score
-                '%s', // analysis_data
-                '%d', // processing_time
-                '%d', // wp_post_id
-                '%s', // expires_at
-            )
+        $insert_data = array(
+            'analysis_id' => $data['session_id'],
+            'user_id' => $data['user_id'],
+            'session_id' => $data['session_id'],
+            'token_name' => $data['token_name'],
+            'token_symbol' => isset($data['token_symbol']) ? mb_substr($data['token_symbol'], 0, 64) : null,
+            'contract_address' => $data['contract_address'],
+            'chain' => $data['chain'],
+            'mode' => $data['mode'] ?? 'standard',
+            'token_cost' => $data['token_cost'],
+            'verdict' => $data['verdict'] ?? 'unknown',
+            'confidence_score' => $data['confidence_score'],
+            'risk_score' => $data['risk_score'],
+            'analysis_data' => $data['message'] ?? null,
+            'processing_time' => $data['processing_time'] ?? 300,
         );
-        return $result;
+        $formats = array('%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s', '%f', '%f', '%s', '%d');
+        $result = $this->wpdb->insert($analysis_table, $insert_data, $formats);
     }
 
 
