@@ -417,9 +417,6 @@ class Dredd_Database
         );
         $formats = array('%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s', '%f', '%f', '%s', '%d');
         $result = $this->wpdb->insert($analysis_table, $insert_data, $formats);
-        if ($result === false) {
-            var_dump('<pre>DB Insert Error: ' . esc_html($this->wpdb->last_error) . '</pre>');
-        }
     }
 
 
