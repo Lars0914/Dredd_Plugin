@@ -444,12 +444,10 @@
                 const data = response.data;
 
                 if (data.action === "response" && data.message) {
-                    console.log("DREDD Frontend - Adding message to chat:", data.message);
                     this.addMessage(data.message, "dredd");
                     return;
                 }
 
-                // Handle other action types
                 switch (data.action) {
                     case "analyzing":
                         this.addMessage(data.message, "dredd");
@@ -753,10 +751,10 @@
                         if (
                             response.success &&
                             response.data.expires_at &&
-                            new Date(response.data.expires_at) < new Date() &&
+                            new Date(response.data.expires_at) >= new Date() &&
                             response.data.expires_at != "0000-00-00 00:00:00"
                         ) {
-                            resolve(response.data.expires_at || 0);
+                            resolve(response.data.expires_at);
                         } else {
                             resolve(0);
                         }
